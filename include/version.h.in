@@ -1,0 +1,14 @@
+/**
+* \warning @AUTOGEN_WARNING@
+* \copyright Copyright 2015 Jan-Niklas Braak. This project is released under
+* the MIT License, see the file
+* LICENSE.md for rights and limitations.
+*   \file main.h
+*   \author Jan-Niklas Braak
+*/
+
+#define VERSION "@VERSION@"
+#define VERSION_MAJOR @VERSION_MAJOR@
+#define VERSION_MINOR @VERSION_MINOR@
+#define VERSION_PATCH @VERSION_PATCH@
+#define VERSION_SHA1 "@VERSION_SHA1@"
