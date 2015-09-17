@@ -5,7 +5,7 @@ set(CXX_STANDARD_REQUIRED ON)
 
 add_executable(robots main.cpp Robot.cpp)
 
-find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
+find_package(SFML 2 COMPONENTS system window graphics)
 if(SFML_FOUND)
     add_executable(robots-gui robots-gui.cpp Robot.cpp)
     include_directories(${SFML_INCLUDE_DIR})
