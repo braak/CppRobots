@@ -10,5 +10,7 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 set(AUTOGEN_WARNING "This file was generated automaticly by cmake. Changes to this file will be lost if the code is regenerated.")
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
+
 subdirs(src)
 subdirs(doc)

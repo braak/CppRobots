@@ -13,7 +13,7 @@ endif(NOT DOXYGEN_DOT_FOUND)
 
 # file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doc/img DESTINATION ${CMAKE_DOC_OUTPUT_DIR})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_DOC_OUTPUT_DIR}/Doxyfile @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/Doxyfile.in ${CMAKE_DOC_OUTPUT_DIR}/Doxyfile @ONLY)
 
 add_custom_target(doc
 		${DOXYGEN_EXECUTABLE} ${CMAKE_DOC_OUTPUT_DIR}/Doxyfile
