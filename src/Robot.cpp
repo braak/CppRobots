@@ -16,15 +16,22 @@ Robot::~Robot() {}
 
 void Robot::update(double v, double w) {
   //   TODO: limit speed and acceleration
-  double dx = sin(theta) * v;
-  double dy = cos(theta) * v;
-  double dTheta = w;
+  // double w = max(min(w, -M_PI / 2), M_PI / 2);
+  double dx = cos(theta) * v;
+  double dy = sin(theta) * v;
+  double dTheta = w; // v / 100 * tan(w);
 
   x = x + dx * timeBase;
   y = y + dy * timeBase;
   theta = theta + dTheta * timeBase;
 }
 
+Pose Robot::getPose() { return Pose(x, y, theta); }
+void Robot::setPose(Pose p) {
+  x = p.x;
+  y = p.y;
+  theta = p.theta;
+}
 Robot::operator std::string() {
   std::stringstream str;
   str << "<Robot at " << x << ", " << y << ", " << theta << ">";

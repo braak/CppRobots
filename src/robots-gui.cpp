@@ -7,7 +7,9 @@
 
 #include "version.h"
 #include "Robot.hpp"
+#include <math.h>
 #include <sstream>
+#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
 /**
@@ -21,9 +23,11 @@ int main(int argc, char const *argv[]) {
   window_name << "CppRobot Gui v" << VERSION_MAJOR << "." << VERSION_MINOR
               << "." << VERSION_PATCH;
   sf::RenderWindow window(sf::VideoMode(800, 600), window_name.str());
+  window.setVerticalSyncEnabled(false);
 
   const double timeBase = 1.0 / 60;
   Robot robot(timeBase);
+  robot.setPose(Pose(100, 100, 0));
 
   while (window.isOpen()) {
     sf::Event event;
@@ -31,13 +35,21 @@ int main(int argc, char const *argv[]) {
       if (event.type == sf::Event::Closed)
         window.close();
     }
-    robot.update(1, 0.1);
+    robot.update(20, 0.6);
+    Pose pose = robot.getPose();
+    sf::RectangleShape rectangle;
+    rectangle.setSize(sf::Vector2f(10, 4));
+    rectangle.setOutlineThickness(5);
+    rectangle.setPosition(pose.x, pose.y);
+    rectangle.setRotation(pose.theta * 180.0 / M_PI);
 
     window.clear(sf::Color::Black);
 
-    // draw everything here...
+    window.draw(rectangle);
 
     window.display();
+
+    sf::sleep(sf::seconds(timeBase));
   }
   return 0;
 }

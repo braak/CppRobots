@@ -22,7 +22,7 @@ int main(int argc, char const *argv[]) {
 
   for (size_t i = 0; i < 100; i++) {
     std::cout << (std::string)robot << std::endl;
-    robot.update(1, 0.1);
+    robot.update(1, 0.0000001);
   }
   return 0;
 }

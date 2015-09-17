@@ -9,6 +9,13 @@
 #include <math.h>
 #include <string>
 
+struct Pose {
+  double x;
+  double y;
+  double theta;
+  Pose(double x, double y, double theta) : x(x), y(y), theta(theta) {}
+};
+
 /**
     \brief The Robot class represents the movement behavior, position and
    orientation of a player.
@@ -41,6 +48,8 @@ public:
   */
   void update(double v, double w);
 
+  Pose getPose();
+  void setPose(Pose p);
   /**
       Method for conveniently printing the state of the Robot.
       \return a string in the form "<Robot at x, y, theta>", where x and y are
