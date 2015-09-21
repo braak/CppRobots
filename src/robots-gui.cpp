@@ -32,8 +32,8 @@ template <typename T> std::string to_string(const T &n) {
 int main(int argc, char const *argv[]) {
   // Load resources
   sf::Font font;
-  if (!font.loadFromFile("resources\\font\\liberation-fonts-ttf-2.00."
-                         "1\\LiberationSans-Regular.ttf")) {
+  if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00."
+                         "1/LiberationSans-Regular.ttf")) {
     exit(1);
   }
 
@@ -49,7 +49,7 @@ int main(int argc, char const *argv[]) {
   Robot robot(timeBase);
   robot.setPose(Pose(100, 100, 0));
 
-  FrameTimer frameTimer;
+  FrameTimer frameTimer(timeBase);
 
   sf::Text fps_counter;
   fps_counter.setFont(font);
@@ -81,8 +81,8 @@ int main(int argc, char const *argv[]) {
 
     window.display();
 
-    sf::sleep(sf::seconds(timeBase));
-    frameTimer.endFrame();
+    // sf::sleep(sf::seconds(timeBase));
+    frameTimer.endFrame(true);
   }
   return 0;
 }

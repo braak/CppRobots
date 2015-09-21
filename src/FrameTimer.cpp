@@ -10,18 +10,23 @@
 
 // FrameTimer::FrameTimer(std::chrono::duration<double> targetTime)
 //     : targetTime(targetTime) {}
-// FrameTimer::FrameTimer(float targetTime) : targetTime(targetTime) {}
-FrameTimer::FrameTimer() {}
+FrameTimer::FrameTimer(float targetTime) : targetTime(targetTime) {}
+// FrameTimer::FrameTimer() {}
 FrameTimer::~FrameTimer() {}
 
 void FrameTimer::startFrame() {
   startOfFrame = std::chrono::high_resolution_clock::now();
 }
-void FrameTimer::endFrame() {
+void FrameTimer::endFrame(bool wait) {
+  if(wait){
+    std::this_thread::sleep_for(targetTime);
+  }
+
   std::chrono::high_resolution_clock::time_point endOfFrame;
   endOfFrame = std::chrono::high_resolution_clock::now();
   frameTime = endOfFrame - startOfFrame;
 }
+
 
 float FrameTimer::getFps() { return 1.0 / frameTime.count(); }
 float FrameTimer::getFrameTime() { return frameTime.count(); }

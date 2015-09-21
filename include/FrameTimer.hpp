@@ -9,6 +9,9 @@
 #include <thread>
 #include <string>
 
+/**
+\brief This class measures and controlls the frametiming of the simmulation.
+*/
 class FrameTimer {
 private:
   std::chrono::duration<double> frameTime;
@@ -16,15 +19,41 @@ private:
   std::chrono::high_resolution_clock::time_point startOfFrame;
 
 public:
-  // FrameTimer(std::chrono::duration<double> targetTime);
-  // FrameTimer(float targetTime);
-  FrameTimer();
+  /**
+  Constructs a FrameTimer object with the specified target time.
+  \param targetTime the frame tiem targeted by the Frametimer.
+  */
+  FrameTimer(float targetTime);
+  /**
+  Default destructor.
+  */
   virtual ~FrameTimer();
 
+  /**
+  This method is called to signal the start of a frame.
+  */
   void startFrame();
-  void endFrame();
+  /**
+  This method is called to signal the end of a frame.
 
+  If wait is true it lets the current thread sleep until the targetTime is reached.
+
+  \param wait Wheter to wait for the next frame or not.
+  */
+  void endFrame(bool wait = false);
+
+  /**
+  Returns the current framerate.
+  \return the current framerate
+  */
   float getFps();
+  /**
+  Returns the duration of the previous frame.
+  */
   float getFrameTime();
+  /**
+  Returns the framerate and the frametime in a human readable format.
+  \return s string in the form "<framerate> (<frametime> ms)"
+  */
   std::string getOutput();
 };
