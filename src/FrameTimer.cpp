@@ -19,7 +19,7 @@ void FrameTimer::startFrame() {
 }
 void FrameTimer::endFrame(bool wait) {
   if(wait){
-    std::this_thread::sleep_for(targetTime);
+    std::this_thread::sleep_until(startOfFrame  + targetTime);
   }
 
   std::chrono::high_resolution_clock::time_point endOfFrame;

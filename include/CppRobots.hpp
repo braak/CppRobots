@@ -6,7 +6,6 @@
 *   \author Jan-Niklas Braak
 */
 
-
 #include "version.h"
 #include "Robot.hpp"
 #include "Pose.hpp"

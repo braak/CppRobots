@@ -42,28 +42,30 @@ Pose& Pose::operator/=(const double&rhs){
   theta /= rhs;
   return *this;
 }
-inline Pose operator+(Pose lhs, const Pose& rhs){
+Pose operator+(Pose lhs, const Pose& rhs){
   lhs += rhs;
   return lhs;
 }
-inline Pose operator-(Pose lhs, const Pose& rhs){
+Pose operator-(Pose lhs, const Pose& rhs){
   lhs -= rhs;
   return lhs;
 }
-inline Pose operator*(Pose lhs, const double& rhs){
+Pose operator*(Pose lhs, const double& rhs){
   lhs *= rhs;
   return lhs;
 }
-inline Pose operator/(Pose lhs, const double& rhs){
-  lhs /= rhs;
-  return lhs;
-}
-inline Pose operator*(const double& lhs, Pose rhs){
+Pose operator*(const double& lhs, Pose rhs){
   rhs *= lhs;
   return rhs;
 }
-inline Pose operator/(const double& lhs, Pose rhs){
-  rhs /= lhs;
+Pose operator/(Pose lhs, const double& rhs){
+  lhs /= rhs;
+  return lhs;
+}
+Pose operator/(const double& lhs, Pose rhs){
+  rhs.x = lhs / rhs.x;
+  rhs.y = lhs / rhs.y;
+  rhs.theta = lhs / rhs.theta;
   return rhs;
 }
 

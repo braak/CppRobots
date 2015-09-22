@@ -9,31 +9,25 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeBase)
-    : x(0), y(0), theta(0), timeBase(timeBase) {}
+Robot::Robot(const double timeStep)
+    : pose(), timeStep(timeStep) {}
 
 Robot::~Robot() {}
 
 void Robot::update(double v, double w) {
-  //   TODO: limit speed and acceleration
-  // double w = max(min(w, -M_PI / 2), M_PI / 2);
-  double dx = cos(theta) * v;
-  double dy = sin(theta) * v;
-  double dTheta = w; // v / 100 * tan(w);
-
-  x = x + dx * timeBase;
-  y = y + dy * timeBase;
-  theta = theta + dTheta * timeBase;
+  double dx = cos(pose.theta) * v;
+  double dy = sin(pose.theta) * v;
+  double dTheta = w;
+  Pose deltaPose(dx, dy, dTheta);
+  pose += deltaPose * timeStep;
 }
 
-Pose Robot::getPose() { return Pose(x, y, theta); }
+Pose Robot::getPose() const { return pose; }
 void Robot::setPose(Pose p) {
-  x = p.x;
-  y = p.y;
-  theta = p.theta;
+  pose =p;
 }
-Robot::operator std::string() {
-  std::stringstream str;
-  str << "<Robot at " << x << ", " << y << ", " << theta << ">";
-  return str.str();
+
+std::ostream& operator<<(std::ostream& os, const Robot& obj){
+  os << "<Robot at " << obj.pose << ">";
+  return os;
 }

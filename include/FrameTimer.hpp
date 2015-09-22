@@ -4,6 +4,8 @@
 *   \file FrameTimer.cpp
 *   \author Jan-Niklas Braak
 */
+#ifndef __FRAME_TIMER__
+#define __FRAME_TIMER__
 
 #include <chrono>
 #include <thread>
@@ -57,3 +59,5 @@ public:
   */
   std::string getOutput();
 };
+
+#endif /* end of include guard: __FRAME_TIMER__ */

@@ -8,7 +8,6 @@ if(GTEST_FOUND)
   include_directories(${GTEST_INCLUDE_DIRS})
   include_directories(${CMAKE_SOURCE_DIR}/src)
 
-
   add_executable(testPose testPose.cpp)
   target_link_libraries(testPose ${GTEST_LIBRARIES} pthread)
   add_test(UnitTestPose testPose)

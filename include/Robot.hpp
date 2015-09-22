@@ -6,15 +6,13 @@
 *   \author Jan-Niklas Braak
 */
 
+#ifndef __ROBOT__
+#define __ROBOT__
+
 #include <math.h>
 #include <string>
 
-struct Pose {
-  double x;
-  double y;
-  double theta;
-  Pose(double x, double y, double theta) : x(x), y(y), theta(theta) {}
-};
+#include "Pose.hpp"
 
 /**
     \brief The Robot class represents the movement behavior, position and
@@ -25,18 +23,19 @@ struct Pose {
 */
 class Robot {
 private:
-  double x;
-  double y;
-  double theta;
+  Pose pose;
+  // double x;
+  // double y;
+  // double theta;
 
-  const double timeBase;
-
+  const double timeStep;
+  friend std::ostream& operator<<(std::ostream& os, const Robot& obj);
 public:
   /**
-  constructs a Robot with a specified timeBase. The timeBase determins the
+  constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
   */
-  Robot(const double timeBase = 1);
+  Robot(const double timeStep = 1);
 
   virtual ~Robot();
 
@@ -48,12 +47,22 @@ public:
   */
   void update(double v, double w);
 
-  Pose getPose();
-  void setPose(Pose p);
   /**
-      Method for conveniently printing the state of the Robot.
-      \return a string in the form "<Robot at x, y, theta>", where x and y are
-     the current position of the Robot and theta the current orientation.
+  Getter for the Pose of the Robot.
+  \return the Pose of the Robot.
   */
-  operator std::string();
+  Pose getPose() const;
+  /**
+  Setter for the Pose of the Robot.
+  \param pose The new Pose of the Robot.
+  */
+  void setPose(Pose pose);
+
 };
+
+/**
+  Output stream Operator.
+*/
+std::ostream& operator<<(std::ostream& os, const Robot& obj);
+
+#endif /* end of include guard: __ROBOT__ */

@@ -1,13 +1,13 @@
 /**
 *   \copyright Copyright 2015 Jan-Niklas Braak. This project is released under
 * the MIT License, see the file LICENSE.md for rights and limitations.
-*   \file main.cpp
+*   \file robots.cpp
 *   \author Jan-Niklas Braak
 */
 
 #include <iostream>
-#include "version.h"
-#include "Robot.hpp"
+
+#include "CppRobots.hpp"
 
 /**
     This is the main function of the program.
@@ -21,8 +21,8 @@ int main(int argc, char const *argv[]) {
   std::cout << "Welcome to CppRobots " << VERSION << std::endl;
 
   for (size_t i = 0; i < 100; i++) {
-    std::cout << (std::string)robot << std::endl;
-    robot.update(1, 0.0000001);
+    std::cout << robot << std::endl;
+    robot.update(20, 0.6);
   }
   return 0;
 }

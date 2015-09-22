@@ -1,13 +1,9 @@
 /**
 *   \copyright Copyright 2015 Jan-Niklas Braak. This project is released under
 * the MIT License, see the file LICENSE.md for rights and limitations.
-*   \file main.cpp
+*   \file robots-gui.cpp
 *   \author Jan-Niklas Braak
 */
-
-#include "version.h"
-#include "Robot.hpp"
-#include "FrameTimer.hpp"
 #include <math.h>
 #include <sstream>
 #include <SFML/System.hpp>
@@ -15,14 +11,7 @@
 #include <chrono>
 #include <iostream>
 
-#ifdef __MINGW32__
-template <typename T> std::string to_string(const T &n) {
-  std::ostringstream stm;
-  stm << n;
-  return stm.str();
-}
-#endif
-
+#include "CppRobots.hpp"
 /**
     This is the main function of the program.
     \param argc number of commandline parameters
@@ -56,12 +45,12 @@ int main(int argc, char const *argv[]) {
   fps_counter.setCharacterSize(10);
 
   while (window.isOpen()) {
-    // auto start(std::chrono::high_resolution_clock::now());
     frameTimer.startFrame();
     sf::Event event;
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed)
         window.close();
+
     }
     robot.update(20, 0.6);
 
@@ -81,7 +70,6 @@ int main(int argc, char const *argv[]) {
 
     window.display();
 
-    // sf::sleep(sf::seconds(timeBase));
     frameTimer.endFrame(true);
   }
   return 0;
