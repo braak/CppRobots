@@ -9,25 +9,20 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeStep)
-    : pose(), timeStep(timeStep) {}
+Robot::Robot(const double timeStep) : pose(), timeStep(timeStep) {}
 
-Robot::~Robot() {}
+Pose Robot::getPose() const { return pose; }
+void Robot::setPose(Pose p) { pose = p; }
 
-void Robot::update(double v, double w) {
-  double dx = cos(pose.theta) * v;
-  double dy = sin(pose.theta) * v;
-  double dTheta = w;
+void Robot::update(Action const &a) {
+  double dx = cos(pose.theta) * a.v;
+  double dy = sin(pose.theta) * a.v;
+  double dTheta = a.w;
   Pose deltaPose(dx, dy, dTheta);
   pose += deltaPose * timeStep;
 }
 
-Pose Robot::getPose() const { return pose; }
-void Robot::setPose(Pose p) {
-  pose =p;
-}
-
-std::ostream& operator<<(std::ostream& os, const Robot& obj){
+std::ostream &operator<<(std::ostream &os, const Robot &obj) {
   os << "<Robot at " << obj.pose << ">";
   return os;
 }

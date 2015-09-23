@@ -12,13 +12,16 @@
 #include <iostream>
 
 #include "CppRobots.hpp"
+
+#include "Agents/Orbiter.hpp"
+
 /**
     This is the main function of the program.
     \param argc number of commandline parameters
     \param argv array of command line parameters
     \return returns 0 on success
 */
-int main(int argc, char const *argv[]) {
+int main() {
   // Load resources
   sf::Font font;
   if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00."
@@ -28,8 +31,7 @@ int main(int argc, char const *argv[]) {
 
   // create window
   std::stringstream window_name;
-  window_name << "CppRobot Gui v" << VERSION_MAJOR << "." << VERSION_MINOR
-              << "." << VERSION_PATCH;
+  window_name << "CppRobot Gui v" << VERSION_SHORT;
   sf::RenderWindow window(sf::VideoMode(800, 600), window_name.str());
   window.setVerticalSyncEnabled(false);
 
@@ -37,6 +39,7 @@ int main(int argc, char const *argv[]) {
   const double timeBase = 1.0 / 60.0;
   Robot robot(timeBase);
   robot.setPose(Pose(100, 100, 0));
+  Agent *agent = new Orbiter(20, 0.6);
 
   FrameTimer frameTimer(timeBase);
 
@@ -50,9 +53,9 @@ int main(int argc, char const *argv[]) {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed)
         window.close();
-
     }
-    robot.update(20, 0.6);
+    Robot::Action action = agent->update(robot);
+    robot.update(action);
 
     Pose pose = robot.getPose();
     sf::RectangleShape rectangle;
