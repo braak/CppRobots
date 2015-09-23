@@ -9,20 +9,24 @@
 
 #include "CppRobots.hpp"
 
+#include "Agents/Orbiter.hpp"
+
 /**
     This is the main function of the program.
     \param argc number of commandline parameters
     \param argv array of command line parameters
     \return returns 0 on success
 */
-int main(int argc, char const *argv[]) {
+int main() {
   const double timeBase = 1.0 / 60;
   Robot robot(timeBase);
-  std::cout << "Welcome to CppRobots " << VERSION << std::endl;
+  Agent *agent = new Orbiter(20, 0.6);
+  std::cout << "Welcome to CppRobots " << VERSION_SHORT << std::endl;
 
-  for (size_t i = 0; i < 100; i++) {
+  for (size_t i = 0; i < 1000; i++) {
     std::cout << robot << std::endl;
-    robot.update(20, 0.6);
+    Robot::Action action = agent->update(robot);
+    robot.update(action);
   }
   return 0;
 }

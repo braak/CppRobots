@@ -11,19 +11,28 @@ else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+
+
+
 # A library used by all programs
-add_library(CppRobots Robot.cpp Pose.cpp FrameTimer.cpp)
+add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp)
+
+# A library, that contains all Agents
+file(GLOB AGENT_SOURCES
+    "Agents/*.cpp"
+)
+add_library(CppRobotsAgents ${AGENT_SOURCES})
 
 # The first program is for commandline use.
 add_executable(robots robots.cpp)
-target_link_libraries(robots CppRobots)
+target_link_libraries(robots CppRobots CppRobotsAgents)
 
 # The second program uses SFLM to display the simulation
 find_package(SFML 2 COMPONENTS system window graphics)
 if(SFML_FOUND)
     add_executable(robots-gui robots-gui.cpp)
     include_directories(${SFML_INCLUDE_DIR})
-    target_link_libraries(robots-gui ${SFML_LIBRARIES} CppRobots)
+    target_link_libraries(robots-gui ${SFML_LIBRARIES} CppRobots CppRobotsAgents)
     file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 else(SFML_FOUND)
     message(WARNING "robots-gui will not be build, because SFML was not found.")
