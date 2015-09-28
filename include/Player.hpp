@@ -15,6 +15,14 @@
 #include "Robot.hpp"
 #include "Agent.hpp"
 
+/**
+  \brief Encapsulates the behavior of a player.
+
+  The Player class has an Agent an a Robot object. during each time step the
+  Agent makes a descision, that descision is passed to the Robot, which performs
+  the aprpriate actions. The Player inherrits from sf::Drawable and can be drawn
+  to a RenderTarget.
+*/
 class Player : public sf::Drawable {
 private:
   Robot robot;
@@ -22,15 +30,43 @@ private:
   sf::RectangleShape rectangle;
 
 public:
+  /**
+    Constructor.
+
+    \param timeStep the duration between each time step.
+    \param size the size of the Rectangle representing the Player
+  */
   Player(const double &timeStep, const sf::Vector2f &size);
 
-  // Move Constructor
-  Player(Player &&player);
+  /**
+   Move Constructor.
+   \param player the Player to move.
+  */
+  Player(Player &&player) noexcept;
 
+  /**
+    Perfom one time step.
+
+    Updates the Agent and the Robot.
+    \exception Throws an exception when no Agent is set.
+    \see Agent::update, Robot::update
+  */
   void update();
 
+  /**
+    set the current Agent.
+    \param agent An Agent.
+  */
   void setAgent(Agent *agent);
+  /**
+    set the Pose of the Robot.
+    \param pose the new Pose
+  */
   void setPose(Pose pose);
+  /**
+    get the current Pose of the Robot.
+    \return the current Pose of the Robot
+  */
   Pose getPose() const;
 
 private:

@@ -12,8 +12,9 @@ Player::Player(const double &timeStep, const sf::Vector2f &size)
   rectangle.setOrigin(0.5 * size.x, 0.5 * size.y);
 }
 
-Player::Player(Player &&player)
-    : robot(std::move(player.robot)), agent(std::move(player.agent)),
+Player::Player(Player &&player) noexcept
+    : robot(std::move(player.robot)),
+      agent(std::move(player.agent)),
       rectangle(std::move(player.rectangle)) {}
 
 void Player::update() {

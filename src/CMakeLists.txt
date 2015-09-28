@@ -15,7 +15,7 @@ endif()
 
 
 # A library used by all programs
-add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp)
+add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Player.cpp)
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES

@@ -10,3 +10,4 @@
 #include "Robot.hpp"
 #include "Pose.hpp"
 #include "FrameTimer.hpp"
+#include "Player.hpp"
