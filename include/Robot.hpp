@@ -11,6 +11,8 @@
 
 #include <math.h>
 #include <string>
+#include <list>
+#include <memory>
 
 #include "Pose.hpp"
 
@@ -20,8 +22,8 @@
 */
 class Robot {
 private:
-  friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
   double timeStep;
+  std::list<std::shared_ptr<Robot>> scanTargets;
 
 protected:
   Pose pose; //!< The Location and Oriantation of the Robot.
@@ -57,6 +59,11 @@ public:
   \param pose The new Pose of the Robot.
   */
   void setPose(Pose pose);
+
+  void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
+
+private:
+  friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
 };
 
 /**

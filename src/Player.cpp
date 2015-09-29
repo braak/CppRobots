@@ -19,7 +19,7 @@ Player::Player(Player &&player) noexcept
 
 void Player::update() {
   if (!agent) {
-    throw std::exception();
+    throw std::runtime_error("No Agent was set for this Player.");
   }
   Robot::Action action = agent->update(robot);
 
@@ -27,13 +27,18 @@ void Player::update() {
 
   Pose pose = robot.getPose();
   rectangle.setPosition(pose.x, pose.y);
-  rectangle.setRotation(pose.theta * 180.0 / M_PI);
+  rectangle.setRotation(degrees(pose.theta));
 }
 
 void Player::setAgent(Agent *agent_) { agent = std::unique_ptr<Agent>(agent_); }
 void Player::setPose(Pose pose) { robot.setPose(pose); }
 Pose Player::getPose() const { return robot.getPose(); }
 
+void Player::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets) {
+  robot.setScanTargets(scanTargets);
+}
+
+Robot &Player::getRobot() { return robot; }
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   target.draw(rectangle, states);
 }

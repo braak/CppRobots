@@ -14,11 +14,12 @@
 #include "Pose.hpp"
 #include "Robot.hpp"
 #include "Agent.hpp"
+#include "Angles.hpp"
 
 /**
   \brief Encapsulates the behavior of a player.
 
-  The Player class has an Agent an a Robot object. during each time step the
+  A Player has an Agent an a Robot object. during each time step the
   Agent makes a descision, that descision is passed to the Robot, which performs
   the aprpriate actions. The Player inherrits from sf::Drawable and can be drawn
   to a RenderTarget.
@@ -68,6 +69,9 @@ public:
     \return the current Pose of the Robot
   */
   Pose getPose() const;
+
+  void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
+  Robot &getRobot();
 
 private:
   virtual void draw(sf::RenderTarget &target,

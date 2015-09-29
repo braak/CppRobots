@@ -4,26 +4,28 @@
 *   \file robots-gui.cpp
 *   \author Jan-Niklas Braak
 */
-#include <math.h>
-#include <sstream>
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
-#include <chrono>
-#include <iostream>
 
 #include "CppRobots.hpp"
 
 #include "Agents/Orbiter.hpp"
 
+#include <math.h>
+#include <sstream>
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+#include <chrono>
+#include <memory>
+#include <iostream>
+
 template <class URNG>
-Pose randomPose(URNG &generator, long unsigned int max_x,
-                long unsigned int max_y) {
-  std::uniform_int_distribution<long unsigned int> distribution_x(0, max_x);
-  std::uniform_int_distribution<long unsigned int> distribution_y(0, max_y);
+Pose randomPose(URNG &generator, double max_x, double max_y) {
+  std::uniform_real_distribution<double> distribution_x(0, max_x);
+  std::uniform_real_distribution<double> distribution_y(0, max_y);
   std::uniform_real_distribution<double> distribution_theta(0, M_PI * 2.0);
   return {distribution_x(generator), distribution_y(generator),
           distribution_theta(generator)};
 }
+
 template <class URNG>
 Agent *randomOrbiter(URNG &generator, double max_speed,
                      double max_turning_rate) {
@@ -38,13 +40,19 @@ Agent *randomOrbiter(URNG &generator, double max_speed,
     \return returns 0 on success
 */
 int main() {
-  std::default_random_engine rng;
-  std::vector<Player> players;
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine rng(seed);
+
+  std::vector<std::string> names = {
+      "Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
+      "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
+      "Maria",     "Nemo", "Oscar",   "Paige", "Quentin", "Romeo"};
+  Simulation simulation;
   // Load resources
   sf::Font font;
   if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
                          "LiberationSans-Regular.ttf")) {
-    exit(1);
+    throw std::runtime_error("unable to load font");
   }
 
   // create window
@@ -56,18 +64,18 @@ int main() {
   const double timeStep = 1.0 / 60.0;
 
   // Create the players
-  for (size_t i = 0; i < 20; i++) {
+  for (auto &name : names) {
     Player player(timeStep, {30, 18});
     player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
     player.setAgent(randomOrbiter(rng, 60, 0.6));
 
-    players.push_back(std::move(player));
+    simulation.addPlayer(name, player);
   }
 
   // Create the FrameTimer
   FrameTimer frameTimer(timeStep);
 
-  // Create the fps-counter
+  // Create the fps_counter
   sf::Text fps_counter;
   fps_counter.setFont(font);
   fps_counter.setCharacterSize(10);
@@ -77,14 +85,17 @@ int main() {
 
     sf::Event event;
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed)
+      if (event.type == sf::Event::Closed) {
         window.close();
+      }
+      if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Key::Escape) {
+          window.close();
+        }
+      }
     }
 
-    //  Update the Player(s)
-    for (auto &player : players) {
-      player.update();
-    }
+    simulation.update();
 
     // Update the fps_counter
     fps_counter.setString(frameTimer.getOutput());
@@ -92,9 +103,7 @@ int main() {
     // clear-draw-display cycle
     window.clear(sf::Color::Black);
 
-    for (auto const &player : players) {
-      window.draw(player);
-    }
+    window.draw(simulation);
 
     window.draw(fps_counter);
 
