@@ -40,13 +40,16 @@ Agent *randomOrbiter(URNG &generator, double max_speed,
     \return returns 0 on success
 */
 int main() {
+  constexpr double ZOOM_SPEED = 0.8;
+
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
   std::vector<std::string> names = {
-      "Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
-      "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
-      "Maria",     "Nemo", "Oscar",   "Paige", "Quentin", "Romeo"};
+      "Albert", "Bob",     "Charlie", "Daisy",  "Eric",   "Frank", "Guinevere",
+      "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
+      "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
+      "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
   Simulation simulation;
   // Load resources
   sf::Font font;
@@ -58,10 +61,12 @@ int main() {
   // create window
   std::stringstream window_name;
   window_name << "CppRobot Gui " << VERSION_SHORT;
-  sf::RenderWindow window(sf::VideoMode(800, 600), window_name.str());
+  sf::RenderWindow window(sf::VideoMode::getDesktopMode(), window_name.str());
   window.setVerticalSyncEnabled(false);
 
   const double timeStep = 1.0 / 60.0;
+
+  double zoom_level = 1;
 
   // Create the players
   for (auto &name : names) {
@@ -88,6 +93,19 @@ int main() {
       if (event.type == sf::Event::Closed) {
         window.close();
       }
+      if (event.type == sf::Event::Resized) {
+        sf::View new_view = window.getView();
+        new_view.setSize(static_cast<sf::Vector2f>(window.getSize()));
+        new_view.zoom(zoom_level);
+        window.setView(new_view);
+      }
+      if (event.type == sf::Event::MouseWheelMoved) {
+        sf::View new_view = window.getView();
+        double zoom = pow(ZOOM_SPEED, event.mouseWheel.delta);
+        new_view.zoom(zoom);
+        zoom_level *= zoom;
+        window.setView(new_view);
+      }
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Key::Escape) {
           window.close();
@@ -105,7 +123,11 @@ int main() {
 
     window.draw(simulation);
 
+    sf::View old_view = window.getView();
+    window.setView(sf::View({0.f, 0.f, static_cast<float>(window.getSize().x),
+                             static_cast<float>(window.getSize().y)}));
     window.draw(fps_counter);
+    window.setView(old_view);
 
     window.display();
 
