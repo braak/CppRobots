@@ -9,6 +9,7 @@
 
 // #include "Agents/Orbiter.hpp"
 #include "Agents/Wanderer.hpp"
+#include "Agents/Follower.hpp"
 
 #include <math.h>
 #include <sstream>
@@ -38,11 +39,11 @@ int main() {
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
-  std::vector<std::string> names = {
-      "Albert", "Bob",     "Charlie", "Daisy",  "Eric",   "Frank", "Guinevere",
-      "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
-      "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
-      "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
+  std::vector<std::string> names = {"Albert", "Bob",   "Charlie",   "Daisy",
+                                    "Eric",   "Frank", "Guinevere", "Hiro"};
+  /*,      "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
+  "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
+  "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack*/
   // Load resources
   sf::Font font;
   if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
@@ -62,14 +63,7 @@ int main() {
 
   double zoom_level = 1;
 
-  // Create the players
-  // for (auto &name : names) {
-  //   Player player(timeStep, {30, 18});
-  //   player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
-  //   player.setAgent(randomOrbiter(rng, 60, 0.6));
-  //
-  //   simulation.addPlayer(name, player);
-  // }
+  // create the players
   std::hash<std::string> string_hash;
   for (auto &name : names) {
     /*use name of player to generate psudo-random seed. So they behave the
@@ -78,7 +72,8 @@ int main() {
 
     Player player(timeStep, {30, 18});
     // player.setAgent(randomOrbiter(rng, 60, 0.6));
-    player.setAgent(new Wanderer(string_hash(name), 0.6, 0.1, 60));
+    // player.setAgent(new Wanderer(string_hash(name), 0.6, 0.1, 60));
+    player.setAgent(new Follower(100, 0.5, 0.1));
     player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
 
     simulation.addPlayer(name, player);

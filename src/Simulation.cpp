@@ -12,6 +12,21 @@ Simulation::Simulation(sf::Font &font) : font(font) {}
 void Simulation::update() {
   for (auto &player : players) {
     // check_scan();
+
+    std::list<std::shared_ptr<Robot>> scanTargets;
+    for (auto const &player2 : players) {
+      if (&player == &player2) {
+        continue;
+      }
+      Pose pose1 = player.second.getPose();
+      Pose pose2 = player2.second.getPose();
+      if (inSector(pose1, pose2)) {
+        scanTargets.push_back(
+            std::make_shared<Robot>(player2.second.getRobot()));
+      }
+    }
+    player.second.setScanTargets(std::move(scanTargets));
+
     player.second.update();
   }
 }
@@ -46,24 +61,34 @@ void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     target.draw(name_tag, states);
     drawArc(target, states, p, scan_range, scan_angle);
+
+    // for (auto const &player2 : players) {
+    //   Pose pose1 = player.second.getPose();
+    //   Pose pose2 = player2.second.getPose();
+    //   if (inSector(pose1, pose2)) {
+    //     sf::VertexArray lines(sf::Lines);
+    //     lines.append({{(float)pose1.x, (float)pose1.y}, {0, 255, 0, 60}});
+    //     lines.append({{(float)pose2.x, (float)pose2.y}, {0, 255, 0, 60}});
+    //     target.draw(lines, states);
+    //   }
+    // }
   }
 }
 
-// bool Simulation::inSector(Pose const &p1, Pose const &p2, double radius,
-//                           double angle) {
-//   const double v_x = p1.x - p2.x;
-//   const double v_y = p1.y - p2.y;
-//
-//   const double r = sqrt(pow(v_x, 2) + pow(v_y, 2));
-//   const bool in_range = r < radius;
-//
-//   const double alpha_min = angDiffRadians(p1.theta, angle);
-//   const double alpha_max = angDiffRadians(p1.theta + angle);
-//   const double beta = angDiffRadians(p1.theta, atan2(v_y, v_x));
-//   const bool in_segment = alpha_min < beta && beta < alpha_max;
-//
-//   return in_range && in_segment;
-// }
+bool Simulation::inSector(Pose const &p1, Pose const &p2) const {
+  const double v_x = p2.x - p1.x;
+  const double v_y = p2.y - p1.y;
+
+  const double r = sqrt(pow(v_x, 2) + pow(v_y, 2));
+  const bool in_range = r < scan_range;
+
+  const double alpha = atan2(v_y, v_x);
+  const double beta = angDiffRadians(p1.theta, alpha);
+  const bool in_segment = -scan_angle < beta && beta < scan_angle;
+
+  return in_range && in_segment;
+}
+
 //
 // void Simulation::check_scan() {
 //   for (auto &player1 : players) {

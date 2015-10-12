@@ -32,7 +32,7 @@ private:
   void drawArc(sf::RenderTarget &target, sf::RenderStates states, Pose pose,
                double radius, double angle) const;
   // void check_scan();
-  // bool inSector(Pose const &p1, Pose const &p2, double radius, double angle);
+  bool inSector(Pose const &p1, Pose const &p2) const;
 };
 
 #endif /* end of include guard: __SIMULATION__ */

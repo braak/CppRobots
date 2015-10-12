@@ -60,7 +60,15 @@ public:
   */
   void setPose(Pose pose);
 
+  /**
+  set the list of visible Robots.
+  \param scanTargets the list of visible Robots.
+  */
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
+  /**
+  get a list of all visible Robots.
+  */
+  std::list<std::shared_ptr<Robot>> getScanTargets() const;
 
 private:
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);

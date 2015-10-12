@@ -26,6 +26,10 @@ void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
   scanTargets = scanTargets_;
 }
 
+std::list<std::shared_ptr<Robot>> Robot::getScanTargets() const {
+  return scanTargets;
+}
+
 std::ostream &operator<<(std::ostream &os, const Robot &obj) {
   os << "<Robot at " << obj.pose << ">";
   return os;

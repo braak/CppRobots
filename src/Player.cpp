@@ -38,7 +38,7 @@ void Player::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets) {
   robot.setScanTargets(scanTargets);
 }
 
-Robot &Player::getRobot() { return robot; }
+const Robot &Player::getRobot() const { return robot; }
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   target.draw(rectangle, states);
 }

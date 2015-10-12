@@ -71,7 +71,7 @@ public:
   Pose getPose() const;
 
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
-  Robot &getRobot();
+  const Robot &getRobot() const;
 
 private:
   virtual void draw(sf::RenderTarget &target,
