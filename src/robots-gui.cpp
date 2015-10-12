@@ -7,7 +7,8 @@
 
 #include "CppRobots.hpp"
 
-#include "Agents/Orbiter.hpp"
+// #include "Agents/Orbiter.hpp"
+#include "Agents/Wanderer.hpp"
 
 #include <math.h>
 #include <sstream>
@@ -16,6 +17,7 @@
 #include <chrono>
 #include <memory>
 #include <iostream>
+#include <functional>
 
 template <class URNG>
 Pose randomPose(URNG &generator, double max_x, double max_y) {
@@ -24,15 +26,6 @@ Pose randomPose(URNG &generator, double max_x, double max_y) {
   std::uniform_real_distribution<double> distribution_theta(0, M_PI * 2.0);
   return {distribution_x(generator), distribution_y(generator),
           distribution_theta(generator)};
-}
-
-template <class URNG>
-Agent *randomOrbiter(URNG &generator, double max_speed,
-                     double max_turning_rate) {
-  std::uniform_real_distribution<double> distribution_v(0, max_speed);
-  std::uniform_real_distribution<double> distribution_w(-max_turning_rate,
-                                                        max_turning_rate);
-  return new Orbiter(distribution_v(generator), distribution_w(generator));
 }
 
 /**
@@ -50,13 +43,14 @@ int main() {
       "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
       "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
       "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
-  Simulation simulation;
   // Load resources
   sf::Font font;
   if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
                          "LiberationSans-Regular.ttf")) {
     throw std::runtime_error("unable to load font");
   }
+
+  Simulation simulation(font);
 
   // create window
   std::stringstream window_name;
@@ -69,14 +63,26 @@ int main() {
   double zoom_level = 1;
 
   // Create the players
+  // for (auto &name : names) {
+  //   Player player(timeStep, {30, 18});
+  //   player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
+  //   player.setAgent(randomOrbiter(rng, 60, 0.6));
+  //
+  //   simulation.addPlayer(name, player);
+  // }
+  std::hash<std::string> string_hash;
   for (auto &name : names) {
+    /*use name of player to generate psudo-random seed. So they behave the
+    same each time.*/
+    std::default_random_engine rng(string_hash(name));
+
     Player player(timeStep, {30, 18});
+    // player.setAgent(randomOrbiter(rng, 60, 0.6));
+    player.setAgent(new Wanderer(string_hash(name), 0.6, 0.1, 60));
     player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
-    player.setAgent(randomOrbiter(rng, 60, 0.6));
 
     simulation.addPlayer(name, player);
   }
-
   // Create the FrameTimer
   FrameTimer frameTimer(timeStep);
 
@@ -126,7 +132,9 @@ int main() {
     sf::View old_view = window.getView();
     window.setView(sf::View({0.f, 0.f, static_cast<float>(window.getSize().x),
                              static_cast<float>(window.getSize().y)}));
+    // Draw UI elements here
     window.draw(fps_counter);
+
     window.setView(old_view);
 
     window.display();

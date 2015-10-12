@@ -17,73 +17,22 @@ private:
   std::map<std::string, Player> players;
   sf::Font font;
 
+  const double scan_range = 1500.0;
+  const double scan_angle = M_PI / 12;
+
 public:
-  Simulation() {
-    if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
-                           "LiberationSans-Regular.ttf")) {
-      throw std::runtime_error("unable to load font");
-    }
-  }
+  Simulation(sf::Font &font);
   // virtual ~Simulation() {}
-  void update() {
-    for (auto &player : players) {
-      player.second.update();
-    }
-  }
-  void addPlayer(std::string name, Player &player) {
-    players.insert(KeyValuePair(name, std::move(player)));
-  }
-
-  void check_scan() {
-    for (auto &player1 : players) {
-      std::list<std::shared_ptr<Robot>> scanTargets;
-      for (auto &player2 : players) {
-        if (inSector(player1.second.getPose(), player2.second.getPose(),
-                     scan_range, scan_angle)) {
-          //&&  &player1.second != &player2.second
-
-          scanTargets.push_back(
-              std::make_shared<Robot>(player2.second.getRobot()));
-        }
-      }
-      player1.second.setScanTargets(scanTargets);
-    }
-  }
+  void update();
+  void addPlayer(std::string name, Player &player);
 
 private:
   virtual void draw(sf::RenderTarget &target,
-                    sf::RenderStates states) const override {
-
-    for (auto const &player : players) {
-      target.draw(player.second, states);
-
-      Pose p = player.second.getPose();
-
-      sf::Text name_tag(player.first, font, 15);
-      name_tag.setOrigin(0.5 * name_tag.getLocalBounds().width, 0);
-      name_tag.setPosition({(float)p.x, (float)p.y + 15});
-
-      target.draw(name_tag, states);
-    }
-  }
-
-  const double scan_range = 500.0;
-  const double scan_angle = M_PI / 5;
-
-  bool inSector(Pose const &p1, Pose const &p2, double radius, double angle) {
-    const double v_x = p1.x - p2.x;
-    const double v_y = p1.y - p2.y;
-
-    const double r = sqrt(pow(v_x, 2) + pow(v_y, 2));
-    const bool in_range = r < radius;
-
-    const double alpha_min = angDiffRadians(p1.theta, angle);
-    const double alpha_max = angDiffRadians(p1.theta + angle);
-    const double beta = angDiffRadians(p1.theta, atan2(v_y, v_x));
-    const bool in_segment = alpha_min < beta && beta < alpha_max;
-
-    return in_range && in_segment;
-  }
+                    sf::RenderStates states) const override;
+  void drawArc(sf::RenderTarget &target, sf::RenderStates states, Pose pose,
+               double radius, double angle) const;
+  // void check_scan();
+  // bool inSector(Pose const &p1, Pose const &p2, double radius, double angle);
 };
 
 #endif /* end of include guard: __SIMULATION__ */
