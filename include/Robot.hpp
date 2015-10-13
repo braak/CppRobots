@@ -26,14 +26,13 @@ private:
   double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
 
-  const double max_v = 60;
-  const double min_v = -8;
-  const double max_w = 0.6;
-
 protected:
   Pose pose; //!< The Location and Oriantation of the Robot.
 
 public:
+  const double v_max = 60;
+  const double v_min = -8;
+  const double w_max = 0.6;
   /**
   \brief  Action to be perfomes during a timeStep.
   */

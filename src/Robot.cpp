@@ -15,8 +15,8 @@ Pose Robot::getPose() const { return pose; }
 void Robot::setPose(Pose p) { pose = p; }
 
 void Robot::update(Action const &a) {
-  const double v = std::max(std::min(a.v, max_v), min_v);
-  const double w = std::max(std::min(a.w, max_w), -max_w);
+  const double v = std::max(std::min(a.v, v_max), v_min);
+  const double w = std::max(std::min(a.w, w_max), -w_max);
 
   const double dx = cos(pose.theta) * v;
   const double dy = sin(pose.theta) * v;

@@ -8,8 +8,7 @@
 
 #include "Agents/Wanderer.hpp"
 
-Wanderer::Wanderer(unsigned seed, double max_w, double delta_w, double v)
-    : v(v), max_w(max_w), w(0) {
+Wanderer::Wanderer(unsigned seed, double delta_w, double v) : v(v), w(0) {
   std::default_random_engine generator(seed);
   // std::uniform_real_distribution<double> distribution(-delta_w, delta_w);
   std::normal_distribution<double> distribution(0, delta_w);
@@ -18,8 +17,8 @@ Wanderer::Wanderer(unsigned seed, double max_w, double delta_w, double v)
 }
 
 Robot::Action Wanderer::update(Robot const &r) {
-  (void)(r);
   w += rng();
-  w = std::min(std::max(w, -max_w), max_w);
+  // prevent windup by limiting the turning rate.
+  w = std::min(std::max(w, -r.w_max), r.w_max);
   return {v, w};
 }

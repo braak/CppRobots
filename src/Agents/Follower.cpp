@@ -17,7 +17,7 @@ Robot::Action Follower::update(Robot const &r) {
 
   if (scanTargets.empty()) {
     // If no visible Robot, turn in circle
-    return {0, -0.6};
+    return {0, -r.w_max};
   }
   Pose pose = r.getPose();
   /*

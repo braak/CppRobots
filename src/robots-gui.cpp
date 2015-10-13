@@ -72,8 +72,8 @@ int main() {
 
     Player player(timeStep, {30, 18});
     // player.setAgent(randomOrbiter(rng, 60, 0.6));
-    // player.setAgent(new Wanderer(string_hash(name), 0.6, 0.1, 60));
-    player.setAgent(new Follower(100, 0.5, 0.1));
+    // player.setAgent(new Wanderer(string_hash(name), 0.1, 60));
+    player.setAgent(new Follower(200, 0.5, 0.1));
     player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
 
     simulation.addPlayer(name, player);
@@ -103,7 +103,7 @@ int main() {
       }
       if (event.type == sf::Event::MouseWheelMoved) {
         sf::View new_view = window.getView();
-        double zoom = pow(ZOOM_SPEED, event.mouseWheel.delta);
+        const double zoom = pow(ZOOM_SPEED, event.mouseWheel.delta);
         new_view.zoom(zoom);
         zoom_level *= zoom;
         window.setView(new_view);
