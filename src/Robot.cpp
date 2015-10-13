@@ -15,9 +15,12 @@ Pose Robot::getPose() const { return pose; }
 void Robot::setPose(Pose p) { pose = p; }
 
 void Robot::update(Action const &a) {
-  double dx = cos(pose.theta) * a.v;
-  double dy = sin(pose.theta) * a.v;
-  double dTheta = a.w;
+  const double v = std::max(std::min(a.v, max_v), min_v);
+  const double w = std::max(std::min(a.w, max_w), -max_w);
+
+  const double dx = cos(pose.theta) * v;
+  const double dy = sin(pose.theta) * v;
+  const double dTheta = w;
   Pose deltaPose(dx, dy, dTheta);
   pose += deltaPose * timeStep;
 }

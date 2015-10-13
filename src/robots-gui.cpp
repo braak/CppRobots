@@ -39,9 +39,9 @@ int main() {
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
-  std::vector<std::string> names = {"Albert", "Bob",   "Charlie",   "Daisy",
-                                    "Eric",   "Frank", "Guinevere", "Hiro"};
-  /*,      "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
+  std::vector<std::string> names = {"Albert", "Bob",   "Charlie",  "Daisy",
+                                    "Eric",   "Frank", "Guinevere"};
+  /*, "Hiro", "Isabel", "Julia", "Kate", "Ludwig" , "Marge", "Nemo",
   "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
   "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack*/
   // Load resources
@@ -59,7 +59,7 @@ int main() {
   sf::RenderWindow window(sf::VideoMode::getDesktopMode(), window_name.str());
   window.setVerticalSyncEnabled(false);
 
-  const double timeStep = 1.0 / 60.0;
+  const double timeStep = 1.0 / 30.0;
 
   double zoom_level = 1;
 
@@ -78,6 +78,7 @@ int main() {
 
     simulation.addPlayer(name, player);
   }
+
   // Create the FrameTimer
   FrameTimer frameTimer(timeStep);
 

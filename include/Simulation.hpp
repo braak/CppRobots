@@ -18,7 +18,7 @@ private:
   sf::Font font;
 
   const double scan_range = 1500.0;
-  const double scan_angle = M_PI / 12;
+  const double scan_angle = M_PI / 8;
 
 public:
   Simulation(sf::Font &font);
@@ -31,7 +31,7 @@ private:
                     sf::RenderStates states) const override;
   void drawArc(sf::RenderTarget &target, sf::RenderStates states, Pose pose,
                double radius, double angle) const;
-  // void check_scan();
+  void check_scan(Player &player);
   bool inSector(Pose const &p1, Pose const &p2) const;
 };
 

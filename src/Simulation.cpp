@@ -11,21 +11,7 @@ Simulation::Simulation(sf::Font &font) : font(font) {}
 
 void Simulation::update() {
   for (auto &player : players) {
-    // check_scan();
-
-    std::list<std::shared_ptr<Robot>> scanTargets;
-    for (auto const &player2 : players) {
-      if (&player == &player2) {
-        continue;
-      }
-      Pose pose1 = player.second.getPose();
-      Pose pose2 = player2.second.getPose();
-      if (inSector(pose1, pose2)) {
-        scanTargets.push_back(
-            std::make_shared<Robot>(player2.second.getRobot()));
-      }
-    }
-    player.second.setScanTargets(std::move(scanTargets));
+    check_scan(player.second);
 
     player.second.update();
   }
@@ -49,7 +35,6 @@ void Simulation::drawArc(sf::RenderTarget &target, sf::RenderStates states,
 }
 
 void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-
   for (auto const &player : players) {
     target.draw(player.second, states);
 
@@ -61,17 +46,6 @@ void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     target.draw(name_tag, states);
     drawArc(target, states, p, scan_range, scan_angle);
-
-    // for (auto const &player2 : players) {
-    //   Pose pose1 = player.second.getPose();
-    //   Pose pose2 = player2.second.getPose();
-    //   if (inSector(pose1, pose2)) {
-    //     sf::VertexArray lines(sf::Lines);
-    //     lines.append({{(float)pose1.x, (float)pose1.y}, {0, 255, 0, 60}});
-    //     lines.append({{(float)pose2.x, (float)pose2.y}, {0, 255, 0, 60}});
-    //     target.draw(lines, states);
-    //   }
-    // }
   }
 }
 
@@ -89,19 +63,17 @@ bool Simulation::inSector(Pose const &p1, Pose const &p2) const {
   return in_range && in_segment;
 }
 
-//
-// void Simulation::check_scan() {
-//   for (auto &player1 : players) {
-//     std::list<std::shared_ptr<Robot>> scanTargets;
-//     for (auto &player2 : players) {
-//       if (inSector(player1.second.getPose(), player2.second.getPose(),
-//                    scan_range, scan_angle)) {
-//         //&&  &player1.second != &player2.second
-//
-//         scanTargets.push_back(
-//             std::make_shared<Robot>(player2.second.getRobot()));
-//       }
-//     }
-//     player1.second.setScanTargets(scanTargets);
-//   }
-// }
+void Simulation::check_scan(Player &player) {
+  std::list<std::shared_ptr<Robot>> scanTargets;
+  for (auto const &player2 : players) {
+    if (&player == &player2.second) {
+      continue;
+    }
+    Pose pose1 = player.getPose();
+    Pose pose2 = player2.second.getPose();
+    if (inSector(pose1, pose2)) {
+      scanTargets.push_back(std::make_shared<Robot>(player2.second.getRobot()));
+    }
+  }
+  player.setScanTargets(std::move(scanTargets));
+}

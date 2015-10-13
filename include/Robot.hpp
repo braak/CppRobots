@@ -13,6 +13,7 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <algorithm>
 
 #include "Pose.hpp"
 
@@ -24,6 +25,10 @@ class Robot {
 private:
   double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
+
+  const double max_v = 60;
+  const double min_v = -8;
+  const double max_w = 0.6;
 
 protected:
   Pose pose; //!< The Location and Oriantation of the Robot.
