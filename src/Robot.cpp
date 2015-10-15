@@ -9,7 +9,7 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeStep) : timeStep(timeStep), pose() {}
+Robot::Robot(const double timeStep) : timeStep(timeStep) {}
 
 Pose Robot::getPose() const { return pose; }
 void Robot::setPose(Pose p) { pose = p; }

@@ -51,6 +51,9 @@ public:
 
 /**
   Output stream Operator.
+  \param os the output stream.
+  \param obj the Pose to output.
+  \return the output stream.
 */
 std::ostream &operator<<(std::ostream &os, const Pose &obj);
 

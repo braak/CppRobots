@@ -17,8 +17,8 @@ private:
   std::map<std::string, Player> players;
   sf::Font font;
 
-  const double scan_range = 1500.0;
-  const double scan_angle = M_PI / 8;
+  const double scan_range = 1000.0;
+  const double scan_angle = M_PI / 6;
 
 public:
   Simulation(sf::Font &font);

@@ -12,9 +12,19 @@ Simulation::Simulation(sf::Font &font) : font(font) {}
 void Simulation::update() {
   for (auto &player : players) {
     check_scan(player.second);
-
+  }
+  for (auto &player : players) {
     player.second.update();
   }
+
+  // std::list<Collision> collisions;
+  // for (auto &player : players) {
+  //   Collision collision = check_collision(player.second);
+  //   collisions.append(collision);
+  // }
+  // for (auto &collision : collisions) {
+  //   collision.resolve();
+  // }
 }
 
 void Simulation::addPlayer(std::string name, Player &player) {

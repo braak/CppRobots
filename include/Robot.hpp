@@ -22,17 +22,21 @@
    and orientation of a player.
 */
 class Robot {
-private:
-  double timeStep;
-  std::list<std::shared_ptr<Robot>> scanTargets;
-
-protected:
-  Pose pose; //!< The Location and Oriantation of the Robot.
-
+  // Data and declarations
 public:
   const double v_max = 60;
   const double v_min = -8;
   const double w_max = 0.6;
+
+protected:
+  Pose pose; //!< The Location and Oriantation of the Robot.
+
+private:
+  double timeStep;
+  std::list<std::shared_ptr<Robot>> scanTargets;
+
+  // Methodes
+public:
   /**
   \brief  Action to be perfomes during a timeStep.
   */

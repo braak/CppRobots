@@ -1,5 +1,17 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
+#set(CMAKE_CXX_STANDARD 11)
+#set(CXX_STANDARD_REQUIRED ON)
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else()
+        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+
+
 find_package(GTest)
 if(GTEST_FOUND)
   enable_testing()
@@ -11,6 +23,10 @@ if(GTEST_FOUND)
   add_executable(testPose testPose.cpp)
   target_link_libraries(testPose ${GTEST_LIBRARIES} pthread)
   add_test(UnitTestPose testPose)
+
+  add_executable(testVector testVector.cpp)
+  target_link_libraries(testVector ${GTEST_LIBRARIES} pthread)
+  add_test(UnitTestVector testVector)
 
 else(GTEST_FOUND)
   message(WARNING "Unit Tests will not be generated.")

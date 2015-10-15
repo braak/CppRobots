@@ -44,6 +44,7 @@ int main() {
   /*, "Hiro", "Isabel", "Julia", "Kate", "Ludwig" , "Marge", "Nemo",
   "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
   "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack*/
+
   // Load resources
   sf::Font font;
   if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
