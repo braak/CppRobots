@@ -11,6 +11,7 @@
 template class Vector<int>;
 template class Vector<unsigned int>;
 template class Vector<float>;
+template class Vector<double>;
 
 // template <typename T> T magnitude(const Vector<T> &vec) {
 //   return sqrt(pow(vec.x, 2) + pow(vec.y, 2));

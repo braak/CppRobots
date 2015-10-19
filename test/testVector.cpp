@@ -13,11 +13,11 @@ TEST(VectorTest, Construction) {
   EXPECT_EQ(2, p.y);
 }
 
-TEST(VectorTest, Alias) {
-  Vector_i p(1, 2);
-  EXPECT_EQ(p.width, p.x);
-  EXPECT_EQ(p.height, p.y);
-}
+// TEST(VectorTest, Alias) {
+//   Vector_i p(1, 2);
+//   EXPECT_EQ(p.width, p.x);
+//   EXPECT_EQ(p.height, p.y);
+// }
 
 TEST(VectorTest, Addition) {
   Vector_i p1(1, 1);
@@ -80,6 +80,16 @@ TEST(VectorTest, Cast) {
   Vector_f p2(4.1, 4.2);
 
   EXPECT_EQ(p1, static_cast<Vector<int>>(p2));
+}
+
+TEST(VectorTest, Rotation) {
+  Vector_i p(4, 0);
+  p.rotate(M_PI);
+
+  EXPECT_EQ(Vector_i(-4, 0), p);
+
+  p.rotate(M_PI / 2);
+  EXPECT_EQ(Vector_i(0, -4), p);
 }
 
 TEST(VectorTest, DotProduct) {

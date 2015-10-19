@@ -11,7 +11,6 @@ else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-
 find_package(GTest)
 if(GTEST_FOUND)
   enable_testing()
@@ -27,6 +26,10 @@ if(GTEST_FOUND)
   add_executable(testVector testVector.cpp)
   target_link_libraries(testVector ${GTEST_LIBRARIES} pthread)
   add_test(UnitTestVector testVector)
+
+  add_executable(testRectangle testRectangle.cpp)
+  target_link_libraries(testRectangle ${GTEST_LIBRARIES} pthread)
+  add_test(UnitTestRectangle testRectangle)
 
 else(GTEST_FOUND)
   message(WARNING "Unit Tests will not be generated.")

@@ -31,7 +31,7 @@ public:
   /**
     Constructor.
 
-    Converts any type of Vector into any othe.
+    Constructs a Vector from any other type of Vector.
     \param vector any type of vector.
   */
   template <typename U>
@@ -88,8 +88,16 @@ public:
   */
   Vector<T> operator-() { return Vector(-x, -y); }
 
+  Vector<T> &rotate(double rotation) {
+    const double x_ = x * cos(rotation) - y * sin(rotation);
+    y = x * sin(rotation) + y * cos(rotation);
+    x = x_;
+
+    return *this;
+  }
+
   /**
-  Dotproduct of two Vectors.
+  Dot product of two Vectors.
   \param rhs right hand side of the operation.
   \return the scalar value.
   */
@@ -99,22 +107,22 @@ public:
   The zero vector, \f$\vec{0}\f$.
   \return the new Vector.
   */
-  static Vector<T> zero() { return {0, 0}; }
+  constexpr static Vector<T> zero() { return {0, 0}; }
   /**
   The one vector, \f$\vec{1}\f$.
   \return the new Vector.
   */
-  static Vector<T> one() { return {1, 1}; }
+  constexpr static Vector<T> one() { return {1, 1}; }
   /**
   The unit vector in x direction, \f$\vec{e}_x\f$.
   \return the new Vector.
   */
-  static Vector<T> unit_x() { return {1, 0}; }
+  constexpr static Vector<T> unit_x() { return {1, 0}; }
   /**
   The unit vector in y direction, \f$\vec{e}_y\f$.
   \return the new Vector.
   */
-  static Vector<T> unit_y() { return {0, 1}; }
+  constexpr static Vector<T> unit_y() { return {0, 1}; }
 
   /**
   Constructs a polar Vector.
@@ -128,14 +136,9 @@ public:
   }
 
   // Member data
-  union {
-    T x;     //!< the x value of the Vector. The same as width.
-    T width; //!< the withd value of the Vector. The same as x.
-  };
-  union {
-    T y;      //!< the y value of the Vector. The same as height.
-    T height; //!< the height value of the Vector. The same as y.
-  };
+
+  T x; //!< the x value of the Vector.
+  T y; //!< the y value of the Vector.
 };
 
 /**
@@ -220,14 +223,15 @@ Output stream Operator.
 */
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const Vector<T> &obj) {
-  os << "Vector(" << obj.x << obj.y << ")";
+  os << "Vector(" << obj.x << ", " << obj.y << ")";
   return os;
 }
 
 // common types
 using Vector_i = Vector<int>; //!< Vector specialization for int
 using Vector_u =
-    Vector<unsigned int>;       //!< Vector specialization for unsigned int
-using Vector_f = Vector<float>; //!< Vector specialization for float
+    Vector<unsigned int>;        //!< Vector specialization for unsigned int
+using Vector_f = Vector<float>;  //!< Vector specialization for float
+using Vector_d = Vector<double>; //!< Vector specialization for double
 
 #endif /* end of include guard: __VECTOR__ */
