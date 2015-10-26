@@ -1,6 +1,5 @@
 # CppRobots
-The goal of CppRobots is the creation of a C++ framework for simulating AI-driven robots in a virtual environment. CppRobots was inspired by [CROBOTS](http://crobots.deepthought.it/home.php), a programming game first published in
-lichung	december 1985. CppRobots does not intend to be a replacement for CROBOTS.
+The goal of CppRobots is the creation of a C++ framework for simulating AI-driven robots in a virtual environment. CppRobots was inspired by [CROBOTS](http://crobots.deepthought.it/home.php), a programming game first published in	december 1985. CppRobots does not intend to be a replacement for CROBOTS.
 
 # Building #
 To build the project use `cmake` and `make`
