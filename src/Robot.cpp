@@ -9,20 +9,28 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeStep) : timeStep(timeStep) {}
+Robot::Robot(const double timeStep, Vector_d size)
+    : body(size), timeStep(timeStep) {}
 
-Pose Robot::getPose() const { return pose; }
-void Robot::setPose(Pose p) { pose = p; }
+void Robot::setPose(Pose p) {
+  body.move({p.x, p.y});
+  body.rotate(p.theta);
+}
+
+void Robot::setPosition(Vector_d position) { body.setPosition(position); }
+Vector_d Robot::getPosition() const { return body.getPosition(); }
+double Robot::getRotation() const { return body.getRotation(); }
+
+const Rectangle &Robot::getBody() const { return body; }
 
 void Robot::update(Action const &a) {
   const double v = std::max(std::min(a.v, v_max), v_min);
   const double w = std::max(std::min(a.w, w_max), -w_max);
 
-  const double dx = cos(pose.theta) * v;
-  const double dy = sin(pose.theta) * v;
-  const double dTheta = w;
-  Pose deltaPose(dx, dy, dTheta);
-  pose += deltaPose * timeStep;
+  // move forward
+  body.move(Vector_d::polar(body.getRotation(), v * timeStep));
+  // turn
+  body.rotate(w * timeStep);
 }
 
 void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
@@ -33,7 +41,11 @@ std::list<std::shared_ptr<Robot>> Robot::getScanTargets() const {
   return scanTargets;
 }
 
+void Robot::onCollision() { health -= 5; }
+
+double Robot::getHealth() const { return health; }
+
 std::ostream &operator<<(std::ostream &os, const Robot &obj) {
-  os << "<Robot at " << obj.pose << ">";
+  os << "<Robot at " << obj.body.getPosition() << ">";
   return os;
 }

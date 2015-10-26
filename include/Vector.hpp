@@ -19,14 +19,14 @@ public:
   /**
   Default Contructor.
   */
-  Vector() : x(0), y(0){};
+  constexpr Vector() : x(0), y(0){};
 
   /**
   Constructor.
   \param x x coordinate of the Vector.
   \param y y coordinate of the Vector
   */
-  Vector(T x, T y) : x(x), y(y){};
+  constexpr Vector(T x, T y) : x(x), y(y){};
 
   /**
     Constructor.
@@ -35,7 +35,7 @@ public:
     \param vector any type of vector.
   */
   template <typename U>
-  explicit Vector(const Vector<U> &vector)
+  explicit constexpr Vector(const Vector<U> &vector)
       : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y)) {}
 
   /**
@@ -84,10 +84,15 @@ public:
   }
   /**
   Unary Minus.
-  \return the new Vector.
+  \return the inverse of the Vector.
   */
-  Vector<T> operator-() { return Vector(-x, -y); }
+  constexpr Vector<T> operator-() { return Vector(-x, -y); }
 
+  /**
+  Rotates the Vector by the given rotation.
+  \param rotation the amount to rotate tne Vector by.
+  \return *this for method chaining.
+  */
   Vector<T> &rotate(double rotation) {
     const double x_ = x * cos(rotation) - y * sin(rotation);
     y = x * sin(rotation) + y * cos(rotation);
@@ -97,11 +102,23 @@ public:
   }
 
   /**
+    The magnitude of the Vector.
+    \return the magnitude of the Vector.
+  */
+  constexpr T magnitude() const { return sqrt(pow(x, 2) + pow(y, 2)); }
+
+  /**
+    The angle of the Vector.
+    \return the angle of the Vector.
+  */
+  constexpr T angle() const { return atan2(y, x); }
+
+  /**
   Dot product of two Vectors.
   \param rhs right hand side of the operation.
   \return the scalar value.
   */
-  T dot(Vector<T> &rhs) { return x * rhs.x + y * rhs.y; }
+  constexpr T dot(const Vector<T> &rhs) const { return x * rhs.x + y * rhs.y; }
 
   /**
   The zero vector, \f$\vec{0}\f$.
@@ -130,7 +147,7 @@ public:
   \param magnitude the magnitide of the Vector.
   \return the new Vector.
   */
-  static Vector<T> polar(double angle, double magnitude = 1) {
+  constexpr static Vector<T> polar(double angle, double magnitude = 1) {
     return {static_cast<T>(magnitude * cos(angle)),
             static_cast<T>(magnitude * sin(angle))};
   }
@@ -147,9 +164,9 @@ public:
   \param rhs right hand side of the operation.
   \return the new Vector.
 */
-template <typename T> Vector<T> operator+(Vector<T> lhs, const Vector<T> &rhs) {
-  lhs += rhs;
-  return lhs;
+template <typename T>
+constexpr Vector<T> operator+(Vector<T> lhs, const Vector<T> &rhs) {
+  return lhs += rhs;
 }
 /**
   Binary subtraction of two Vectors.
@@ -157,9 +174,9 @@ template <typename T> Vector<T> operator+(Vector<T> lhs, const Vector<T> &rhs) {
   \param rhs right hand side of the operation.
   \return the new Vector.
 */
-template <typename T> Vector<T> operator-(Vector<T> lhs, const Vector<T> &rhs) {
-  lhs -= rhs;
-  return lhs;
+template <typename T>
+constexpr Vector<T> operator-(Vector<T> lhs, const Vector<T> &rhs) {
+  return lhs -= rhs;
 }
 /**
   Binary multiplication of a Vector and a scalar.
@@ -167,9 +184,8 @@ template <typename T> Vector<T> operator-(Vector<T> lhs, const Vector<T> &rhs) {
   \param rhs right hand side of the operation.
   \return the new Vector.
 */
-template <typename T> Vector<T> operator*(Vector<T> lhs, T rhs) {
-  lhs *= rhs;
-  return lhs;
+template <typename T> constexpr Vector<T> operator*(Vector<T> lhs, T rhs) {
+  return lhs *= rhs;
 }
 
 /**
@@ -178,9 +194,8 @@ template <typename T> Vector<T> operator*(Vector<T> lhs, T rhs) {
   \param rhs right hand side of the operation.
   \return the new Vector.
 */
-template <typename T> Vector<T> operator*(T lhs, Vector<T> rhs) {
-  rhs *= lhs;
-  return rhs;
+template <typename T> constexpr Vector<T> operator*(T lhs, Vector<T> rhs) {
+  return rhs *= lhs;
 }
 
 /**
@@ -189,9 +204,19 @@ template <typename T> Vector<T> operator*(T lhs, Vector<T> rhs) {
   \param rhs right hand side of the operation.
   \return the new Vector.
 */
-template <typename T> Vector<T> operator/(Vector<T> lhs, T rhs) {
-  lhs /= rhs;
-  return lhs;
+template <typename T> constexpr Vector<T> operator/(Vector<T> lhs, T rhs) {
+  return lhs /= rhs;
+}
+
+/**
+Dot product of two Vectors.
+\param lhs left hand side of the operation.
+\param rhs right hand side of the operation.
+\return the scalar result.
+*/
+template <typename T>
+constexpr T dot(const Vector<T> &lhs, const Vector<T> &rhs) {
+  return lhs.dot(rhs);
 }
 
 /**
@@ -201,7 +226,7 @@ template <typename T> Vector<T> operator/(Vector<T> lhs, T rhs) {
   \return true when the Vectors are equal, false otherwise.
 */
 template <typename T>
-bool operator==(const Vector<T> &lhs, const Vector<T> &rhs) {
+constexpr bool operator==(const Vector<T> &lhs, const Vector<T> &rhs) {
   return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 /**
@@ -211,7 +236,7 @@ bool operator==(const Vector<T> &lhs, const Vector<T> &rhs) {
   \return true when the Vectors are inequal, false otherwise.
 */
 template <typename T>
-bool operator!=(const Vector<T> &lhs, const Vector<T> &rhs) {
+constexpr bool operator!=(const Vector<T> &lhs, const Vector<T> &rhs) {
   return !(lhs == rhs);
 }
 

@@ -13,13 +13,14 @@ endif()
 
 
 # A library used by all programs
-add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Player.cpp Simulation.cpp Vector.cpp)
+add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Player.cpp Simulation.cpp Vector.cpp Rectangle.cpp)
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES
     "Agents/*.cpp"
 )
 add_library(CppRobotsAgents ${AGENT_SOURCES})
+target_link_libraries(CppRobotsAgents CppRobots)
 
 # The first program is for commandline use.
 add_executable(robots robots.cpp)

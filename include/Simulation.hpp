@@ -9,30 +9,46 @@
 
 #include "Player.hpp"
 #include "Angles.hpp"
+#include "Collision.hpp"
 #include <memory>
+#include <iostream>
+#include <random>
 
 class Simulation : public sf::Drawable {
 private:
   using KeyValuePair = std::pair<std::string, Player>;
   std::map<std::string, Player> players;
-  sf::Font font;
 
+  sf::Font font;
+  const double timeStep;
+  std::default_random_engine generator;
+
+  // Rules
   const double scan_range = 1000.0;
   const double scan_angle = M_PI / 6;
+  const Vector_d robot_size = {30, 18};
+  const Vector_d arena_size = {1000, 1000};
 
 public:
-  Simulation(sf::Font &font);
+  Simulation(sf::Font &font, std::default_random_engine rng,
+             double timeStep = 1);
   // virtual ~Simulation() {}
   void update();
   void addPlayer(std::string name, Player &player);
+  void newPlayer(std::string name, Agent *agent);
 
 private:
   virtual void draw(sf::RenderTarget &target,
                     sf::RenderStates states) const override;
-  void drawArc(sf::RenderTarget &target, sf::RenderStates states, Pose pose,
-               double radius, double angle) const;
+  void drawArc(sf::RenderTarget &target, sf::RenderStates states,
+               Vector_d position, double rotation, double radius,
+               double angle) const;
   void check_scan(Player &player);
-  bool inSector(Pose const &p1, Pose const &p2) const;
+  bool inSector(Vector_d const &p1, double rotation, Vector_d const &p2) const;
+
+  bool check_collision(Player &player);
+
+  Vector_d random_position() const;
 };
 
 #endif /* end of include guard: __SIMULATION__ */

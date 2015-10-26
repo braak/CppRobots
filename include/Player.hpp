@@ -28,7 +28,6 @@ class Player : public sf::Drawable {
 private:
   Robot robot;
   std::unique_ptr<Agent> agent;
-  sf::RectangleShape rectangle;
 
 public:
   /**
@@ -37,7 +36,7 @@ public:
     \param timeStep the duration between each time step.
     \param size the size of the Rectangle representing the Player
   */
-  Player(const double &timeStep, const sf::Vector2f &size);
+  Player(const double &timeStep, const Vector_d &size);
 
   /**
    Move Constructor.
@@ -64,13 +63,16 @@ public:
     \param pose the new Pose
   */
   void setPose(Pose pose);
-  /**
-    get the current Pose of the Robot.
-    \return the current Pose of the Robot
-  */
-  Pose getPose() const;
+
+  void setPosition(Vector_d position);
+  Vector_d getPosition() const;
+  double getRotation() const;
+
+  void onCollision();
+  double getHealth() const;
 
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
+
   const Robot &getRobot() const;
 
 private:

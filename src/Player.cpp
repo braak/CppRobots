@@ -7,15 +7,11 @@
 
 #include "Player.hpp"
 
-Player::Player(const double &timeStep, const sf::Vector2f &size)
-    : robot(timeStep), rectangle(size) {
-  rectangle.setOrigin(0.5 * size.x, 0.5 * size.y);
-}
+Player::Player(const double &timeStep, const Vector_d &size)
+    : robot(timeStep, size) {}
 
-Player::Player(Player &&player) noexcept
-    : robot(std::move(player.robot)),
-      agent(std::move(player.agent)),
-      rectangle(std::move(player.rectangle)) {}
+Player::Player(Player &&player) noexcept : robot(std::move(player.robot)),
+                                           agent(std::move(player.agent)) {}
 
 void Player::update() {
   if (!agent) {
@@ -24,21 +20,34 @@ void Player::update() {
   Robot::Action action = agent->update(robot);
 
   robot.update(action);
-
-  Pose pose = robot.getPose();
-  rectangle.setPosition(pose.x, pose.y);
-  rectangle.setRotation(degrees(pose.theta));
 }
 
 void Player::setAgent(Agent *agent_) { agent = std::unique_ptr<Agent>(agent_); }
-void Player::setPose(Pose pose) { robot.setPose(pose); }
-Pose Player::getPose() const { return robot.getPose(); }
+// void Player::setPose(Pose pose) { robot.setPose(pose); }
+
+void Player::setPosition(Vector_d position) { robot.setPosition(position); }
+Vector_d Player::getPosition() const { return robot.getPosition(); }
+double Player::getRotation() const { return robot.getRotation(); }
+
+void Player::onCollision() { robot.onCollision(); }
+double Player::getHealth() const { return robot.getHealth(); }
 
 void Player::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets) {
   robot.setScanTargets(scanTargets);
 }
 
 const Robot &Player::getRobot() const { return robot; }
+
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-  target.draw(rectangle, states);
+  Rectangle body = robot.getBody();
+
+  sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
+  rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
+  rect.setRotation(degrees(body.getRotation()));
+  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
+  double a = robot.getHealth() / 100.0;
+  if (a > 0)
+    rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});
+
+  target.draw(rect, states);
 }

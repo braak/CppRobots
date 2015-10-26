@@ -19,29 +19,24 @@ Robot::Action Follower::update(Robot const &r) {
     // If no visible Robot, turn in circle
     return {0, -r.w_max};
   }
-  Pose pose = r.getPose();
+  Vector_d position = r.getPosition();
+  double rotation = r.getRotation();
   /*
     find the closes visible Robot
   */
-  auto cmp = [pose](const std::shared_ptr<Robot> &a,
-                    const std::shared_ptr<Robot> &b) -> bool {
-    Pose pose_a = a->getPose();
-    Pose pose_b = b->getPose();
-    double distance_a =
-        sqrt(pow(pose.x - pose_a.x, 2) + pow(pose.y - pose_a.y, 2));
-    double distance_b =
-        sqrt(pow(pose.x - pose_b.x, 2) + pow(pose.y - pose_b.y, 2));
-    return distance_a < distance_b;
+  auto cmp = [position](const std::shared_ptr<Robot> &a,
+                        const std::shared_ptr<Robot> &b) -> bool {
+    const Vector_d vector_a = a->getPosition() - position;
+    const Vector_d vector_b = b->getPosition() - position;
+    return vector_a.magnitude() < vector_b.magnitude();
   };
   scanTargets.sort(cmp);
 
   std::shared_ptr<Robot> target_robot = scanTargets.front();
-  Pose target_pose = target_robot->getPose();
 
-  const double v_x = pose.x - target_pose.x;
-  const double v_y = pose.y - target_pose.y;
-  double beta = angDiffRadians(pose.theta, atan2(v_y, v_x));
-  double distance =
-      sqrt(pow(pose.x - target_pose.x, 2) + pow(pose.y - target_pose.y, 2));
-  return {K_distance * (distance - target_distance), K_beta * beta};
+  Vector_d target_position = target_robot->getPosition();
+  Vector_d diff = position - target_position;
+  const double distance_error = diff.magnitude() - target_distance;
+  const double angle_error = angDiffRadians(rotation, diff.angle());
+  return {K_distance * distance_error, K_beta * angle_error};
 }

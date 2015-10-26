@@ -53,20 +53,38 @@ TEST(RectangleTest, Resize) {
 TEST(RectangleTest, Vertices) {
   Rectangle r({10, 20}, {0, 10}, M_PI / 2.0);
 
-  auto vertexes = r.vertices();
+  auto vertices = r.vertices();
 
-  EXPECT_DOUBLE_EQ(10, vertexes[0].x);
-  EXPECT_DOUBLE_EQ(5, vertexes[0].y);
+  EXPECT_DOUBLE_EQ(10, vertices[0].x);
+  EXPECT_DOUBLE_EQ(5, vertices[0].y);
 
-  EXPECT_DOUBLE_EQ(10, vertexes[1].x);
-  EXPECT_DOUBLE_EQ(15, vertexes[1].y);
+  EXPECT_DOUBLE_EQ(10, vertices[1].x);
+  EXPECT_DOUBLE_EQ(15, vertices[1].y);
 
-  EXPECT_DOUBLE_EQ(-10, vertexes[2].x);
-  EXPECT_DOUBLE_EQ(15, vertexes[2].y);
+  EXPECT_DOUBLE_EQ(-10, vertices[2].x);
+  EXPECT_DOUBLE_EQ(15, vertices[2].y);
 
-  EXPECT_DOUBLE_EQ(-10, vertexes[3].x);
-  EXPECT_DOUBLE_EQ(5, vertexes[3].y);
+  EXPECT_DOUBLE_EQ(-10, vertices[3].x);
+  EXPECT_DOUBLE_EQ(5, vertices[3].y);
 }
+
+// TEST(RectangleTest, Normals) {
+//   Rectangle r({10, 20}, {0, 20}, M_PI / 4.0);
+//
+//   auto normals = r.normals();
+//
+//   EXPECT_DOUBLE_EQ(0.70710678118654746, normals[0].x);
+//   EXPECT_DOUBLE_EQ(-0.70710678118654746, normals[0].y);
+//
+//   EXPECT_DOUBLE_EQ(0.70710678118654746, normals[1].x);
+//   EXPECT_DOUBLE_EQ(0.70710678118654746, normals[1].y);
+//
+//   EXPECT_DOUBLE_EQ(-0.70710678118654746, normals[2].x);
+//   EXPECT_DOUBLE_EQ(0.70710678118654746, normals[2].y);
+//
+//   EXPECT_DOUBLE_EQ(-0.70710678118654746, normals[3].x);
+//   EXPECT_DOUBLE_EQ(-0.70710678118654746, normals[3].y);
+// }
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);

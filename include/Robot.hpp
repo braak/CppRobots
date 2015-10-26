@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include "Pose.hpp"
+#include "Rectangle.hpp"
 
 /**
     \brief The Robot class represents the movement behavior, position
@@ -24,16 +25,18 @@
 class Robot {
   // Data and declarations
 public:
-  const double v_max = 60;
-  const double v_min = -8;
-  const double w_max = 0.6;
+  const double v_max = 60;  //!< Maximal velocity of the Robot
+  const double v_min = -8;  //!< Minimal velocity of the Robot
+  const double w_max = 0.6; //!< Maximal turning rate of the Robot.
 
 protected:
-  Pose pose; //!< The Location and Oriantation of the Robot.
+  Rectangle body; //!< The body of the Robot. Represents its location, heading
+  // and dimentions.
 
 private:
   double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
+  double health = 100.0;
 
   // Methodes
 public:
@@ -41,14 +44,14 @@ public:
   \brief  Action to be perfomes during a timeStep.
   */
   struct Action {
-    double v; //!< The speed of the Robot.
-    double w; //!< The turning rate of the Robot.
+    double v; //!< The desired speed of the Robot.
+    double w; //!< The desired turning rate of the Robot.
   };
   /**
   constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
   */
-  Robot(const double timeStep = 1);
+  Robot(const double timeStep, Vector_d size);
 
   /**
       updates the position and orientation of the Robot acording to the
@@ -58,16 +61,29 @@ public:
   virtual void update(Action const &a);
 
   /**
-  Getter for the Pose of the Robot.
-  \return the Pose of the Robot.
-  */
-  Pose getPose() const;
-  /**
   Setter for the Pose of the Robot.
   \param pose The new Pose of the Robot.
   */
   void setPose(Pose pose);
 
+  /**
+  Get method for the position of the Robot.
+  \return the position of the Robot.
+  */
+  Vector_d getPosition() const;
+  void setPosition(Vector_d position);
+
+  /**
+  Get method for the rotation of the Robot.
+  \return the rotation of the Robot.
+  */
+  double getRotation() const;
+
+  /**
+  Get method for the Robot body.
+  \return the body of the Robot.
+  */
+  const Rectangle &getBody() const;
   /**
   set the list of visible Robots.
   \param scanTargets the list of visible Robots.
@@ -75,8 +91,13 @@ public:
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
   /**
   get a list of all visible Robots.
+  \return the list of visible Robots.
   */
   std::list<std::shared_ptr<Robot>> getScanTargets() const;
+
+  void onCollision();
+
+  double getHealth() const;
 
 private:
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
