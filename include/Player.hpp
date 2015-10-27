@@ -34,9 +34,9 @@ public:
     Constructor.
 
     \param timeStep the duration between each time step.
-    \param size the size of the Rectangle representing the Player
+    \param rules the Rules of the game.
   */
-  Player(const double &timeStep, const Vector_d &size);
+  Player(const double &timeStep, const Rules &rules);
 
   /**
    Move Constructor.
@@ -62,10 +62,12 @@ public:
     set the Pose of the Robot.
     \param pose the new Pose
   */
-  void setPose(Pose pose);
+  // void setPose(Pose pose);
 
   void setPosition(Vector_d position);
   Vector_d getPosition() const;
+
+  void setRotation(double rotation);
   double getRotation() const;
 
   void onCollision();

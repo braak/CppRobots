@@ -7,8 +7,8 @@
 
 #include "Player.hpp"
 
-Player::Player(const double &timeStep, const Vector_d &size)
-    : robot(timeStep, size) {}
+Player::Player(const double &timeStep, const Rules &rules)
+    : robot(timeStep, rules) {}
 
 Player::Player(Player &&player) noexcept : robot(std::move(player.robot)),
                                            agent(std::move(player.agent)) {}
@@ -23,10 +23,11 @@ void Player::update() {
 }
 
 void Player::setAgent(Agent *agent_) { agent = std::unique_ptr<Agent>(agent_); }
-// void Player::setPose(Pose pose) { robot.setPose(pose); }
 
 void Player::setPosition(Vector_d position) { robot.setPosition(position); }
 Vector_d Player::getPosition() const { return robot.getPosition(); }
+
+void Player::setRotation(double rotation) { robot.setRotation(rotation); }
 double Player::getRotation() const { return robot.getRotation(); }
 
 void Player::onCollision() { robot.onCollision(); }
@@ -42,9 +43,9 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   Rectangle body = robot.getBody();
 
   sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
+  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
   rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
   rect.setRotation(degrees(body.getRotation()));
-  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
   double a = robot.getHealth() / 100.0;
   if (a > 0)
     rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});

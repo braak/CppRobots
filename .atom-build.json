@@ -1,0 +1,18 @@
+{
+  "cmd": "make",
+  "cwd": "{PROJECT_PATH}/build/",
+  "errorMatch" : "\n(?<file>[-\\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+)",
+
+  "targets": {
+  "all": {
+    "cmd": "make all",
+    "cwd": "{PROJECT_PATH}/build/",
+    "errorMatch" : "\n(?<file>[-\\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+)"
+  },
+  "doc": {
+    "cmd": "make doc",
+    "cwd": "{PROJECT_PATH}/build/",
+    "errorMatch" : "\n(?<file>[-\\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+)"
+  }
+  }
+}

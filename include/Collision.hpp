@@ -24,7 +24,7 @@ class Collision {
     }
   };
 
-  // Rectangle specific helper methodes
+  // Rectangle specific helper methode for projection
   static Projection project(const Rectangle &rect, const Vector_d &axis) {
     auto vertices = rect.vertices();
     double min = axis.dot(vertices[0]);
@@ -41,6 +41,7 @@ class Collision {
     return {min, max};
   }
 
+  // Rectangle specific helper methode for calculating axes
   static std::vector<Vector_d> getAxes(const Rectangle &rect) {
     std::vector<Vector_d> axes(2);
     // the first axis is a unit vector in the direction of the Rectangle
@@ -56,33 +57,34 @@ public:
 
   // Collision(const Circle &circ1, const Circle &circ2);
   // Collision(const Rectangle &rect, const Circle &circ);
-  // Collision(const Circle &circ), const Rectangle &rect): Collision(rect,
-  // circ);
+  // Collision(const Circle &circ, const Rectangle &rect);
 
   Collision(const Rectangle &rect1, const Rectangle &rect2) {
+    // NOTE: we could calculate the MTV by finding the axis with the bigest
+    // overlap, and the coresponding overlap amount.
     collision = true;
     const auto axes1 = getAxes(rect1);
     const auto axes2 = getAxes(rect2);
 
     for (const auto &axis : axes1) {
-      // Project both Rectangles on the axis
+      // Project both Rectangles onto the axis
       Projection p1 = project(rect1, axis);
       Projection p2 = project(rect2, axis);
-      // if the Projections dont overlap we have a seperating axis, the
-      // Rectangles don't collide.
       if (!p1.overlap(p2)) {
+        // if the Projections dont overlap we have a seperating axis, the
+        // Rectangles don't collide.
         collision = false;
         return;
       }
     }
 
     for (const auto &axis : axes2) {
-      // Project both Rectangles on the axis
+      // Project both Rectangles onto the axis
       Projection p1 = project(rect1, axis);
       Projection p2 = project(rect2, axis);
-      // if the Projections dont overlap we have a seperating axis, the
-      // Rectangles don't collide.
       if (!p1.overlap(p2)) {
+        // if the Projections dont overlap we have a seperating axis, the
+        // Rectangles don't collide.
         collision = false;
         return;
       }

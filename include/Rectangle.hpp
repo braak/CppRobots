@@ -125,6 +125,12 @@ private:
   Vector_d toGlobal(Vector_d vec) const;
 };
 
+/**
+Output stream Operator.
+\param os the output stream.
+\param obj the Rectangle to output.
+\return the output stream.
+*/
 std::ostream &operator<<(std::ostream &os, const Rectangle &obj);
 
 #endif /* end of include guard: __CPPROBOT_RECTANGLE__ */

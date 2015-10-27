@@ -17,6 +17,7 @@
 
 #include "Pose.hpp"
 #include "Rectangle.hpp"
+#include "Rules.hpp"
 
 /**
     \brief The Robot class represents the movement behavior, position
@@ -25,18 +26,16 @@
 class Robot {
   // Data and declarations
 public:
-  const double v_max = 60;  //!< Maximal velocity of the Robot
-  const double v_min = -8;  //!< Minimal velocity of the Robot
-  const double w_max = 0.6; //!< Maximal turning rate of the Robot.
+  const Rules &rules;
 
 protected:
   Rectangle body; //!< The body of the Robot. Represents its location, heading
   // and dimentions.
+  double health;
 
 private:
   double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
-  double health = 100.0;
 
   // Methodes
 public:
@@ -50,27 +49,26 @@ public:
   /**
   constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
+  \param timeStep the timeStep
+  \param rules the Rules of the game.
   */
-  Robot(const double timeStep, Vector_d size);
+  Robot(const double timeStep, const Rules &rules);
 
   /**
-      updates the position and orientation of the Robot acording to the
-     Action.
-      \param a An Action object
+  updates the position and orientation of the Robot acording to the Action.
+  \param a An Action object
   */
   virtual void update(Action const &a);
-
-  /**
-  Setter for the Pose of the Robot.
-  \param pose The new Pose of the Robot.
-  */
-  void setPose(Pose pose);
 
   /**
   Get method for the position of the Robot.
   \return the position of the Robot.
   */
   Vector_d getPosition() const;
+  /**
+  Set method for the Position.
+  \param position the new position.
+  */
   void setPosition(Vector_d position);
 
   /**
@@ -79,6 +77,11 @@ public:
   */
   double getRotation() const;
 
+  /**
+  Set method for the Rotation.
+  \param rotation the new rotation.
+  */
+  void setRotation(double rotation);
   /**
   Get method for the Robot body.
   \return the body of the Robot.
@@ -95,8 +98,14 @@ public:
   */
   std::list<std::shared_ptr<Robot>> getScanTargets() const;
 
+  /**
+  Method that is called each time ther is a collision.
+  */
   void onCollision();
 
+  /**
+  returns the current health of the Robot.
+  */
   double getHealth() const;
 
 private:

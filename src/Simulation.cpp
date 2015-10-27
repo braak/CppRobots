@@ -9,40 +9,60 @@
 
 Simulation::Simulation(sf::Font &font, std::default_random_engine seed,
                        double timeStep_)
-    : font(font), timeStep(timeStep_), generator(seed) {}
+    : rules(Rules::defaultRules()), font(font), timeStep(timeStep_),
+      generator(seed) {}
 
 void Simulation::update() {
+  // set vision for all players
   for (auto &player : players) {
     check_scan(player.second);
   }
+
+  // update all players
   for (auto &player : players) {
     player.second.update();
   }
 
+  // check collision for all playeres
   std::list<std::string> collisions;
+  // NOTE: currently we check each pair of players twice, once for each
+  // direction.
   for (auto const &player1 : players) {
     for (auto const &player2 : players) {
       if (&player1 == &player2) {
+        // dont check collision with self.
         continue;
       }
-      // NOTE: currently we check each pair of players twice.
-
       Collision collision(player1.second.getRobot().getBody(),
                           player2.second.getRobot().getBody());
       if (collision) {
-        std::cout << player1.first << " collided with " << player2.first
-                  << std::endl;
         collisions.push_back(player1.first);
       }
     }
   }
 
+  // resolve all collisions
   for (auto &collision : collisions) {
     auto &player = players.at(collision);
     player.onCollision();
-    if (player.getHealth() <= 0) {
-      players.erase(collision);
+  }
+
+  // check if any player is outside the arena
+  for (auto &player : players) {
+    Vector_d pos = player.second.getPosition();
+    if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
+        pos.y < 0) {
+      player.second.onCollision();
     }
+  }
+
+  // remove players, that dont have health left.
+  auto pred = [](const std::pair<const std::string, Player> &player) {
+    return player.second.getHealth() <= 0;
+  };
+  auto it = players.begin();
+  while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
+    players.erase(it++);
   }
 }
 
@@ -50,22 +70,56 @@ void Simulation::addPlayer(std::string name, Player &player) {
   players.insert(KeyValuePair(name, std::move(player)));
 }
 void Simulation::newPlayer(std::string name, Agent *agent) {
-  Player player(timeStep, robot_size);
+  Player player(timeStep, rules);
   player.setAgent(agent);
 
-  std::uniform_real_distribution<double> pos_x(0, arena_size.x);
-  std::uniform_real_distribution<double> pos_y(0, arena_size.y);
+  std::uniform_real_distribution<double> pos_x(0, rules.arena_size.x);
+  std::uniform_real_distribution<double> pos_y(0, rules.arena_size.y);
+  std::uniform_real_distribution<double> rot(0, 2 * M_PI);
   player.setPosition({pos_x(generator), pos_y(generator)});
+  player.setRotation(rot(generator));
 
   addPlayer(name, player);
 }
+
+// void Simulation::drawRobot(sf::RenderTarget &target, sf::RenderStates states,
+//                            const Robot &player) const {
+//   // draw Body
+//   Rectangle body = robot.getBody();
+//
+//   sf::RectangleShape rect({(float)body.getSize().x,
+//   (float)body.getSize().y});
+//   rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
+//
+//   double a = robot.getHealth() / 100.0;
+//   if (a > 0)
+//     rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});
+//
+//   target.draw(rect, states);
+//   // NOTE: draw turret here
+// }
+
+// void Simulation::drawNameTag(sf::RenderTarget &target, sf::RenderStates
+// states,
+//                              const std::string &name) const {
+//   sf::Text name_tag(name, font, 15);
+//   name_tag.setOrigin(0.5 * name_tag.getLocalBounds().width, 0);
+//   name_tag.setPosition({0, 15});
+//
+//   target.draw(name_tag, states);
+// }
+
 void Simulation::drawArc(sf::RenderTarget &target, sf::RenderStates states,
                          Vector_d position, double rotation, double radius,
                          double angle) const {
+  /* NOTE: this function is very inefficient. It can be improved by having a
+  constant Arc object and modifiing its position via the transformation
+  matrix of RenderStates.
+  */
   sf::VertexArray lines(sf::TrianglesFan);
-  lines.append({{(float)position.x, (float)position.y}, {255, 0, 0, 60}});
+  lines.append({{(float)position.x, (float)position.y}, {0, 0, 255, 60}});
 
-  for (double alpha = -angle; alpha <= angle; alpha += angle / 16) {
+  for (double alpha = -angle / 2; alpha <= angle / 2; alpha += angle / 16) {
     float x = position.x + radius * cos(rotation - alpha);
     float y = position.y + radius * sin(rotation - alpha);
     lines.append({{x, y}, {0, 0, 255, 60}});
@@ -74,6 +128,16 @@ void Simulation::drawArc(sf::RenderTarget &target, sf::RenderStates states,
 }
 
 void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+  /*NOTE: This can be significantly simplified by using drawPlayer and calling
+     drawRobot, drawLable and drawArc after modifiing states.transform
+  */
+  sf::RectangleShape rect(
+      {(float)rules.arena_size.x, (float)rules.arena_size.y});
+  rect.setFillColor(sf::Color::Transparent);
+  rect.setOutlineColor(sf::Color::White);
+  rect.setOutlineThickness(10);
+  target.draw(rect, states);
+
   for (auto const &player : players) {
     target.draw(player.second, states);
 
@@ -84,8 +148,8 @@ void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     name_tag.setPosition({(float)p.x, (float)p.y + 15});
 
     target.draw(name_tag, states);
-    // drawArc(target, states, p, player.second.getRotation(), scan_range,
-    //         scan_angle);
+    // drawArc(target, states, p, player.second.getRotation(), rules.scan_range,
+    //         rules.scan_angle);
   }
 }
 
@@ -95,11 +159,12 @@ bool Simulation::inSector(Vector_d const &p1, double rotation,
   const double v_y = p2.y - p1.y;
 
   const double r = sqrt(pow(v_x, 2) + pow(v_y, 2));
-  const bool in_range = r < scan_range;
+  const bool in_range = r < rules.scan_range;
 
   const double alpha = atan2(v_y, v_x);
   const double beta = angDiffRadians(rotation, alpha);
-  const bool in_segment = -scan_angle < beta && beta < scan_angle;
+  const bool in_segment =
+      -rules.scan_angle / 2 < beta && beta < rules.scan_angle / 2;
 
   return in_range && in_segment;
 }

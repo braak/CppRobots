@@ -21,21 +21,12 @@
 #include <functional>
 #include <random>
 
-template <class URNG>
-Pose randomPose(URNG &generator, double max_x, double max_y) {
-  std::uniform_real_distribution<double> distribution_x(0, max_x);
-  std::uniform_real_distribution<double> distribution_y(0, max_y);
-  std::uniform_real_distribution<double> distribution_theta(0, M_PI * 2.0);
-  return {distribution_x(generator), distribution_y(generator),
-          distribution_theta(generator)};
-}
-
 /**
     This is the main function of the program.
     \return returns 0 on success
 */
 int main() {
-  constexpr double ZOOM_SPEED = 0.8;
+  const double ZOOM_SPEED = 0.8;
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
@@ -45,7 +36,6 @@ int main() {
       "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
       "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
       "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
-  /**/
 
   // Load resources
   sf::Font font;
@@ -63,25 +53,16 @@ int main() {
   sf::RenderWindow window(sf::VideoMode::getDesktopMode(), window_name.str());
   window.setVerticalSyncEnabled(false);
 
+  sf::View view = window.getView();
+  view.setCenter({(float)simulation.rules.arena_size.x / 2,
+                  (float)simulation.rules.arena_size.y / 2});
+  window.setView(view);
+
   double zoom_level = 1;
 
   // create the players
-  std::hash<std::string> string_hash;
   for (auto &name : names) {
-    /*use name of player to generate psudo-random seed. So they behave the
-    same each time.*/
-    // std::default_random_engine rng(string_hash(name));
-    //
-    // Player player(timeStep, {30, 18});
-    // // player.setAgent(randomOrbiter(rng, 60, 0.6));
-    // player.setAgent(new Wanderer(string_hash(name), 0.1, 60));
-    // // player.setAgent(new Follower(200, 0.5, 0.1));
-    // player.setPose(randomPose(rng, window.getSize().x, window.getSize().y));
-    //
-    // simulation.addPlayer(name, player);
-
-    std::default_random_engine rng(string_hash(name));
-    simulation.newPlayer(name, new Wanderer(string_hash(name), 0.1, 60));
+    simulation.newPlayer(name, new Wanderer(rng, 0.1, 60));
   }
 
   // Create the FrameTimer

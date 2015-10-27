@@ -9,25 +9,23 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeStep, Vector_d size)
-    : body(size), timeStep(timeStep) {}
-
-void Robot::setPose(Pose p) {
-  body.move({p.x, p.y});
-  body.rotate(p.theta);
-}
+Robot::Robot(const double timeStep, const Rules &rules)
+    : rules(rules), body(rules.robot_size), health(rules.max_health),
+      timeStep(timeStep) {}
 
 void Robot::setPosition(Vector_d position) { body.setPosition(position); }
 Vector_d Robot::getPosition() const { return body.getPosition(); }
+
 double Robot::getRotation() const { return body.getRotation(); }
+void Robot::setRotation(double rotation) { body.setRotation(rotation); }
 
 const Rectangle &Robot::getBody() const { return body; }
 
 void Robot::update(Action const &a) {
-  const double v = std::max(std::min(a.v, v_max), v_min);
-  const double w = std::max(std::min(a.w, w_max), -w_max);
+  const double v = std::max(std::min(a.v, rules.v_max), rules.v_min);
+  const double w = std::max(std::min(a.w, rules.w_max), -rules.w_max);
 
-  // move forward
+  // move forward in the current direction
   body.move(Vector_d::polar(body.getRotation(), v * timeStep));
   // turn
   body.rotate(w * timeStep);
@@ -41,7 +39,7 @@ std::list<std::shared_ptr<Robot>> Robot::getScanTargets() const {
   return scanTargets;
 }
 
-void Robot::onCollision() { health -= 5; }
+void Robot::onCollision() { health -= rules.collision_damage; }
 
 double Robot::getHealth() const { return health; }
 

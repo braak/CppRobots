@@ -10,11 +10,15 @@
 #include "Player.hpp"
 #include "Angles.hpp"
 #include "Collision.hpp"
+#include "Rules.hpp"
 #include <memory>
 #include <iostream>
 #include <random>
 
 class Simulation : public sf::Drawable {
+public:
+  const Rules rules;
+
 private:
   using KeyValuePair = std::pair<std::string, Player>;
   std::map<std::string, Player> players;
@@ -22,12 +26,6 @@ private:
   sf::Font font;
   const double timeStep;
   std::default_random_engine generator;
-
-  // Rules
-  const double scan_range = 1000.0;
-  const double scan_angle = M_PI / 6;
-  const Vector_d robot_size = {30, 18};
-  const Vector_d arena_size = {1000, 1000};
 
 public:
   Simulation(sf::Font &font, std::default_random_engine rng,
@@ -48,7 +46,7 @@ private:
 
   bool check_collision(Player &player);
 
-  Vector_d random_position() const;
+  // Vector_d random_position() const;
 };
 
 #endif /* end of include guard: __SIMULATION__ */

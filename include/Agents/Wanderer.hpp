@@ -26,11 +26,12 @@ public:
   /**
     \brief Constructor.
 
-    \param seed a seed for the internal random number generator.
+    \param gen a Random Number Generator
     \param delta_w the maximal change in turning rate per time step.
     \param v the velocity.
   */
-  Wanderer(unsigned seed, double delta_w, double v);
+
+  Wanderer(std::default_random_engine gen, double delta_w, double v);
 
   /**
     During ech time step the Wanderer changes his turning rate by a random
