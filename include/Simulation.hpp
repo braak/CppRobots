@@ -24,12 +24,12 @@ private:
   std::map<std::string, Player> players;
 
   sf::Font font;
-  const double timeStep;
+  // const double timeStep;
   std::default_random_engine generator;
 
 public:
   Simulation(sf::Font &font, std::default_random_engine rng,
-             double timeStep = 1);
+             const Rules &rules);
   // virtual ~Simulation() {}
   void update();
   void addPlayer(std::string name, Player &player);

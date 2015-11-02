@@ -10,8 +10,8 @@ TEST(CollisionTest, Overlap) {
   Collision collision1(rect1, rect2);
   Collision collision2(rect1, rect3);
 
-  EXPECT_TRUE(collision1);
-  EXPECT_TRUE(collision2);
+  EXPECT_TRUE((bool)collision1);
+  EXPECT_TRUE((bool)collision2);
 }
 
 TEST(CollisionTest, NoOverlap) {
@@ -22,8 +22,8 @@ TEST(CollisionTest, NoOverlap) {
   Collision collision1(rect1, rect2);
   Collision collision2(rect1, rect3);
 
-  EXPECT_FALSE(collision1);
-  EXPECT_FALSE(collision2);
+  EXPECT_FALSE((bool)collision1);
+  EXPECT_FALSE((bool)collision2);
 }
 
 int main(int argc, char **argv) {

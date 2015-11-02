@@ -13,6 +13,7 @@
 
 */
 struct Rules {
+  double timeStep;         //!<
   double scan_range;       //!< Vision range of the Robot.
   double scan_angle;       //!< Field of Veiw of the Robot.
   Vector_d robot_size;     //!< size of the Robot.
@@ -20,11 +21,22 @@ struct Rules {
   double v_max;            //!< Maximal velocity of the Robot.
   double v_min;            //!< Minimal velocity of the Robot.
   double w_max;            //!< Maximal turning rate of the Robot.
+  double turret_w_max;     //!< Maximal turning rate of the Robots turret.
   double collision_damage; //!< Damage taken from collision per timeStep.
   double max_health;       //!< Maximal Health of a Robtot.
 
   constexpr static Rules defaultRules() {
-    return {1000.0, M_PI / 3, {30, 18}, {1500, 1000}, 60, -8, 0.6, 5, 100};
+    return {1 / 60.0,
+            1000.0,
+            M_PI / 3,
+            {30, 18},
+            {1500, 1000},
+            60,
+            -15,
+            0.6,
+            0.8,
+            5,
+            100};
   }
 };
 

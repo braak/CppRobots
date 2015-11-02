@@ -9,9 +9,8 @@
 #include "Robot.hpp"
 #include <sstream>
 
-Robot::Robot(const double timeStep, const Rules &rules)
-    : rules(rules), body(rules.robot_size), health(rules.max_health),
-      timeStep(timeStep) {}
+Robot::Robot(const Rules &rules)
+    : rules(rules), body(rules.robot_size), health(rules.max_health) {}
 
 void Robot::setPosition(Vector_d position) { body.setPosition(position); }
 Vector_d Robot::getPosition() const { return body.getPosition(); }
@@ -21,14 +20,29 @@ void Robot::setRotation(double rotation) { body.setRotation(rotation); }
 
 const Rectangle &Robot::getBody() const { return body; }
 
+double Robot::limitRate(double oldVal, double newVal, double maxRate,
+                        double minRate, double dt) {
+  double turnRate = (newVal - oldVal) / dt;
+  if (turnRate > maxRate) {
+    return oldVal + maxRate * dt;
+  } else if (turnRate < minRate) {
+    return oldVal + minRate * dt;
+  } else {
+    return newVal;
+  }
+}
+
 void Robot::update(Action const &a) {
   const double v = std::max(std::min(a.v, rules.v_max), rules.v_min);
   const double w = std::max(std::min(a.w, rules.w_max), -rules.w_max);
 
   // move forward in the current direction
-  body.move(Vector_d::polar(body.getRotation(), v * timeStep));
+  body.move(Vector_d::polar(body.getRotation(), v * rules.timeStep));
   // turn
-  body.rotate(w * timeStep);
+  body.rotate(w * rules.timeStep);
+
+  turretAngle = limitRate(turretAngle, a.turretAngle, rules.turret_w_max,
+                          -rules.turret_w_max, rules.timeStep);
 }
 
 void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
@@ -42,6 +56,7 @@ std::list<std::shared_ptr<Robot>> Robot::getScanTargets() const {
 void Robot::onCollision() { health -= rules.collision_damage; }
 
 double Robot::getHealth() const { return health; }
+double Robot::getTurretAngle() const { return turretAngle; }
 
 std::ostream &operator<<(std::ostream &os, const Robot &obj) {
   os << "<Robot at " << obj.body.getPosition() << ">";

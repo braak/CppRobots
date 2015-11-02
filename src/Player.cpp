@@ -7,8 +7,7 @@
 
 #include "Player.hpp"
 
-Player::Player(const double &timeStep, const Rules &rules)
-    : robot(timeStep, rules) {}
+Player::Player(const Rules &rules) : robot(rules) {}
 
 Player::Player(Player &&player) noexcept : robot(std::move(player.robot)),
                                            agent(std::move(player.agent)) {}
@@ -49,6 +48,14 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   double a = robot.getHealth() / 100.0;
   if (a > 0)
     rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});
-
   target.draw(rect, states);
+
+  sf::RectangleShape turret(
+      {(float)body.getSize().x, (float)body.getSize().y / 3});
+  turret.setPosition(
+      {(float)body.getPosition().x, (float)body.getPosition().y});
+  turret.setRotation(degrees(body.getRotation() + robot.getTurretAngle()));
+  turret.setOrigin(0.5 * body.getSize().x / 4, 0.5 * body.getSize().x / 4);
+
+  target.draw(turret, states);
 }

@@ -34,8 +34,9 @@ protected:
   double health;
 
 private:
-  double timeStep;
+  // double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
+  double turretAngle;
 
   // Methodes
 public:
@@ -45,6 +46,7 @@ public:
   struct Action {
     double v; //!< The desired speed of the Robot.
     double w; //!< The desired turning rate of the Robot.
+    double turretAngle;
   };
   /**
   constructs a Robot with a specified timeStep. The timeStep determins the
@@ -52,7 +54,7 @@ public:
   \param timeStep the timeStep
   \param rules the Rules of the game.
   */
-  Robot(const double timeStep, const Rules &rules);
+  Robot(const Rules &rules);
 
   /**
   updates the position and orientation of the Robot acording to the Action.
@@ -101,6 +103,8 @@ public:
   /**
   Method that is called each time ther is a collision.
   */
+  // NOTE: we should pass the collision target so we can do better collision
+  // resulution
   void onCollision();
 
   /**
@@ -108,7 +112,11 @@ public:
   */
   double getHealth() const;
 
+  double getTurretAngle() const;
+
 private:
+  double limitRate(double oldVal, double newVal, double maxRate, double minRate,
+                   double dt);
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
 };
 

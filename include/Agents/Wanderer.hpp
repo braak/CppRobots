@@ -31,7 +31,7 @@ public:
     \param v the velocity.
   */
 
-  Wanderer(std::default_random_engine gen, double delta_w, double v);
+  Wanderer(double delta_w, double v);
 
   /**
     During ech time step the Wanderer changes his turning rate by a random

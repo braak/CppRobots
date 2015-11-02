@@ -26,17 +26,15 @@
 */
 class Player : public sf::Drawable {
 private:
+public:
   Robot robot;
   std::unique_ptr<Agent> agent;
-
-public:
   /**
     Constructor.
 
-    \param timeStep the duration between each time step.
     \param rules the Rules of the game.
   */
-  Player(const double &timeStep, const Rules &rules);
+  Player(const Rules &rules);
 
   /**
    Move Constructor.

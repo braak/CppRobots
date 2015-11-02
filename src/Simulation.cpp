@@ -8,9 +8,8 @@
 #include "Simulation.hpp"
 
 Simulation::Simulation(sf::Font &font, std::default_random_engine seed,
-                       double timeStep_)
-    : rules(Rules::defaultRules()), font(font), timeStep(timeStep_),
-      generator(seed) {}
+                       const Rules &rules)
+    : rules(rules), font(font), generator(seed) {}
 
 void Simulation::update() {
   // set vision for all players
@@ -70,7 +69,7 @@ void Simulation::addPlayer(std::string name, Player &player) {
   players.insert(KeyValuePair(name, std::move(player)));
 }
 void Simulation::newPlayer(std::string name, Agent *agent) {
-  Player player(timeStep, rules);
+  Player player(rules);
   player.setAgent(agent);
 
   std::uniform_real_distribution<double> pos_x(0, rules.arena_size.x);
@@ -148,8 +147,9 @@ void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     name_tag.setPosition({(float)p.x, (float)p.y + 15});
 
     target.draw(name_tag, states);
-    // drawArc(target, states, p, player.second.getRotation(), rules.scan_range,
-    //         rules.scan_angle);
+    drawArc(target, states, p,
+            player.second.getRotation() + player.second.robot.getTurretAngle(),
+            rules.scan_range, rules.scan_angle);
   }
 }
 
@@ -176,7 +176,7 @@ void Simulation::check_scan(Player &player) {
       continue;
     }
     Vector_d pose1 = player.getPosition();
-    double rotation = player.getRotation();
+    double rotation = player.getRotation() + player.robot.getTurretAngle();
     Vector_d pose2 = player2.second.getPosition();
     if (inSector(pose1, rotation, pose2)) {
       scanTargets.push_back(std::make_shared<Robot>(player2.second.getRobot()));

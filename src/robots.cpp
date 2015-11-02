@@ -16,8 +16,7 @@
     \return returns 0 on success
 */
 int main() {
-  const double timeBase = 1.0 / 60;
-  Robot robot(timeBase, Rules::defaultRules());
+  Robot robot(Rules::defaultRules());
   Agent *agent = new Orbiter(20, 0.6);
   std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
 
