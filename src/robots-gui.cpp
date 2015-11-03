@@ -62,8 +62,9 @@ int main() {
 
   // create the players
   for (auto &name : names) {
-    simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
-    // simulation.newPlayer(name, new Follower(100, 100, 10));
+    // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
+    simulation.newPlayer(name, new Follower(100, 100, 10));
+    // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 
   // Create the FrameTimer

@@ -14,7 +14,7 @@ Wanderer::Wanderer(double delta_w, double v) : v(v), w(0) {
   rng = std::bind(distribution, gen);
 }
 
-Robot::Action Wanderer::update(Robot const &r) {
+Action Wanderer::update(Robot const &r) {
   w += rng();
   // prevent windup by limiting the turning rate.
   w = std::min(std::max(w, -r.rules.w_max), r.rules.w_max);

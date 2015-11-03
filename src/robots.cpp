@@ -17,13 +17,12 @@
 */
 int main() {
   Robot robot(Rules::defaultRules());
-  Agent *agent = new Orbiter(20, 0.6);
+  robot.setAgent(new Orbiter(20, 0.6));
   std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
 
   for (size_t i = 0; i < 1000; i++) {
     std::cout << robot << std::endl;
-    Robot::Action action = agent->update(robot);
-    robot.update(action);
+    robot.update();
   }
   return 0;
 }

@@ -11,6 +11,8 @@
 
 #include "Robot.hpp"
 
+class Robot;
+struct Action;
 /**
   \brief  Abstract Agent class.
 
@@ -27,7 +29,7 @@ public:
   \param r A constant refference to the Robot.
   \return The Action to be performed this time step.
   */
-  virtual Robot::Action update(Robot const &r) = 0;
+  virtual Action update(Robot const &r) = 0;
 };
 
 #endif /* end of include guard: __AGENT__ */

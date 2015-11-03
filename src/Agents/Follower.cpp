@@ -12,7 +12,7 @@ Follower::Follower(double target_distance, double K_distance, double K_beta)
     : target_distance(target_distance), K_distance(K_distance), K_beta(K_beta) {
 }
 
-Robot::Action Follower::update(Robot const &r) {
+Action Follower::update(Robot const &r) {
   auto scanTargets = r.getScanTargets();
 
   if (scanTargets.empty()) {

@@ -19,6 +19,9 @@ Both programs depend on libraries `CppRobots` and `CppRobotsAgents`, which will 
 
 If Cmake finds [gtest](https://github.com/google/googletest) on the system it will generate the following tests:
 * `testPose`
+* `testVector`
+* `testRectangle`
+* `testCollision`
 
 ## Documentation ##
 Creating the documentation requires [Doxygen](http://www.stack.nl/~dimitri/doxygen/). And optionally [Graphviz](http://www.graphviz.org/) for graphs.

@@ -38,7 +38,7 @@ public:
     amount. The turning rate is capped at a maximal value. The tangential speed
     is constant.
   */
-  virtual Robot::Action update(Robot const &r) override;
+  virtual Action update(Robot const &r) override;
 };
 
 #endif /* end of include guard: __WANDERER__ */

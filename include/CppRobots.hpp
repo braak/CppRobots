@@ -10,7 +10,6 @@
 #include "Robot.hpp"
 #include "Pose.hpp"
 #include "FrameTimer.hpp"
-#include "Player.hpp"
 #include "Simulation.hpp"
 #include "Rules.hpp"
 #include "Rectangle.hpp"

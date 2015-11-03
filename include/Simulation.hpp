@@ -7,10 +7,14 @@
 #ifndef __SIMULATION__
 #define __SIMULATION__
 
-#include "Player.hpp"
+#include "Robot.hpp"
+#include "Agent.hpp"
 #include "Angles.hpp"
 #include "Collision.hpp"
 #include "Rules.hpp"
+
+#include <SFML/Graphics.hpp>
+
 #include <memory>
 #include <iostream>
 #include <random>
@@ -20,8 +24,10 @@ public:
   const Rules rules;
 
 private:
-  using KeyValuePair = std::pair<std::string, Player>;
-  std::map<std::string, Player> players;
+  // using KeyValuePair = std::pair<std::string, Player>;
+  // std::map<std::string, Player> players;
+  using KeyValuePair = std::pair<std::string, Robot>;
+  std::map<std::string, Robot> players;
 
   sf::Font font;
   // const double timeStep;
@@ -32,8 +38,9 @@ public:
              const Rules &rules);
   // virtual ~Simulation() {}
   void update();
-  void addPlayer(std::string name, Player &player);
+  // void addPlayer(std::string name, Player &player);
   void newPlayer(std::string name, Agent *agent);
+  void addPlayer(std::string name, Robot &player);
 
 private:
   virtual void draw(sf::RenderTarget &target,
@@ -41,12 +48,14 @@ private:
   void drawArc(sf::RenderTarget &target, sf::RenderStates states,
                Vector_d position, double rotation, double radius,
                double angle) const;
-  void check_scan(Player &player);
+  void drawPlayer(sf::RenderTarget &target, sf::RenderStates states,
+                  const std::string &name, const Robot &robot) const;
+
+  void drawRobot(sf::RenderTarget &target, sf::RenderStates states,
+                 const Robot &robot) const;
+
+  void check_scan(Robot &robot);
   bool inSector(Vector_d const &p1, double rotation, Vector_d const &p2) const;
-
-  bool check_collision(Player &player);
-
-  // Vector_d random_position() const;
 };
 
 #endif /* end of include guard: __SIMULATION__ */

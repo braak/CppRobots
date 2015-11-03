@@ -10,7 +10,7 @@
 
 Orbiter::Orbiter(double v, double w) : v(v), w(w) {}
 
-Robot::Action Orbiter::update(Robot const &r) {
+Action Orbiter::update(Robot const &r) {
   (void)r; // surpress unused parameter warning
   return {v, w, 0};
 }
