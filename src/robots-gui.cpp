@@ -31,11 +31,11 @@ int main() {
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
-  std::vector<std::string> names = {"Albert", "Bob", "Charlie", "Daisy"};
-  //,  "Eric",   "Frank", "Guinevere",
-  // "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
-  // "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
-  // "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
+  std::vector<std::string> names = {
+      "Albert", "Bob",     "Charlie", "Daisy",  "Eric",   "Frank", "Guinevere",
+      "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
+      "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
+      "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
 
   // Load resources
   sf::Font font;
@@ -62,8 +62,8 @@ int main() {
 
   // create the players
   for (auto &name : names) {
-    // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
-    simulation.newPlayer(name, new Follower(100, 100, 10));
+    simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
+    // simulation.newPlayer(name, new Follower(100, 100, 10));
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 

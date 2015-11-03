@@ -92,6 +92,10 @@ public:
     // No seperating axis was found, the Rectangles collide.
   };
 
+  template <class T, class U>
+  Collision(const T &val1, const U &val2)
+      : Collision(val1.getBody(), val2.getBody()) {}
+
   explicit operator bool() const { return collision; }
 
   static bool testCollision(const Rectangle &rect1, const Rectangle &rect2) {

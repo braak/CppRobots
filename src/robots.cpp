@@ -16,8 +16,7 @@
     \return returns 0 on success
 */
 int main() {
-  Robot robot(Rules::defaultRules());
-  robot.setAgent(new Orbiter(20, 0.6));
+  Robot robot(Rules::defaultRules(), new Orbiter(20, 0.6));
   std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
 
   for (size_t i = 0; i < 1000; i++) {

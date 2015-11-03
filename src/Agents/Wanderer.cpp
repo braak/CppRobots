@@ -18,5 +18,5 @@ Action Wanderer::update(Robot const &r) {
   w += rng();
   // prevent windup by limiting the turning rate.
   w = std::min(std::max(w, -r.rules.w_max), r.rules.w_max);
-  return {v, w, w / r.rules.w_max / 2 * M_PI};
+  return {v, w, w / r.rules.w_max / 2 * M_PI, false};
 }

@@ -16,31 +16,26 @@ void Simulation::update() {
   for (auto &player : players) {
     check_scan(player.second);
   }
+  // move the player and spawn projectiles
   for (auto &player : players) {
     player.second.update();
   }
 
-  // check collision for all playeres
-  std::list<std::string> collisions;
-  // NOTE: currently we check each pair of players twice, once for each
-  // direction.
-  for (auto const &player1 : players) {
+  // check collision between playeres
+  // std::list<Robot *> collisions;
+  // NOTE: currently we check each pair of players twice, once for
+  // Collision(A,B) and once for Collision(B,A).
+  for (auto &player1 : players) {
     for (auto const &player2 : players) {
       if (&player1 == &player2) {
         // dont check collision with self.
         continue;
       }
-      Collision collision(player1.second.getBody(), player2.second.getBody());
+      Collision collision(player1.second, player2.second);
       if (collision) {
-        collisions.push_back(player1.first);
+        player1.second.takeDamage(rules.collision_damage);
       }
     }
-  }
-
-  // resolve all collisions
-  for (auto &collision : collisions) {
-    auto &player = players.at(collision);
-    player.onCollision();
   }
 
   // check if any player is outside the arena
@@ -48,11 +43,48 @@ void Simulation::update() {
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
         pos.y < 0) {
-      player.second.onCollision();
+      player.second.takeDamage(rules.collision_damage);
     }
   }
 
-  // remove players, that dont have health left.
+  // see if any player wants to shoot
+  for (auto &player : players) {
+    if (player.second.shooting) {
+      player.second.shooting = false;
+      projectiles.push_back(Projectile(
+          rules, player.second.getPosition() +
+                     Vector_d::polar(player.second.getRotation(), 20),
+          player.second.getRotation()));
+    }
+  }
+  // move the projectile
+  for (auto &projectle : projectiles) {
+    projectle.update();
+  }
+  // remove projectile if it is out of bounds
+  projectiles.remove_if([this](const Projectile &projectle) {
+    Vector_d pos = projectle.getBody().getPosition();
+    return pos.x > rules.arena_size.x || pos.y > rules.arena_size.y ||
+           pos.x < 0 || pos.y < 0;
+  });
+  // check collision between player and projectile
+  for (auto &player : players) {
+    for (auto projectile = projectiles.begin();
+         projectile != projectiles.end();) {
+      Collision collision(player.second, *projectile);
+      if (collision) {
+        // remove projectile, and advance the iterator
+        projectile = projectiles.erase(projectile);
+        // deal damage to the player
+        player.second.takeDamage(rules.projectile_damage);
+      } else {
+        // advance the iterator
+        ++projectile;
+      }
+    }
+  }
+
+  // remove players that don't have health left.
   auto pred = [](const std::pair<const std::string, Robot> &robot) {
     return robot.second.getHealth() <= 0;
   };
@@ -66,8 +98,7 @@ void Simulation::addPlayer(std::string name, Robot &player) {
   players.insert(KeyValuePair(name, std::move(player)));
 }
 void Simulation::newPlayer(std::string name, Agent *agent) {
-  Robot player(rules);
-  player.setAgent(agent);
+  Robot player(rules, agent);
 
   std::uniform_real_distribution<double> pos_x(0, rules.arena_size.x);
   std::uniform_real_distribution<double> pos_y(0, rules.arena_size.y);
@@ -77,7 +108,46 @@ void Simulation::newPlayer(std::string name, Agent *agent) {
 
   addPlayer(name, player);
 }
+bool Simulation::inSector(Vector_d const &p1, double rotation,
+                          Vector_d const &p2) const {
+  const Vector_d v = p2 - p1;
 
+  const bool in_range = v.magnitude() < rules.scan_range;
+
+  const double beta = angDiffRadians(rotation, v.angle());
+  const bool in_segment =
+      -rules.scan_angle / 2 < beta && beta < rules.scan_angle / 2;
+
+  return in_range && in_segment;
+}
+
+void Simulation::check_scan(Robot &robot) {
+  std::list<std::shared_ptr<Robot>> scanTargets;
+  for (auto const &player2 : players) {
+    if (&robot == &player2.second) {
+      continue;
+    }
+    Vector_d pose1 = robot.getPosition();
+    double rotation = robot.getRotation() + robot.getTurretAngle();
+    Vector_d pose2 = player2.second.getPosition();
+    if (inSector(pose1, rotation, pose2)) {
+      scanTargets.push_back(std::make_shared<Robot>(player2.second));
+    }
+  }
+  robot.setScanTargets(std::move(scanTargets));
+}
+
+void Simulation::drawProjectile(sf::RenderTarget &target,
+                                sf::RenderStates states,
+                                const Projectile &projectile) const {
+  Rectangle body = projectile.getBody();
+
+  sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
+  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
+  rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
+  rect.setRotation(degrees(body.getRotation()));
+  target.draw(rect, states);
+}
 void Simulation::drawRobot(sf::RenderTarget &target, sf::RenderStates states,
                            const Robot &robot) const {
   Rectangle body = robot.getBody();
@@ -134,8 +204,8 @@ void Simulation::drawPlayer(sf::RenderTarget &target, sf::RenderStates states,
   target.draw(name_tag, states);
 
   // drawArc
-  drawArc(target, states, p, robot.getRotation() + robot.getTurretAngle(),
-          rules.scan_range, rules.scan_angle);
+  // drawArc(target, states, p, robot.getRotation() + robot.getTurretAngle(),
+  //         rules.scan_range, rules.scan_angle);
 }
 
 void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
@@ -152,33 +222,8 @@ void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (auto const &player : players) {
     drawPlayer(target, states, player.first, player.second);
   }
-}
 
-bool Simulation::inSector(Vector_d const &p1, double rotation,
-                          Vector_d const &p2) const {
-  const Vector_d v = p2 - p1;
-
-  const bool in_range = v.magnitude() < rules.scan_range;
-
-  const double beta = angDiffRadians(rotation, v.angle());
-  const bool in_segment =
-      -rules.scan_angle / 2 < beta && beta < rules.scan_angle / 2;
-
-  return in_range && in_segment;
-}
-
-void Simulation::check_scan(Robot &robot) {
-  std::list<std::shared_ptr<Robot>> scanTargets;
-  for (auto const &player2 : players) {
-    if (&robot == &player2.second) {
-      continue;
-    }
-    Vector_d pose1 = robot.getPosition();
-    double rotation = robot.getRotation() + robot.getTurretAngle();
-    Vector_d pose2 = player2.second.getPosition();
-    if (inSector(pose1, rotation, pose2)) {
-      scanTargets.push_back(std::make_shared<Robot>(player2.second));
-    }
+  for (auto const &projectile : projectiles) {
+    drawProjectile(target, states, projectile);
   }
-  robot.setScanTargets(std::move(scanTargets));
 }

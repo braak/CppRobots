@@ -9,21 +9,27 @@
 #ifndef __RULES__
 #define __RULES__
 
-/**
+#include "Vector.hpp"
 
+/**
+  The rules of the game.
 */
 struct Rules {
-  double timeStep;         //!<
-  double scan_range;       //!< Vision range of the Robot.
-  double scan_angle;       //!< Field of Veiw of the Robot.
-  Vector_d robot_size;     //!< size of the Robot.
-  Vector_d arena_size;     //!< size of the Arena.
-  double v_max;            //!< Maximal velocity of the Robot.
-  double v_min;            //!< Minimal velocity of the Robot.
-  double w_max;            //!< Maximal turning rate of the Robot.
-  double turret_w_max;     //!< Maximal turning rate of the Robots turret.
-  double collision_damage; //!< Damage taken from collision per timeStep.
-  double max_health;       //!< Maximal Health of a Robtot.
+  double timeStep;          //!<
+  double scan_range;        //!< Vision range of the Robot.
+  double scan_angle;        //!< Field of Veiw of the Robot.
+  Vector_d robot_size;      //!< size of the Robot.
+  Vector_d arena_size;      //!< size of the Arena.
+  double v_max;             //!< Maximal velocity of the Robot.
+  double v_min;             //!< Minimal velocity of the Robot.
+  double w_max;             //!< Maximal turning rate of the Robot.
+  double turret_w_max;      //!< Maximal turning rate of the Robots turret.
+  double collision_damage;  //!< Damage taken from collision per timeStep.
+  double max_health;        //!< Maximal Health of a Robtot.
+  Vector_d projectile_size; //!< size of the Robot.
+  double projectile_speed;
+  double projectile_cooldown;
+  double projectile_damage;
 
   constexpr static Rules defaultRules() {
     return {1 / 60.0,
@@ -36,7 +42,11 @@ struct Rules {
             0.6,
             0.8,
             5,
-            100};
+            100,
+            {4, 4},
+            1000,
+            2,
+            10};
   }
 };
 

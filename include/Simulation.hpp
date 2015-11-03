@@ -12,12 +12,14 @@
 #include "Angles.hpp"
 #include "Collision.hpp"
 #include "Rules.hpp"
+#include "Projectile.hpp"
 
 #include <SFML/Graphics.hpp>
 
 #include <memory>
 #include <iostream>
 #include <random>
+#include <list>
 
 class Simulation : public sf::Drawable {
 public:
@@ -28,6 +30,7 @@ private:
   // std::map<std::string, Player> players;
   using KeyValuePair = std::pair<std::string, Robot>;
   std::map<std::string, Robot> players;
+  std::list<Projectile> projectiles;
 
   sf::Font font;
   // const double timeStep;
@@ -45,6 +48,8 @@ public:
 private:
   virtual void draw(sf::RenderTarget &target,
                     sf::RenderStates states) const override;
+  void drawProjectile(sf::RenderTarget &target, sf::RenderStates states,
+                      const Projectile &projectile) const;
   void drawArc(sf::RenderTarget &target, sf::RenderStates states,
                Vector_d position, double rotation, double radius,
                double angle) const;

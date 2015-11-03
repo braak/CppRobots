@@ -20,7 +20,7 @@ Action Follower::update(Robot const &r) {
     // NOTE: for faster turning, we could also turn our turret, but we'd have to
     // be carefull not to overshoot. Also navigating to the target gets a bit
     // more complex that way.
-    return {0, -r.rules.scan_angle / r.rules.timeStep, 0};
+    return {0, -r.rules.scan_angle / r.rules.timeStep, 0, false};
   }
   Vector_d position = r.getPosition();
   double rotation = r.getRotation();
@@ -41,5 +41,5 @@ Action Follower::update(Robot const &r) {
   Vector_d diff = position - target_position;
   const double distance_error = diff.magnitude() - target_distance;
   const double angle_error = angDiffRadians(rotation, diff.angle());
-  return {K_distance * distance_error, K_beta * angle_error, 0};
+  return {K_distance * distance_error, K_beta * angle_error, 0, false};
 }

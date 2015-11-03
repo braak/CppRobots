@@ -18,18 +18,10 @@
 #include "Pose.hpp"
 #include "Rectangle.hpp"
 #include "Rules.hpp"
+#include "Action.hpp"
 #include "Agent.hpp"
 
 class Agent;
-/**
-\brief  Action to be perfomes during a timeStep.
-*/
-struct Action {
-  double v; //!< The desired speed of the Robot.
-  double w; //!< The desired turning rate of the Robot.
-  double turretAngle;
-};
-
 /**
     \brief The Robot class represents the movement behavior, position
    and orientation of a player.
@@ -37,6 +29,7 @@ struct Action {
 class Robot {
   // Data and declarations
 public:
+  bool shooting;
   const Rules &rules;
 
 protected:
@@ -50,16 +43,17 @@ private:
   double turretAngle;
   // double v;
   std::shared_ptr<Agent> agent;
+  double cooldown;
 
   // Methodes
 public:
   /**
   constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
-  \param timeStep the timeStep
   \param rules the Rules of the game.
+  \param agent the Agent ust to controll the Robot.
   */
-  Robot(const Rules &rules);
+  Robot(const Rules &rules, Agent *agent = nullptr);
 
   // Robot(const Robot &robot);
 
@@ -129,6 +123,8 @@ public:
   returns the current health of the Robot.
   */
   double getHealth() const;
+
+  double takeDamage(double damage);
 
   double getTurretAngle() const;
 

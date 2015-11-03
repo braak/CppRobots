@@ -10,9 +10,10 @@
 #define __AGENT__
 
 #include "Robot.hpp"
+#include "Action.hpp"
 
 class Robot;
-struct Action;
+
 /**
   \brief  Abstract Agent class.
 
