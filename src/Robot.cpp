@@ -40,6 +40,7 @@ void Robot::update() {
   // set the turretAngle
   turretAngle = limitRate(turretAngle, a.turretAngle, rules.turret_w_max,
                           -rules.turret_w_max);
+  turretAngle = wrapRadians(turretAngle);
 
   // shoot
   cooldown -= rules.timeStep;

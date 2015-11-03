@@ -12,6 +12,8 @@
 // returns a value with the same sign as the dividend
 template <class T> constexpr T amod(T a, T n) { return a - floor(a / n) * n; }
 
+template <class T> constexpr T wrapRadians(T a) { return amod<T>(a, 2 * M_PI); }
+
 template <class T> constexpr T angDiffRadians(T a, T b = 0) {
   return amod<T>(a - b + M_PI, 2 * M_PI) - M_PI;
 }

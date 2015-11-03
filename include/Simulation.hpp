@@ -41,13 +41,14 @@ public:
              const Rules &rules);
   // virtual ~Simulation() {}
   void update();
-  // void addPlayer(std::string name, Player &player);
+
   void newPlayer(std::string name, Agent *agent);
   void addPlayer(std::string name, Robot &player);
 
 private:
-  virtual void draw(sf::RenderTarget &target,
-                    sf::RenderStates states) const override;
+  void updatePlayers();
+  void updateProjectiles();
+  void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
   void drawProjectile(sf::RenderTarget &target, sf::RenderStates states,
                       const Projectile &projectile) const;
   void drawArc(sf::RenderTarget &target, sf::RenderStates states,

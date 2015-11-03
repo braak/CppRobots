@@ -11,7 +11,7 @@ Simulation::Simulation(sf::Font &font, std::default_random_engine seed,
                        const Rules &rules)
     : rules(rules), font(font), generator(seed) {}
 
-void Simulation::update() {
+void Simulation::updatePlayers() {
   // set vision for all players
   for (auto &player : players) {
     check_scan(player.second);
@@ -31,8 +31,8 @@ void Simulation::update() {
         // dont check collision with self.
         continue;
       }
-      Collision collision(player1.second, player2.second);
-      if (collision) {
+      // Collision collision(player1.second, player2.second);
+      if (Collision(player1.second, player2.second)) {
         player1.second.takeDamage(rules.collision_damage);
       }
     }
@@ -51,12 +51,17 @@ void Simulation::update() {
   for (auto &player : players) {
     if (player.second.shooting) {
       player.second.shooting = false;
-      projectiles.push_back(Projectile(
-          rules, player.second.getPosition() +
-                     Vector_d::polar(player.second.getRotation(), 20),
-          player.second.getRotation()));
+      double direction =
+          player.second.getRotation() + player.second.getTurretAngle();
+      Vector_d porjectilePosition = player.second.getPosition();
+      // make sure we create the Projectile outside the player
+      porjectilePosition += Vector_d::polar(direction, rules.robot_size.x + 1);
+      projectiles.push_back(Projectile(rules, porjectilePosition, direction));
     }
   }
+}
+
+void Simulation::updateProjectiles() {
   // move the projectile
   for (auto &projectle : projectiles) {
     projectle.update();
@@ -67,6 +72,7 @@ void Simulation::update() {
     return pos.x > rules.arena_size.x || pos.y > rules.arena_size.y ||
            pos.x < 0 || pos.y < 0;
   });
+
   // check collision between player and projectile
   for (auto &player : players) {
     for (auto projectile = projectiles.begin();
@@ -83,6 +89,10 @@ void Simulation::update() {
       }
     }
   }
+}
+void Simulation::update() {
+  updatePlayers();
+  updateProjectiles();
 
   // remove players that don't have health left.
   auto pred = [](const std::pair<const std::string, Robot> &robot) {
@@ -203,7 +213,6 @@ void Simulation::drawPlayer(sf::RenderTarget &target, sf::RenderStates states,
 
   target.draw(name_tag, states);
 
-  // drawArc
   // drawArc(target, states, p, robot.getRotation() + robot.getTurretAngle(),
   //         rules.scan_range, rules.scan_angle);
 }

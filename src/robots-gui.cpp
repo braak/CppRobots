@@ -7,9 +7,10 @@
 
 #include "CppRobots.hpp"
 
-// #include "Agents/Orbiter.hpp"
+#include "Agents/Orbiter.hpp"
 #include "Agents/Wanderer.hpp"
 #include "Agents/Follower.hpp"
+#include "Agents/Sniper.hpp"
 
 #include <math.h>
 #include <sstream>
@@ -62,7 +63,9 @@ int main() {
 
   // create the players
   for (auto &name : names) {
-    simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
+    // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
+    simulation.newPlayer(name, new Sniper());
+
     // simulation.newPlayer(name, new Follower(100, 100, 10));
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
