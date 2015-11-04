@@ -13,7 +13,8 @@ endif()
 
 
 # A library used by all programs
-add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Projectile.cpp)
+add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Projectile.cpp SimulationSFML.cpp)
+
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES
@@ -29,9 +30,17 @@ target_link_libraries(robots CppRobots CppRobotsAgents)
 # The second program uses SFLM to display the simulation
 find_package(SFML 2 COMPONENTS system window graphics)
 if(SFML_FOUND)
-    add_executable(robots-gui robots-gui.cpp)
     include_directories(${SFML_INCLUDE_DIR})
-    target_link_libraries(robots-gui ${SFML_LIBRARIES} CppRobots CppRobotsAgents)
+
+    # A library used by programms using SFML
+    add_library(CppRobotsSFML  SimulationSFML.cpp)
+    target_link_libraries(CppRobotsSFML ${SFML_LIBRARIES})
+
+    # create the executable
+    add_executable(robots-gui robots-gui.cpp)
+    target_link_libraries(robots-gui ${SFML_LIBRARIES} CppRobots CppRobotsSFML CppRobotsAgents)
+
+    # copy all rescource files to the runtime directory
     file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 else(SFML_FOUND)
     message(WARNING "robots-gui will not be build, because SFML was not found.")

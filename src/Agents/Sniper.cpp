@@ -48,11 +48,6 @@ Action Sniper::update(Robot const &r) {
   } else {
     shooting = false;
   }
-  // if (abs(beta) < 0.01) {
-  //   shooting = true;
-  // } else {
-  //   shooting = false;
-  // }
 
   return {0, 0, angle, shooting};
 }

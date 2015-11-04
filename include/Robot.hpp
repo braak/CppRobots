@@ -32,13 +32,10 @@ public:
   bool shooting;
   const Rules &rules;
 
-protected:
-  Rectangle body; //!< The body of the Robot. Represents its location, heading
-  // and dimentions.
+private:
+  Rectangle body;
   double health;
 
-private:
-  // double timeStep;
   std::list<std::shared_ptr<Robot>> scanTargets;
   double turretAngle;
   // double v;
@@ -48,20 +45,12 @@ private:
   // Methodes
 public:
   /**
-  constructs a Robot with a specified timeStep. The timeStep determins the
+  Constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
   \param rules the Rules of the game.
   \param agent the Agent ust to controll the Robot.
   */
   Robot(const Rules &rules, Agent *agent = nullptr);
-
-  // Robot(const Robot &robot);
-
-  // /**
-  // updates the position and orientation of the Robot acording to the Action.
-  // \param a An Action object
-  // */
-  // virtual void update(Action const &a);
 
   /**
   updates the position and orientation of the Robot
@@ -79,6 +68,7 @@ public:
   \return the position of the Robot.
   */
   Vector_d getPosition() const;
+
   /**
   Set method for the Position.
   \param position the new position.
@@ -96,16 +86,19 @@ public:
   \param rotation the new rotation.
   */
   void setRotation(double rotation);
+
   /**
   Get method for the Robot body.
   \return the body of the Robot.
   */
   const Rectangle &getBody() const;
+
   /**
   set the list of visible Robots.
   \param scanTargets the list of visible Robots.
   */
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
+
   /**
   get a list of all visible Robots.
   \return the list of visible Robots.
@@ -115,7 +108,7 @@ public:
   /**
   Method that is called each time ther is a collision.
   */
-  // NOTE: we should pass the collision target so we can do better collision
+  // NOTE: we could pass the collision target so we can do better collision
   // resulution
   void onCollision();
 
@@ -132,8 +125,6 @@ private:
   double limitRate(double oldVal, double newVal, double maxRate,
                    double minRate);
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
-
-  Robot();
 };
 
 /**

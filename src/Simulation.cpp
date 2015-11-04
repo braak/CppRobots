@@ -7,9 +7,9 @@
 
 #include "Simulation.hpp"
 
-Simulation::Simulation(sf::Font &font, std::default_random_engine seed,
-                       const Rules &rules)
-    : rules(rules), font(font), generator(seed) {}
+Simulation::Simulation(const Rules &rules_,
+                       std::default_random_engine generator_)
+    : rules(rules_), generator(generator_) {}
 
 void Simulation::updatePlayers() {
   // set vision for all players
@@ -33,6 +33,7 @@ void Simulation::updatePlayers() {
       }
       // Collision collision(player1.second, player2.second);
       if (Collision(player1.second, player2.second)) {
+        // ReportCollision(player1, player2);
         player1.second.takeDamage(rules.collision_damage);
       }
     }
@@ -43,6 +44,7 @@ void Simulation::updatePlayers() {
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
         pos.y < 0) {
+      // ReportOutOfBounds(player);
       player.second.takeDamage(rules.collision_damage);
     }
   }
@@ -79,10 +81,11 @@ void Simulation::updateProjectiles() {
          projectile != projectiles.end();) {
       Collision collision(player.second, *projectile);
       if (collision) {
-        // remove projectile, and advance the iterator
-        projectile = projectiles.erase(projectile);
+        // ReportHit(player1, projectile.owner);
         // deal damage to the player
         player.second.takeDamage(rules.projectile_damage);
+        // remove projectile, and advance the iterator
+        projectile = projectiles.erase(projectile);
       } else {
         // advance the iterator
         ++projectile;
@@ -145,94 +148,4 @@ void Simulation::check_scan(Robot &robot) {
     }
   }
   robot.setScanTargets(std::move(scanTargets));
-}
-
-void Simulation::drawProjectile(sf::RenderTarget &target,
-                                sf::RenderStates states,
-                                const Projectile &projectile) const {
-  Rectangle body = projectile.getBody();
-
-  sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
-  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
-  rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
-  rect.setRotation(degrees(body.getRotation()));
-  target.draw(rect, states);
-}
-void Simulation::drawRobot(sf::RenderTarget &target, sf::RenderStates states,
-                           const Robot &robot) const {
-  Rectangle body = robot.getBody();
-
-  sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
-  rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
-  rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
-  rect.setRotation(degrees(body.getRotation()));
-  double a = robot.getHealth() / 100.0;
-  if (a > 0)
-    rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});
-  target.draw(rect, states);
-
-  sf::RectangleShape turret(
-      {(float)body.getSize().x, (float)body.getSize().y / 3});
-  turret.setPosition(
-      {(float)body.getPosition().x, (float)body.getPosition().y});
-  turret.setRotation(degrees(body.getRotation() + robot.getTurretAngle()));
-  turret.setOrigin(0.5 * body.getSize().x / 4, 0.5 * body.getSize().x / 4);
-
-  target.draw(turret, states);
-}
-
-void Simulation::drawArc(sf::RenderTarget &target, sf::RenderStates states,
-                         Vector_d position, double rotation, double radius,
-                         double angle) const {
-  /* NOTE: this function is very inefficient. It can be improved by having a
-  constant Arc object and modifiing its position via the transformation
-  matrix of RenderStates.
-  */
-  sf::VertexArray lines(sf::TrianglesFan);
-  lines.append({{(float)position.x, (float)position.y}, {0, 0, 255, 60}});
-
-  for (double alpha = -angle / 2; alpha <= angle / 2; alpha += angle / 16) {
-    float x = position.x + radius * cos(rotation - alpha);
-    float y = position.y + radius * sin(rotation - alpha);
-    lines.append({{x, y}, {0, 0, 255, 60}});
-  }
-  target.draw(lines, states);
-}
-
-void Simulation::drawPlayer(sf::RenderTarget &target, sf::RenderStates states,
-                            const std::string &name, const Robot &robot) const {
-  // drawRobot
-  drawRobot(target, states, robot);
-
-  // drawLable
-  Vector_d p = robot.getPosition();
-
-  sf::Text name_tag(name, font, 15);
-  name_tag.setOrigin(0.5 * name_tag.getLocalBounds().width, 0);
-  name_tag.setPosition({(float)p.x, (float)p.y + 15});
-
-  target.draw(name_tag, states);
-
-  // drawArc(target, states, p, robot.getRotation() + robot.getTurretAngle(),
-  //         rules.scan_range, rules.scan_angle);
-}
-
-void Simulation::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-  /*NOTE: This can be significantly simplified by using drawPlayer and calling
-     drawRobot, drawLable and drawArc after modifying states.transform
-  */
-  sf::RectangleShape rect(
-      {(float)rules.arena_size.x, (float)rules.arena_size.y});
-  rect.setFillColor(sf::Color::Transparent);
-  rect.setOutlineColor(sf::Color::White);
-  rect.setOutlineThickness(10);
-  target.draw(rect, states);
-
-  for (auto const &player : players) {
-    drawPlayer(target, states, player.first, player.second);
-  }
-
-  for (auto const &projectile : projectiles) {
-    drawProjectile(target, states, projectile);
-  }
 }

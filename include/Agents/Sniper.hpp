@@ -15,7 +15,7 @@
 
 #include <iostream>
 /**
-  \brief An Agent that follows the closes visible Robot.
+  \brief An Agent that shoots the closes visible Robot.
 */
 class Sniper final : public Agent {
 
