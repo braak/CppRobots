@@ -6,9 +6,32 @@
 */
 
 #include <iostream>
+#include <math.h>
 
 #include "CppRobots.hpp"
 #include "Agents/Sniper.hpp"
+
+class SimulationConsole : public Simulation {
+  double runTime = 0;
+
+public:
+  SimulationConsole(const Rules &rules, std::default_random_engine rng)
+      : Simulation(rules, rng) {
+    std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
+  };
+  void update() {
+    Simulation::update();
+
+    runTime += rules.timeStep;
+    std::cout << "runTime = " << int(runTime / 60) << ":" << fmod(runTime, 60)
+              << std::endl;
+
+    for (auto const &player : players) {
+      std::cout << player.first << " at " << player.second.getPosition() << ", "
+                << player.second.getHealth() << " health" << std::endl;
+    }
+  }
+};
 
 /**
     This is the main function of the program.
@@ -19,16 +42,13 @@ int main() {
       std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
-  Simulation simulation(Rules::defaultRules(), rng);
-
-  std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
+  SimulationConsole simulation(Rules::defaultRules(), rng);
 
   std::vector<std::string> names = {
       "Albert", "Bob",     "Charlie", "Daisy",  "Eric",   "Frank", "Guinevere",
       "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
       "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
       "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
-
   // create the players
   for (auto &name : names) {
     // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
@@ -37,7 +57,7 @@ int main() {
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 
-  for (size_t i = 0; i < 1000; i++) {
+  for (size_t i = 0; i < 10000; i++) {
     simulation.update();
   }
   return 0;

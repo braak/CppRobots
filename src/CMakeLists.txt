@@ -13,8 +13,7 @@ endif()
 
 
 # A library used by all programs
-add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Projectile.cpp SimulationSFML.cpp)
-
+add_library(CppRobots Pose.cpp FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Projectile.cpp)
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES
@@ -23,7 +22,7 @@ file(GLOB AGENT_SOURCES
 add_library(CppRobotsAgents ${AGENT_SOURCES})
 target_link_libraries(CppRobotsAgents CppRobots)
 
-# The first program is for commandline use.
+# The program for commandline use.
 add_executable(robots robots.cpp)
 target_link_libraries(robots CppRobots CppRobotsAgents)
 
@@ -32,7 +31,7 @@ find_package(SFML 2 COMPONENTS system window graphics)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
 
-    # A library used by programms using SFML
+    # The library used by programms using SFML
     add_library(CppRobotsSFML  SimulationSFML.cpp)
     target_link_libraries(CppRobotsSFML ${SFML_LIBRARIES})
 
