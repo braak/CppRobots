@@ -22,6 +22,7 @@
 #include "Agent.hpp"
 
 class Agent;
+
 /**
     \brief The Robot class represents the movement behavior, position
    and orientation of a player.
@@ -45,6 +46,43 @@ private:
   // Methodes
 public:
   /**
+  Get method for the position of the Robot.
+  \return the position of the Robot.
+  */
+  Vector_d getPosition() const;
+
+  /**
+  Get method for the rotation of the Robot.
+  \return the rotation of the Robot.
+  */
+  double getRotation() const;
+
+  /**
+  Get method for the Robot body.
+  \return the body of the Robot.
+  */
+  const Rectangle &getBody() const;
+
+  /**
+  get a list of all visible Robots.
+  \return the list of visible Robots.
+  */
+  std::list<std::shared_ptr<Robot>> scanAll() const;
+
+  std::shared_ptr<Robot> scanClosest() const;
+
+  std::shared_ptr<Robot> scanAny() const;
+
+  /**
+  returns the current health of the Robot.
+  */
+  double getHealth() const;
+
+  double getTurretAngle() const;
+
+private:
+  friend class Simulation;
+  /**
   Constructs a Robot with a specified timeStep. The timeStep determins the
   simulation speed.
   \param rules the Rules of the game.
@@ -64,22 +102,10 @@ public:
   void setAgent(Agent *agent);
 
   /**
-  Get method for the position of the Robot.
-  \return the position of the Robot.
-  */
-  Vector_d getPosition() const;
-
-  /**
   Set method for the Position.
   \param position the new position.
   */
   void setPosition(Vector_d position);
-
-  /**
-  Get method for the rotation of the Robot.
-  \return the rotation of the Robot.
-  */
-  double getRotation() const;
 
   /**
   Set method for the Rotation.
@@ -88,22 +114,10 @@ public:
   void setRotation(double rotation);
 
   /**
-  Get method for the Robot body.
-  \return the body of the Robot.
-  */
-  const Rectangle &getBody() const;
-
-  /**
   set the list of visible Robots.
   \param scanTargets the list of visible Robots.
   */
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
-
-  /**
-  get a list of all visible Robots.
-  \return the list of visible Robots.
-  */
-  std::list<std::shared_ptr<Robot>> getScanTargets() const;
 
   /**
   Method that is called each time ther is a collision.
@@ -112,14 +126,7 @@ public:
   // resulution
   void onCollision();
 
-  /**
-  returns the current health of the Robot.
-  */
-  double getHealth() const;
-
   double takeDamage(double damage);
-
-  double getTurretAngle() const;
 
 private:
   double limitRate(double oldVal, double newVal, double maxRate,

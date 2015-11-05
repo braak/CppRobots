@@ -41,11 +41,11 @@ int main() {
 
   SimulationSFML simulation(Rules::defaultRules(), rng, font);
 
-  std::vector<std::string> names = {
-      "Albert", "Bob",     "Charlie", "Daisy",  "Eric",   "Frank", "Guinevere",
-      "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
-      "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
-      "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
+  auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
+                "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
+                "Marge",     "Nemo", "Oscar",   "Paige", "Quentin", "Romeo",
+                "Stuart",    "Tina", "Usain",   "Val",   "Wilhelm", "Xerxes",
+                "Yvonne",    "Zack"};
 
   // create the players
   for (auto &name : names) {

@@ -49,6 +49,7 @@ int main() {
       "Hiro",   "Isabel",  "Julia",   "Kate",   "Ludwig", "Marge", "Nemo",
       "Oscar",  "Paige",   "Quentin", "Romeo",  "Stuart", "Tina",  "Usain",
       "Val",    "Wilhelm", "Xerxes",  "Yvonne", "Zack"};
+
   // create the players
   for (auto &name : names) {
     // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
@@ -57,7 +58,7 @@ int main() {
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 
-  for (size_t i = 0; i < 10000; i++) {
+  for (size_t i = 0; i < 5000; i++) {
     simulation.update();
   }
   return 0;

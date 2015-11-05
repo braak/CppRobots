@@ -13,29 +13,18 @@ Follower::Follower(double target_distance, double K_distance, double K_beta)
 }
 
 Action Follower::update(Robot const &r) {
-  auto scanTargets = r.getScanTargets();
+  std::shared_ptr<Robot> target_robot = r.scanClosest();
 
-  if (scanTargets.empty()) {
+  if (!target_robot) {
     // If no visible Robot, turn in circle.
     // NOTE: for faster turning, we could also turn our turret, but we'd have to
     // be carefull not to overshoot. Also navigating to the target gets a bit
     // more complex that way.
     return {0, -r.rules.scan_angle / r.rules.timeStep, 0, false};
   }
+
   Vector_d position = r.getPosition();
   double rotation = r.getRotation();
-  /*
-    find the closes visible Robot
-  */
-  auto cmp = [position](const std::shared_ptr<Robot> &a,
-                        const std::shared_ptr<Robot> &b) -> bool {
-    const Vector_d vector_a = a->getPosition() - position;
-    const Vector_d vector_b = b->getPosition() - position;
-    return vector_a.magnitude() < vector_b.magnitude();
-  };
-  scanTargets.sort(cmp);
-
-  std::shared_ptr<Robot> target_robot = scanTargets.front();
 
   Vector_d target_position = target_robot->getPosition();
   Vector_d diff = position - target_position;

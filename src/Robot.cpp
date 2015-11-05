@@ -13,8 +13,6 @@ Robot::Robot(const Rules &rules, Agent *agent_)
     : shooting(false), rules(rules), body(rules.robot_size),
       health(rules.max_health), agent(std::shared_ptr<Agent>(agent_)) {}
 
-// Robot::Robot(const Robot &robot) {}
-
 void Robot::setPosition(Vector_d position) { body.setPosition(position); }
 Vector_d Robot::getPosition() const { return body.getPosition(); }
 
@@ -40,7 +38,7 @@ void Robot::update() {
   // set the turretAngle
   turretAngle = limitRate(turretAngle, a.turretAngle, rules.turret_w_max,
                           -rules.turret_w_max);
-  turretAngle = wrapRadians(turretAngle);
+  turretAngle = turretAngle;
 
   // shoot
   cooldown -= rules.timeStep;
@@ -56,8 +54,28 @@ void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
   scanTargets = scanTargets_;
 }
 
-std::list<std::shared_ptr<Robot>> Robot::getScanTargets() const {
-  return scanTargets;
+std::list<std::shared_ptr<Robot>> Robot::scanAll() const { return scanTargets; }
+
+std::shared_ptr<Robot> Robot::scanClosest() const {
+  if (scanTargets.empty()) {
+    return nullptr;
+  }
+  std::shared_ptr<Robot> target = scanTargets.front();
+  for (const auto &currentTarget : scanTargets) {
+    const Vector_d vector_a = target->getPosition() - body.getPosition();
+    const Vector_d vector_b = currentTarget->getPosition() - body.getPosition();
+    if (vector_a.magnitude() > vector_b.magnitude()) {
+      target = currentTarget;
+    }
+  }
+  return target;
+}
+
+std::shared_ptr<Robot> Robot::scanAny() const {
+  if (scanTargets.empty()) {
+    return nullptr;
+  }
+  return scanTargets.front();
 }
 
 void Robot::onCollision() { takeDamage(rules.collision_damage); }
