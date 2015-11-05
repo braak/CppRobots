@@ -112,7 +112,7 @@ void Simulation::addPlayer(std::string name, Robot &player) {
   players.insert(KeyValuePair(name, std::move(player)));
 }
 void Simulation::newPlayer(std::string name, Agent *agent) {
-  Robot player(rules, agent);
+  Robot player(rules, std::move(agent));
 
   std::uniform_real_distribution<double> pos_x(0, rules.arena_size.x);
   std::uniform_real_distribution<double> pos_y(0, rules.arena_size.y);

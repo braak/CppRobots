@@ -88,7 +88,7 @@ private:
   \param rules the Rules of the game.
   \param agent the Agent ust to controll the Robot.
   */
-  Robot(const Rules &rules, Agent *agent = nullptr);
+  Robot(const Rules &rules, Agent *agent);
 
   /**
   updates the position and orientation of the Robot

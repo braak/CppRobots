@@ -33,16 +33,18 @@ public:
 
   /**
   This method is called to signal the start of a frame.
+    \param wait Wheter to wait for the next frame or not.
   */
-  void startFrame();
+  void startFrame(bool wait = false);
   /**
   This method is called to signal the end of a frame.
 
-  If wait is true it lets the current thread sleep until the targetTime is reached.
+  If wait is true it lets the current thread sleep until the targetTime is
+  reached.
 
-  \param wait Wheter to wait for the next frame or not.
+
   */
-  void endFrame(bool wait = false);
+  void endFrame();
 
   /**
   Returns the current framerate.

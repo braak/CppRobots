@@ -8,8 +8,8 @@
 #include "SimulationSFML.hpp"
 
 SimulationSFML::SimulationSFML(const Rules &rules,
-                               std::default_random_engine rng, sf::Font font)
-    : Simulation(rules, rng), font(font),
+                               std::default_random_engine rng, sf::Font font_)
+    : Simulation(rules, rng), font(font_),
       window(sf::VideoMode::getDesktopMode(), window_name),
       frameTimer(rules.timeStep) {
 
@@ -18,11 +18,14 @@ SimulationSFML::SimulationSFML(const Rules &rules,
   view.setCenter(
       {(float)rules.arena_size.x / 2, (float)rules.arena_size.y / 2});
   window.setView(view);
+
+  fps_counter.setFont(font);
+  fps_counter.setCharacterSize(10);
 }
 
 void SimulationSFML::update() {
 
-  frameTimer.startFrame();
+  frameTimer.startFrame(true);
 
   sf::Event event;
   while (window.pollEvent(event)) {
@@ -57,17 +60,8 @@ void SimulationSFML::update() {
   // clear-draw-display cycle
   window.clear(sf::Color::Black);
 
-  /*NOTE: This can be significantly simplified by using drawPlayer and calling
-     drawRobot, drawLable and drawArc after modifying states.transform
-  */
-
   // draw Arena
-  sf::RectangleShape rect(
-      {(float)rules.arena_size.x, (float)rules.arena_size.y});
-  rect.setFillColor(sf::Color::Transparent);
-  rect.setOutlineColor(sf::Color::White);
-  rect.setOutlineThickness(10);
-  window.draw(rect);
+  drawArena(window);
 
   // draw all players
   for (auto const &player : players) {
@@ -77,17 +71,12 @@ void SimulationSFML::update() {
   for (auto const &projectile : projectiles) {
     drawProjectile(window, projectile);
   }
-
   // draw UI
-  sf::View old_view = window.getView();
-  window.setView(sf::View({0.f, 0.f, static_cast<float>(window.getSize().x),
-                           static_cast<float>(window.getSize().y)}));
-  window.draw(fps_counter);
-  window.setView(old_view);
+  drawUI(window);
 
   window.display();
 
-  frameTimer.endFrame(true);
+  frameTimer.endFrame();
 }
 
 void SimulationSFML::drawProjectile(sf::RenderTarget &target,
@@ -124,8 +113,9 @@ void SimulationSFML::drawRobot(sf::RenderTarget &target,
 }
 
 void SimulationSFML::drawArc(sf::RenderTarget &target, Vector_d position,
-                             double rotation, double radius,
-                             double angle) const {
+                             double rotation) const {
+  double angle = rules.scan_angle;
+  double radius = rules.scan_range;
   /* NOTE: this function is very inefficient. It can be improved by having a
   constant Arc object and modifiing its position via the transformation
   matrix of RenderStates acording to the player position.
@@ -142,21 +132,45 @@ void SimulationSFML::drawArc(sf::RenderTarget &target, Vector_d position,
 }
 
 void SimulationSFML::drawPlayer(sf::RenderTarget &target,
-
                                 const std::string &name,
                                 const Robot &robot) const {
   // drawRobot
   drawRobot(target, robot);
 
   // drawLable
-  Vector_d p = robot.getPosition();
+  drawLable(target, name, robot.getPosition());
+  // Vector_d p = robot.getPosition();
 
+  drawArc(target, robot.getPosition(),
+          robot.getRotation() + robot.getTurretAngle());
+}
+
+void SimulationSFML::drawUI(sf::RenderTarget &target) const {
+  sf::View old_view = target.getView();
+  target.setView(sf::View({0.f, 0.f, static_cast<float>(target.getSize().x),
+                           static_cast<float>(target.getSize().y)}));
+
+  target.draw(fps_counter);
+  // Other UI elements go here
+
+  target.setView(old_view);
+}
+
+void SimulationSFML::drawLable(sf::RenderTarget &target,
+                               const std::string &name,
+                               const Vector_d &position) const {
   sf::Text name_tag(name, font, 15);
   name_tag.setOrigin(0.5 * name_tag.getLocalBounds().width, 0);
-  name_tag.setPosition({(float)p.x, (float)p.y + 15});
+  name_tag.setPosition({(float)position.x, (float)position.y + 15});
 
   target.draw(name_tag);
+}
 
-  // drawArc(target, states, p, robot.getRotation() + robot.getTurretAngle(),
-  //         rules.scan_range, rules.scan_angle);
+void SimulationSFML::drawArena(sf::RenderTarget &target) const {
+  sf::RectangleShape rect(
+      {(float)rules.arena_size.x, (float)rules.arena_size.y});
+  rect.setFillColor(sf::Color::Transparent);
+  rect.setOutlineColor(sf::Color::White);
+  rect.setOutlineThickness(5);
+  target.draw(rect);
 }

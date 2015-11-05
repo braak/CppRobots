@@ -45,14 +45,16 @@ public:
 private:
   void drawProjectile(sf::RenderTarget &target,
                       const Projectile &projectile) const;
-  void drawArc(sf::RenderTarget &target, Vector_d position, double rotation,
-               double radius, double angle) const;
+  void drawArc(sf::RenderTarget &target, Vector_d position,
+               double rotation) const;
   void drawPlayer(sf::RenderTarget &target, const std::string &name,
                   const Robot &robot) const;
-
+  void drawLable(sf::RenderTarget &target, const std::string &name,
+                 const Vector_d &position) const;
   void drawRobot(sf::RenderTarget &target, const Robot &robot) const;
 
   void drawUI(sf::RenderTarget &target) const;
+  void drawArena(sf::RenderTarget &target) const;
 };
 
 #endif /* end of include guard: __SIMULATION_SFML__ */

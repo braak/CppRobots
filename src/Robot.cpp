@@ -11,7 +11,8 @@
 
 Robot::Robot(const Rules &rules, Agent *agent_)
     : shooting(false), rules(rules), body(rules.robot_size),
-      health(rules.max_health), agent(std::shared_ptr<Agent>(agent_)) {}
+      health(rules.max_health),
+      agent(std::shared_ptr<Agent>(std::move(agent_))) {}
 
 void Robot::setPosition(Vector_d position) { body.setPosition(position); }
 Vector_d Robot::getPosition() const { return body.getPosition(); }
