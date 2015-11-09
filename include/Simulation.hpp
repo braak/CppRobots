@@ -25,13 +25,10 @@ public:
   const Rules rules;
 
 protected:
-  // using KeyValuePair = std::pair<std::string, Player>;
-  // std::map<std::string, Player> players;
   using KeyValuePair = std::pair<std::string, Robot>;
   std::map<std::string, Robot> players;
   std::list<Projectile> projectiles;
 
-  // const double timeStep;
   std::default_random_engine generator;
 
 public:
@@ -40,8 +37,6 @@ public:
   void update();
 
 private:
-  void addPlayer(std::string name, Robot &player);
-
   void updatePlayers();
   void updateProjectiles();
 

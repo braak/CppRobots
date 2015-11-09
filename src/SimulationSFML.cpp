@@ -8,8 +8,8 @@
 #include "SimulationSFML.hpp"
 
 SimulationSFML::SimulationSFML(const Rules &rules,
-                               std::default_random_engine rng, sf::Font font_)
-    : Simulation(rules, rng), font(font_),
+                               std::default_random_engine rng)
+    : Simulation(rules, rng),
       window(sf::VideoMode::getDesktopMode(), window_name),
       frameTimer(rules.timeStep) {
 
@@ -19,6 +19,14 @@ SimulationSFML::SimulationSFML(const Rules &rules,
       {(float)rules.arena_size.x / 2, (float)rules.arena_size.y / 2});
   window.setView(view);
 
+  // Load resources
+  if (!font.loadFromFile(fontName)) {
+    if (!font.loadFromFile("bin/" + fontName)) {
+      throw std::runtime_error("unable to load font");
+    }
+  }
+
+  // set static artibutes
   fps_counter.setFont(font);
   fps_counter.setCharacterSize(10);
 }
@@ -53,6 +61,9 @@ void SimulationSFML::update() {
   }
 
   Simulation::update();
+  /*NOTE: to get better perfomance for drawing only create only create the
+   * Graphical objets once and update their state here.
+  */
 
   // Update the fps_counter
   fps_counter.setString(frameTimer.getOutput());
@@ -107,7 +118,7 @@ void SimulationSFML::drawRobot(sf::RenderTarget &target,
   turret.setPosition(
       {(float)body.getPosition().x, (float)body.getPosition().y});
   turret.setRotation(degrees(body.getRotation() + robot.getTurretAngle()));
-  turret.setOrigin(0.5 * body.getSize().x / 4, 0.5 * body.getSize().x / 4);
+  turret.setOrigin(0.5 * turret.getSize().y, 0.5 * turret.getSize().y);
 
   target.draw(turret);
 }
@@ -123,7 +134,10 @@ void SimulationSFML::drawArc(sf::RenderTarget &target, Vector_d position,
   sf::VertexArray lines(sf::TrianglesFan);
   lines.append({{(float)position.x, (float)position.y}, {0, 0, 255, 60}});
 
-  for (double alpha = -angle / 2; alpha <= angle / 2; alpha += angle / 16) {
+  const size_t numPoints = 16;
+  for (size_t i = 0; i < numPoints; i++) {
+    // angle*(i/numPoints - 0.5)
+    double alpha = -angle / 2 + i * angle / numPoints;
     float x = position.x + radius * cos(rotation - alpha);
     float y = position.y + radius * sin(rotation - alpha);
     lines.append({{x, y}, {0, 0, 255, 60}});
@@ -139,10 +153,9 @@ void SimulationSFML::drawPlayer(sf::RenderTarget &target,
 
   // drawLable
   drawLable(target, name, robot.getPosition());
-  // Vector_d p = robot.getPosition();
 
-  drawArc(target, robot.getPosition(),
-          robot.getRotation() + robot.getTurretAngle());
+  // drawArc(target, robot.getPosition(),
+  //         robot.getRotation() + robot.getTurretAngle());
 }
 
 void SimulationSFML::drawUI(sf::RenderTarget &target) const {

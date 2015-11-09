@@ -21,18 +21,20 @@
 
 class SimulationSFML : public Simulation {
 private:
-  sf::Font font;
   const std::string window_name = "CppRobot Gui " + std::string(VERSION_SHORT);
+  const std::string fontName = "resources/font/liberation-fonts-ttf-2.00.1/"
+                               "LiberationSans-Regular.ttf";
   sf::RenderWindow window;
   FrameTimer frameTimer;
+
   sf::Text fps_counter;
+  sf::Font font;
 
   const double zoom_speed = 0.8;
   double zoom_level = 1;
 
 public:
-  SimulationSFML(const Rules &rules, std::default_random_engine rng,
-                 sf::Font font);
+  SimulationSFML(const Rules &rules, std::default_random_engine rng);
 
   void update();
 

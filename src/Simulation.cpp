@@ -21,43 +21,59 @@ void Simulation::updatePlayers() {
     player.second.update();
   }
 
-  // check collision between playeres
-  // std::list<Robot *> collisions;
-  // NOTE: currently we check each pair of players twice, once for
-  // Collision(A,B) and once for Collision(B,A).
-  for (auto &player1 : players) {
+  for (auto &player : players) {
+    // check collision between playeres
+    // std::list<Robot *> collisions;
+    // NOTE: currently we check each pair of players twice, once for
+    // Collision(A,B) and once for Collision(B,A).
     for (auto const &player2 : players) {
-      if (&player1 == &player2) {
+      if (&player == &player2) {
         // dont check collision with self.
         continue;
       }
       // Collision collision(player1.second, player2.second);
-      if (Collision(player1.second, player2.second)) {
+      if (Collision(player.second, player2.second)) {
         // ReportCollision(player1, player2);
-        player1.second.takeDamage(rules.collision_damage);
+        player.second.takeDamage(rules.collision_damage);
       }
     }
-  }
 
-  // check if any player is outside the arena
-  for (auto &player : players) {
+    // check if any player is outside the arena
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
         pos.y < 0) {
       // ReportOutOfBounds(player);
       player.second.takeDamage(rules.collision_damage);
     }
-  }
 
-  // see if any player wants to shoot
-  for (auto &player : players) {
+    // check collision between player and projectile
+    for (auto projectile = projectiles.begin();
+         projectile != projectiles.end();) {
+      Collision collision(player.second, *projectile);
+      if (collision) {
+        // ReportHit(player1, projectile.owner);
+        // deal damage to the player
+        player.second.takeDamage(rules.projectile_damage);
+        // remove projectile, and advance the iterator
+        projectile = projectiles.erase(projectile);
+      } else {
+        // advance the iterator
+        ++projectile;
+      }
+    }
+
+    // see if any player wants to shoot
     if (player.second.shooting) {
+      // reset the shooting flag
       player.second.shooting = false;
+      // calculate the direction in which the Robot shoots
       double direction =
           player.second.getRotation() + player.second.getTurretAngle();
       Vector_d porjectilePosition = player.second.getPosition();
       // make sure we create the Projectile outside the player
-      porjectilePosition += Vector_d::polar(direction, rules.robot_size.x + 1);
+      porjectilePosition += Vector_d::polar(
+          direction, rules.robot_size.x / 2 + rules.projectile_size.x / 2 + 1);
+      // create the Projectile
       projectiles.push_back(Projectile(rules, porjectilePosition, direction));
     }
   }
@@ -74,28 +90,10 @@ void Simulation::updateProjectiles() {
     return pos.x > rules.arena_size.x || pos.y > rules.arena_size.y ||
            pos.x < 0 || pos.y < 0;
   });
-
-  // check collision between player and projectile
-  for (auto &player : players) {
-    for (auto projectile = projectiles.begin();
-         projectile != projectiles.end();) {
-      Collision collision(player.second, *projectile);
-      if (collision) {
-        // ReportHit(player1, projectile.owner);
-        // deal damage to the player
-        player.second.takeDamage(rules.projectile_damage);
-        // remove projectile, and advance the iterator
-        projectile = projectiles.erase(projectile);
-      } else {
-        // advance the iterator
-        ++projectile;
-      }
-    }
-  }
 }
 void Simulation::update() {
-  updatePlayers();
   updateProjectiles();
+  updatePlayers();
 
   // remove players that don't have health left.
   auto pred = [](const std::pair<const std::string, Robot> &robot) {
@@ -108,9 +106,9 @@ void Simulation::update() {
   }
 }
 
-void Simulation::addPlayer(std::string name, Robot &player) {
-  players.insert(KeyValuePair(name, std::move(player)));
-}
+// void Simulation::addPlayer(std::string name, Robot &player) {
+//   players.insert({name, std::move(player)});
+// }
 void Simulation::newPlayer(std::string name, Agent *agent) {
   Robot player(rules, std::move(agent));
 
@@ -120,7 +118,7 @@ void Simulation::newPlayer(std::string name, Agent *agent) {
   player.setPosition({pos_x(generator), pos_y(generator)});
   player.setRotation(rot(generator));
 
-  addPlayer(name, player);
+  players.insert({name, std::move(player)});
 }
 bool Simulation::inSector(Vector_d const &p1, double rotation,
                           Vector_d const &p2) const {

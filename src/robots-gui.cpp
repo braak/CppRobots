@@ -32,14 +32,7 @@ int main() {
       std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine rng(seed);
 
-  // Load resources
-  sf::Font font;
-  if (!font.loadFromFile("resources/font/liberation-fonts-ttf-2.00.1/"
-                         "LiberationSans-Regular.ttf")) {
-    throw std::runtime_error("unable to load font");
-  }
-
-  SimulationSFML simulation(Rules::defaultRules(), rng, font);
+  SimulationSFML simulation(Rules::defaultRules(), rng);
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",

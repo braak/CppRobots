@@ -8,7 +8,9 @@
 #include "FrameTimer.hpp"
 #include <sstream>
 
-FrameTimer::FrameTimer(float targetTime) : targetTime(targetTime) {}
+FrameTimer::FrameTimer(float targetTime)
+    : targetTime(targetTime),
+      startOfFrame(std::chrono::high_resolution_clock::now()) {}
 FrameTimer::~FrameTimer() {}
 
 void FrameTimer::startFrame(bool wait) {
@@ -25,7 +27,9 @@ void FrameTimer::endFrame() {
 }
 
 float FrameTimer::getFps() { return 1.0 / frameTime.count(); }
+
 float FrameTimer::getFrameTime() { return frameTime.count(); }
+
 std::string FrameTimer::getOutput() {
   std::stringstream outputString;
   outputString << getFps() << "(" << getFrameTime() * 1000 << " ms)";
