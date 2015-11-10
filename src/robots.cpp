@@ -12,7 +12,6 @@
 #include "Agents/Sniper.hpp"
 
 class SimulationConsole : public Simulation {
-  double runTime = 0;
 
 public:
   SimulationConsole(const Rules &rules, std::default_random_engine rng)
@@ -22,7 +21,6 @@ public:
   void update() {
     Simulation::update();
 
-    runTime += rules.timeStep;
     std::cout << "runTime = " << int(runTime / 60) << ":" << fmod(runTime, 60)
               << std::endl;
 
@@ -58,7 +56,7 @@ int main() {
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 
-  for (size_t i = 0; i < 5000; i++) {
+  while (simulation.getRuntime() < 120) {
     simulation.update();
   }
   return 0;

@@ -32,7 +32,7 @@ struct Rules {
   double projectile_damage;
 
   constexpr static Rules defaultRules() {
-    return {1 / 10.0,
+    return {1 / 60.0,
             1000.0,
             M_PI / 3,
             {30, 18},

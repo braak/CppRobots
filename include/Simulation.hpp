@@ -31,10 +31,16 @@ protected:
 
   std::default_random_engine generator;
 
+  double runTime = 0;
+
 public:
   Simulation(const Rules &rules, std::default_random_engine rng);
   void newPlayer(std::string name, Agent *agent);
+  void newPlayer(std::string name, Agent *agent, Vector_d position,
+                 double rotation);
   void update();
+
+  double getRuntime() const;
 
 private:
   void updatePlayers();

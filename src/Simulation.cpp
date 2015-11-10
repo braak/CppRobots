@@ -16,11 +16,28 @@ void Simulation::updatePlayers() {
   for (auto &player : players) {
     check_scan(player.second);
   }
-  // move the player and spawn projectiles
+  // Player Actions: Movement and Shooting
   for (auto &player : players) {
     player.second.update();
+
+    // see if any player wants to shoot
+    if (player.second.shooting) {
+      // reset the shooting flag
+      player.second.shooting = false;
+      // calculate the direction in which the Robot shoots
+      double direction =
+          player.second.getRotation() + player.second.getTurretAngle();
+      Vector_d porjectilePosition = player.second.getPosition();
+      // make sure we create the Projectile outside the player
+      porjectilePosition += Vector_d::polar(
+          direction,
+          Vector_d(rules.robot_size.x, rules.projectile_size.x).magnitude());
+      // create the Projectile
+      projectiles.push_back(Projectile(rules, porjectilePosition, direction));
+    }
   }
 
+  // resolve Player Actions
   for (auto &player : players) {
     // check collision between playeres
     // std::list<Robot *> collisions;
@@ -28,10 +45,9 @@ void Simulation::updatePlayers() {
     // Collision(A,B) and once for Collision(B,A).
     for (auto const &player2 : players) {
       if (&player == &player2) {
-        // dont check collision with self.
+        // don't check collision with self.
         continue;
       }
-      // Collision collision(player1.second, player2.second);
       if (Collision(player.second, player2.second)) {
         // ReportCollision(player1, player2);
         player.second.takeDamage(rules.collision_damage);
@@ -51,7 +67,7 @@ void Simulation::updatePlayers() {
          projectile != projectiles.end();) {
       Collision collision(player.second, *projectile);
       if (collision) {
-        // ReportHit(player1, projectile.owner);
+        // ReportHit(player1, projectile.owner;
         // deal damage to the player
         player.second.takeDamage(rules.projectile_damage);
         // remove projectile, and advance the iterator
@@ -60,21 +76,6 @@ void Simulation::updatePlayers() {
         // advance the iterator
         ++projectile;
       }
-    }
-
-    // see if any player wants to shoot
-    if (player.second.shooting) {
-      // reset the shooting flag
-      player.second.shooting = false;
-      // calculate the direction in which the Robot shoots
-      double direction =
-          player.second.getRotation() + player.second.getTurretAngle();
-      Vector_d porjectilePosition = player.second.getPosition();
-      // make sure we create the Projectile outside the player
-      porjectilePosition += Vector_d::polar(
-          direction, rules.robot_size.x / 2 + rules.projectile_size.x / 2 + 1);
-      // create the Projectile
-      projectiles.push_back(Projectile(rules, porjectilePosition, direction));
     }
   }
 }
@@ -104,22 +105,30 @@ void Simulation::update() {
     // ReportDeath(player)
     players.erase(it++);
   }
+
+  runTime += rules.timeStep;
 }
 
-// void Simulation::addPlayer(std::string name, Robot &player) {
-//   players.insert({name, std::move(player)});
-// }
 void Simulation::newPlayer(std::string name, Agent *agent) {
-  Robot player(rules, std::move(agent));
 
-  std::uniform_real_distribution<double> pos_x(0, rules.arena_size.x);
-  std::uniform_real_distribution<double> pos_y(0, rules.arena_size.y);
+  std::uniform_real_distribution<double> x(0, rules.arena_size.x);
+  std::uniform_real_distribution<double> y(0, rules.arena_size.y);
   std::uniform_real_distribution<double> rot(0, 2 * M_PI);
-  player.setPosition({pos_x(generator), pos_y(generator)});
-  player.setRotation(rot(generator));
 
+  newPlayer(name, agent, {x(generator), y(generator)}, rot(generator));
+}
+
+void Simulation::newPlayer(std::string name, Agent *agent, Vector_d position,
+                           double rotation) {
+
+  Robot player(rules, std::move(agent));
+  player.setPosition(position);
+  player.setRotation(rotation);
   players.insert({name, std::move(player)});
 }
+
+double Simulation::getRuntime() const { return runTime; }
+
 bool Simulation::inSector(Vector_d const &p1, double rotation,
                           Vector_d const &p2) const {
   const Vector_d v = p2 - p1;
@@ -140,7 +149,7 @@ void Simulation::check_scan(Robot &robot) {
       continue;
     }
     Vector_d pose1 = robot.getPosition();
-    double rotation = robot.getRotation() + robot.getTurretAngle();
+    double rotation = wrapRadians(robot.getRotation() + robot.getTurretAngle());
     Vector_d pose2 = player2.second.getPosition();
     if (inSector(pose1, rotation, pose2)) {
       scanTargets.push_back(std::make_shared<Robot>(player2.second));

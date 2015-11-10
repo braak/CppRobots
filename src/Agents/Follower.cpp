@@ -27,8 +27,8 @@ Action Follower::update(Robot const &r) {
   double rotation = r.getRotation();
 
   Vector_d target_position = target_robot->getPosition();
-  Vector_d diff = position - target_position;
+  Vector_d diff = target_position - position;
   const double distance_error = diff.magnitude() - target_distance;
-  const double angle_error = angDiffRadians(rotation, diff.angle());
+  const double angle_error = angDiffRadians(diff.angle(), rotation);
   return {K_distance * distance_error, K_beta * angle_error, 0, false};
 }
