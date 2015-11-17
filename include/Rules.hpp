@@ -17,6 +17,7 @@
 struct Rules {
   double timeStep;          //!<
   double scan_range;        //!< Vision range of the Robot.
+  double scan_proximity;    //!< Vision range of the Robot.
   double scan_angle;        //!< Field of Veiw of the Robot.
   Vector_d robot_size;      //!< size of the Robot.
   Vector_d arena_size;      //!< size of the Arena.
@@ -34,19 +35,20 @@ struct Rules {
   constexpr static Rules defaultRules() {
     return {1 / 60.0,
             1000.0,
+            100,
             M_PI / 3,
             {30, 18},
             {1500, 1000},
-            60,
-            -15,
+            100,
+            -30,
             0.6,
             3.14,
             5,
             100,
             {4, 4},
-            500,
-            0.8,
-            20};
+            1000,
+            0.4,
+            10};
   }
 };
 

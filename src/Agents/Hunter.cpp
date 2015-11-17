@@ -16,43 +16,47 @@ Hunter::Hunter(double targetDistance, double K_beta, double K_distance)
     : targetDistance(targetDistance), K_beta(K_beta), K_distance(K_distance) {}
 
 Action Hunter::update(Robot const &r) {
-  // const double targetDistance = 100;
-  // const double K_beta = 100;
-  // const double K_distance = 30;
+
+  Vector_d targetPosition;
+  double turretAngle;
+  Vector_d deltaPosition;
 
   std::shared_ptr<Robot> targetRobot = r.scanClosest();
-
-  if (!targetRobot) {
-    std::cout << "Hunter: No Target" << std::endl;
-    return {0, 0, r.getTurretAngle() + r.rules.scan_angle, false};
-  }
-
   Vector_d position = r.getPosition();
   double rotation = r.getRotation();
+  // TODO: seperate movement and shooting code. Add Wall avoidance.
+  if (!targetRobot) {
+    targetPosition = r.rules.arena_size / 2.0;
 
-  Vector_d targetPosition = targetRobot->getPosition();
-  Vector_d deltaPosition = targetPosition - position;
-  Vector_d perp = (deltaPosition / deltaPosition.magnitude()).rotate(M_PI / 2);
+    deltaPosition = targetPosition - position;
 
-  const double turretAngle = deltaPosition.angle() - rotation;
+    turretAngle = r.getTurretAngle() + r.rules.scan_angle;
+  } else {
+    targetPosition = targetRobot->getPosition();
 
+    deltaPosition = targetPosition - position;
+
+    turretAngle = deltaPosition.angle() - rotation;
+  }
+
+  Vector_d perp = Vector_d(deltaPosition).rotate(M_PI / 2);
   // turn perpandicular to the target
   const double beta_error = angDiffRadians(perp.angle(), rotation);
   // turn toward the target
   const double angle_error = angDiffRadians(deltaPosition.angle(), rotation);
-  // How far are we away from the target.
-  const double distance_error =
-      (deltaPosition.magnitude() - targetDistance) / targetDistance;
+  // How far are we away from the target, as a value from -1 to 1.
+  const double distance_error = std::min(
+      (deltaPosition.magnitude() - targetDistance) / targetDistance, 1.0);
+
+  const double w = distance_error * angle_error * K_distance +
+                   (1 - distance_error) * beta_error * K_beta;
 
   bool shooting;
-  double beta = angDiffRadians(turretAngle, r.getTurretAngle());
-  if (-0.01 < beta && beta < 0.01) {
+  if (abs(angDiffRadians(turretAngle, r.getTurretAngle())) < 0.01 &&
+      targetRobot) {
     shooting = true;
   } else {
     shooting = false;
   }
-
-  const double w = distance_error * angle_error * K_distance +
-                   (1 - distance_error) * beta_error * K_beta;
   return {r.rules.v_max, w, turretAngle, shooting};
 }

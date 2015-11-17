@@ -129,6 +129,15 @@ private:
   double takeDamage(double damage);
 
 private:
+  template <class T>
+  const T &clamp(const T &value, const T &upperLimit, const T &lowerLimit) {
+    if (value > upperLimit) {
+      return upperLimit;
+    } else if (value < lowerLimit) {
+      return lowerLimit;
+    }
+    return value;
+  }
   double limitRate(double oldVal, double newVal, double maxRate,
                    double minRate);
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);

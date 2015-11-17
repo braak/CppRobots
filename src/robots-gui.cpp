@@ -6,7 +6,9 @@
 */
 
 #include "CppRobots.hpp"
+#include "Simulation.hpp"
 #include "SimulationSFML.hpp"
+// #include "SimulationConsole.hpp"
 
 #include "Agents/Orbiter.hpp"
 #include "Agents/Wanderer.hpp"
@@ -14,32 +16,32 @@
 #include "Agents/Sniper.hpp"
 #include "Agents/Hunter.hpp"
 
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
 #include <chrono>
-#include <iostream>
-#include <random>
+#include <functional>
 
 /**
     This is the main function of the program.
     \return returns 0 on success
 */
 int main() {
-  unsigned int seed =
-      std::chrono::system_clock::now().time_since_epoch().count();
-  std::default_random_engine rng(seed);
+  // unsigned int seed =
+  //     std::chrono::system_clock::now().time_since_epoch().count();
+  std::size_t seed = std::hash<std::string>()("Not Random");
 
-  SimulationSFML simulation(Rules::defaultRules(), rng);
+  std::shared_ptr<Simulation> simulation = std::shared_ptr<Simulation>(
+      new SimulationSFML(Rules::defaultRules(), seed));
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
                 "Marge",     "Nemo", "Oscar",   "Paige", "Quentin", "Romeo",
                 "Stuart",    "Tina", "Usain",   "Val",   "Wilhelm", "Xerxes",
                 "Yvonne",    "Zack"};
+
   // create the players
   for (auto &name : names) {
-    // simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max));
-    simulation.newPlayer(name, new Hunter(100, 100, 30));
+    /*simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max,
+                                            std::hash<std::string>()(name)));*/
+    simulation->newPlayer(name, new Hunter(100, 20, 30));
     // simulation.newPlayer(name, new Sniper());
     // simulation.newPlayer(name, new Follower(100, 100, 10));
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
@@ -48,7 +50,10 @@ int main() {
   // simulation.newPlayer("Hunter", new Hunter(100, 100, 30));
   // simulation.newPlayer("Target", new Wanderer(0, 0),
   //                      simulation.rules.arena_size / 2.0, 0.0);
-  simulation.run();
+
+  while (simulation->isRunning()) {
+    simulation->update();
+  }
 
   return 0;
 }

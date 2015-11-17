@@ -18,4 +18,5 @@ struct Action {
   double turretAngle;
   bool shooting;
 };
+
 #endif /* end of include guard: __ACTION__ */

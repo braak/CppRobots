@@ -34,20 +34,23 @@ protected:
   double runTime = 0;
 
 public:
-  Simulation(const Rules &rules, std::default_random_engine rng);
-  void newPlayer(std::string name, Agent *agent);
-  void newPlayer(std::string name, Agent *agent, Vector_d position,
-                 double rotation);
-  void update();
+  Simulation(const Rules &rules, unsigned int seed);
+  virtual void newPlayer(std::string name, Agent *agent);
+  virtual void newPlayer(std::string name, Agent *agent, Vector_d position,
+                         double rotation);
+  virtual void update();
 
-  double getRuntime() const;
+  virtual double getRuntime() const;
+  virtual int getNumPlayers() const;
+  virtual bool isRunning() const;
 
 private:
   void updatePlayers();
   void updateProjectiles();
 
   void check_scan(Robot &robot);
-  bool inSector(Vector_d const &p1, double rotation, Vector_d const &p2) const;
+  bool inScanArea(Vector_d const &p1, double rotation,
+                  Vector_d const &p2) const;
 };
 
 #endif /* end of include guard: __SIMULATION__ */

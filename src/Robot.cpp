@@ -28,24 +28,19 @@ void Robot::update() {
   }
   Action a = agent->update(*this);
 
-  const double v = std::max(std::min(a.v, rules.v_max), rules.v_min);
-  const double w = std::max(std::min(a.w, rules.w_max), -rules.w_max);
+  const double v = clamp(a.v, rules.v_max, rules.v_min);
+  const double w = clamp(a.w, rules.w_max, -rules.w_max);
 
   // move forward in the current direction
   body.move(Vector_d::polar(body.getRotation(), v * rules.timeStep));
   // turn
   body.rotate(w * rules.timeStep);
 
-  // set the turretAngle
-  // find the smallest angle between the current and the target angle
-  double turnRate = angDiffRadians(a.turretAngle, turretAngle) / rules.timeStep;
-  if (turnRate > rules.turret_w_max) {
-    turretAngle += rules.turret_w_max * rules.timeStep;
-  } else if (turnRate < -rules.turret_w_max) {
-    turretAngle -= rules.turret_w_max * rules.timeStep;
-  } else {
-    turretAngle = a.turretAngle;
-  }
+  const double turretTurnRate =
+      clamp(angDiffRadians(a.turretAngle, turretAngle),
+            rules.turret_w_max * rules.timeStep,
+            -rules.turret_w_max * rules.timeStep);
+  turretAngle += turretTurnRate;
 
   // shoot
   cooldown -= rules.timeStep;
@@ -71,6 +66,7 @@ std::shared_ptr<Robot> Robot::scanClosest() const {
   for (const auto &currentTarget : scanTargets) {
     const Vector_d vector_a = target->getPosition() - body.getPosition();
     const Vector_d vector_b = currentTarget->getPosition() - body.getPosition();
+
     if (vector_a.magnitude() > vector_b.magnitude()) {
       target = currentTarget;
     }

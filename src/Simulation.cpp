@@ -7,19 +7,21 @@
 
 #include "Simulation.hpp"
 
-Simulation::Simulation(const Rules &rules_,
-                       std::default_random_engine generator_)
-    : rules(rules_), generator(generator_) {}
+Simulation::Simulation(const Rules &rules_, unsigned int seed)
+    : rules(rules_), generator(seed) {}
 
 void Simulation::updatePlayers() {
   // set vision for all players
   for (auto &player : players) {
     check_scan(player.second);
   }
-  // Player Actions: Movement and Shooting
+  // Player Actions
   for (auto &player : players) {
     player.second.update();
+  }
 
+  // resolve Player Actions
+  for (auto &player : players) {
     // see if any player wants to shoot
     if (player.second.shooting) {
       // reset the shooting flag
@@ -35,10 +37,7 @@ void Simulation::updatePlayers() {
       // create the Projectile
       projectiles.push_back(Projectile(rules, porjectilePosition, direction));
     }
-  }
 
-  // resolve Player Actions
-  for (auto &player : players) {
     // check collision between playeres
     // std::list<Robot *> collisions;
     // NOTE: currently we check each pair of players twice, once for
@@ -49,7 +48,7 @@ void Simulation::updatePlayers() {
         continue;
       }
       if (Collision(player.second, player2.second)) {
-        // ReportCollision(player1, player2);
+        // ReportCollision(player1.second, player2.second);
         player.second.takeDamage(rules.collision_damage);
       }
     }
@@ -58,7 +57,7 @@ void Simulation::updatePlayers() {
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
         pos.y < 0) {
-      // ReportOutOfBounds(player);
+      // ReportOutOfBounds(player.second);
       player.second.takeDamage(rules.collision_damage);
     }
 
@@ -67,7 +66,7 @@ void Simulation::updatePlayers() {
          projectile != projectiles.end();) {
       Collision collision(player.second, *projectile);
       if (collision) {
-        // ReportHit(player1, projectile.owner;
+        // ReportHit(player1.second, projectile.owner);
         // deal damage to the player
         player.second.takeDamage(rules.projectile_damage);
         // remove projectile, and advance the iterator
@@ -102,7 +101,7 @@ void Simulation::update() {
   };
   auto it = players.begin();
   while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
-    // ReportDeath(player)
+    // ReportDeath(player.second)
     players.erase(it++);
   }
 
@@ -128,18 +127,26 @@ void Simulation::newPlayer(std::string name, Agent *agent, Vector_d position,
 }
 
 double Simulation::getRuntime() const { return runTime; }
+int Simulation::getNumPlayers() const { return players.size(); }
+bool Simulation::isRunning() const { return true; }
 
-bool Simulation::inSector(Vector_d const &p1, double rotation,
-                          Vector_d const &p2) const {
+bool Simulation::inScanArea(Vector_d const &p1, double rotation,
+                            Vector_d const &p2) const {
   const Vector_d v = p2 - p1;
 
-  const bool in_range = v.magnitude() < rules.scan_range;
+  // const bool in_range = v.magnitude() < rules.scan_range;
+  if (v.magnitude() < rules.scan_proximity) {
+    return true;
+  } else if (v.magnitude() > rules.scan_range) {
+    // early out, we don't have to check the angles.
+    return false;
+  }
 
   const double beta = angDiffRadians(rotation, v.angle());
   const bool in_segment =
       -rules.scan_angle / 2 < beta && beta < rules.scan_angle / 2;
 
-  return in_range && in_segment;
+  return in_segment;
 }
 
 void Simulation::check_scan(Robot &robot) {
@@ -151,7 +158,7 @@ void Simulation::check_scan(Robot &robot) {
     Vector_d pose1 = robot.getPosition();
     double rotation = wrapRadians(robot.getRotation() + robot.getTurretAngle());
     Vector_d pose2 = player2.second.getPosition();
-    if (inSector(pose1, rotation, pose2)) {
+    if (inScanArea(pose1, rotation, pose2)) {
       scanTargets.push_back(std::make_shared<Robot>(player2.second));
     }
   }

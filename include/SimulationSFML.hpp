@@ -18,6 +18,7 @@
 
 #include <string>
 #include <random>
+#include <iostream>
 
 class SimulationSFML : public Simulation {
 private:
@@ -34,15 +35,10 @@ private:
   double zoom_level = 1;
 
 public:
-  SimulationSFML(const Rules &rules, std::default_random_engine rng);
+  SimulationSFML(const Rules &rules, unsigned int seed);
 
   void update();
-
-  void run() {
-    while (window.isOpen()) {
-      update();
-    }
-  }
+  bool isRunning() const;
 
 private:
   void drawProjectile(sf::RenderTarget &target,

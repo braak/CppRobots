@@ -7,9 +7,8 @@
 
 #include "SimulationSFML.hpp"
 
-SimulationSFML::SimulationSFML(const Rules &rules,
-                               std::default_random_engine rng)
-    : Simulation(rules, rng),
+SimulationSFML::SimulationSFML(const Rules &rules, unsigned int seed)
+    : Simulation(rules, seed),
       window(sf::VideoMode::getDesktopMode(), window_name),
       frameTimer(rules.timeStep) {
 
@@ -25,6 +24,7 @@ SimulationSFML::SimulationSFML(const Rules &rules,
       throw std::runtime_error("unable to load font");
     }
   }
+  std::cout << "Font \"" << fontName << "\" loaded " << std::endl;
 
   // set static artibutes
   fps_counter.setFont(font);
@@ -88,6 +88,10 @@ void SimulationSFML::update() {
   window.display();
 
   frameTimer.endFrame();
+}
+
+bool SimulationSFML::isRunning() const {
+  return Simulation::isRunning() && window.isOpen();
 }
 
 void SimulationSFML::drawProjectile(sf::RenderTarget &target,
@@ -154,8 +158,8 @@ void SimulationSFML::drawPlayer(sf::RenderTarget &target,
   // drawLable
   drawLable(target, name, robot.getPosition());
 
-  // drawArc(target, robot.getPosition(),
-  //         robot.getRotation() + robot.getTurretAngle());
+  drawArc(target, robot.getPosition(),
+          robot.getRotation() + robot.getTurretAngle());
 }
 
 void SimulationSFML::drawUI(sf::RenderTarget &target) const {

@@ -8,8 +8,8 @@
 
 #include "Agents/Wanderer.hpp"
 
-Wanderer::Wanderer(double delta_w, double v) : v(v), w(0) {
-  std::default_random_engine gen;
+Wanderer::Wanderer(double delta_w, double v, unsigned int seed) : v(v), w(0) {
+  std::default_random_engine gen(seed);
   std::normal_distribution<double> distribution(0, delta_w);
   rng = std::bind(distribution, gen);
 }

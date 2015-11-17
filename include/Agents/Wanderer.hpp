@@ -31,7 +31,7 @@ public:
     \param v the velocity.
   */
 
-  Wanderer(double delta_w, double v);
+  Wanderer(double delta_w, double v, unsigned int seed);
 
   /**
     During ech time step the Wanderer changes his turning rate by a random
