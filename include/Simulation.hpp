@@ -13,6 +13,7 @@
 #include "Collision.hpp"
 #include "Rules.hpp"
 #include "Projectile.hpp"
+#include "SignalSlot.hpp"
 
 #include <memory>
 #include <iostream>
@@ -43,6 +44,8 @@ public:
   virtual double getRuntime() const;
   virtual int getNumPlayers() const;
   virtual bool isRunning() const;
+
+  Signal<std::string> deathSignal;
 
 private:
   void updatePlayers();

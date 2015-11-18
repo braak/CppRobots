@@ -37,64 +37,7 @@ public:
 
   \tparam Fn A callable Object, like a function pointer, a Funtor or a lambda.
   */
-  template <class Fn> Slot(Fn fn) : std::function<void(Args...)>(fn){};
-
-  /**
-  \brief Destructor.
-
-  The Destructor automaticaly disconnects the Slot from its Signal.
-  */
-  ~Slot() { disconnect(); }
-
-  /**
-  \brief Connects the Slot to a Signal.
-
-  The old Signal will be disconnected.
-  \param newSignal the new Signal.
-  */
-  void connect(Signal<Args...> &newSignal) {
-    disconnect(); // disconnect from the previous Signal
-    newSignal.connect(*this);
-  };
-
-  /**
-    \brief  Disconnects the Slot from its Signal
-  */
-  void disconnect() {
-    if (signal) {
-      signal->disconnect(*this);
-    }
-  };
-
-private:
-  Signal<Args...> *signal = nullptr;
-  std::size_t id;
-  friend class Signal<Args...>; //!< Acces used to connect Signal and Slot
-};
-
-/**
-  \brief The endpoint of a Signal-Slot connection.
-
-  A Signal-Slot   system is a cariation of the Observer pattern, the Signal is
-  the 'Subject' and   the Slot is the 'Observer'. The main difference is, that
-  no internal state is managed (at least not by deafult).
-
-  A Slot will be called when its connected Signal is called.
-
-  A Slot can be connected to exactly one Signal.
-
-  A Slot can also be called on its own without invoking the Signal.
-
-  \tparam Args... Arguments of the underliying function.
-*/
-template <class... Args> class Slot : public std::function<void(Args...)> {
-public:
-  /**
-  \brief Constructor by initialisation
-
-  \tparam Fn A callable Object, like a function pointer, a Funtor or a lambda.
-  */
-  template <class Fn> Slot(Fn fn) : std::function<void(Args...)>(fn){};
+  template <class Fn> Slot(Fn fn) : std::function<void(Args...)>(fn) {}
 
   /**
   \brief Destructor.

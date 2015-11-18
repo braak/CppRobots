@@ -19,6 +19,9 @@
 #include <chrono>
 #include <functional>
 
+void printDeath(std::string player) {
+  std::cout << player << " died!" << std::endl;
+}
 /**
     This is the main function of the program.
     \return returns 0 on success
@@ -51,6 +54,10 @@ int main() {
   // simulation.newPlayer("Target", new Wanderer(0, 0),
   //                      simulation.rules.arena_size / 2.0, 0.0);
 
+  Slot<std::string> playerDeath(
+      [](std::string player) { std::cout << player << " died!" << std::endl; });
+
+  simulation->deathSignal.connect(playerDeath);
   while (simulation->isRunning()) {
     simulation->update();
   }

@@ -158,8 +158,8 @@ void SimulationSFML::drawPlayer(sf::RenderTarget &target,
   // drawLable
   drawLable(target, name, robot.getPosition());
 
-  drawArc(target, robot.getPosition(),
-          robot.getRotation() + robot.getTurretAngle());
+  // drawArc(target, robot.getPosition(),
+  //         robot.getRotation() + robot.getTurretAngle());
 }
 
 void SimulationSFML::drawUI(sf::RenderTarget &target) const {

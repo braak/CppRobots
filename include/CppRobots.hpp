@@ -17,3 +17,4 @@
 #include "Angles.hpp"
 #include "Action.hpp"
 #include "Collision.hpp"
+#include "SignalSlot.hpp"

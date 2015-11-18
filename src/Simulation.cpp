@@ -102,6 +102,7 @@ void Simulation::update() {
   auto it = players.begin();
   while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
     // ReportDeath(player.second)
+    deathSignal(it->first);
     players.erase(it++);
   }
 
