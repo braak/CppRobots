@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-#set(CMAKE_CXX_STANDARD 11)
-#set(CXX_STANDARD_REQUIRED ON)
-
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
@@ -36,6 +33,10 @@ if(GTEST_FOUND)
   add_executable(testCollision testCollision.cpp)
   target_link_libraries(testCollision CppRobots ${GTEST_LIBRARIES} pthread)
   add_test(UnitTestCollision testCollision)
+
+  add_executable(testSignal testSignal.cpp)
+  target_link_libraries(testSignal CppRobots ${GTEST_LIBRARIES} pthread)
+  add_test(UnitTestSignal testSignal)
 
 else(GTEST_FOUND)
   message(WARNING "Unit Tests will not be generated.")
