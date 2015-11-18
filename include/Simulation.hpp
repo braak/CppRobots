@@ -46,6 +46,7 @@ public:
   virtual bool isRunning() const;
 
   Signal<std::string> deathSignal;
+  Signal<std::string> newPlayerSignal;
 
 private:
   void updatePlayers();

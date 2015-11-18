@@ -1,0 +1,30 @@
+{
+	"arena_size" : 
+	{
+		"x" : 1500,
+		"y" : 1000
+	},
+	"collision_damage" : 5,
+	"max_health" : 100,
+	"projectile_cooldown" : 0.40000000000000002,
+	"projectile_damage" : 10,
+	"projectile_size" : 
+	{
+		"x" : 4,
+		"y" : 4
+	},
+	"projectile_speed" : 1000,
+	"robot_size" : 
+	{
+		"x" : 30,
+		"y" : 18
+	},
+	"scan_angle" : 1.0471975511965976,
+	"scan_proximity" : 100,
+	"scan_range" : 1000,
+	"timeStep" : 0.016666666666666666,
+	"v_max" : 100,
+	"v_min" : -30,
+	"w_max" : 0.59999999999999998,
+	"turret_w_max" : 3.14
+}

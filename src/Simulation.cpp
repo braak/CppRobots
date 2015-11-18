@@ -101,9 +101,9 @@ void Simulation::update() {
   };
   auto it = players.begin();
   while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
-    // ReportDeath(player.second)
-    deathSignal(it->first);
+    std::string name = it->first;
     players.erase(it++);
+    deathSignal(name);
   }
 
   runTime += rules.timeStep;
@@ -125,6 +125,12 @@ void Simulation::newPlayer(std::string name, Agent *agent, Vector_d position,
   player.setPosition(position);
   player.setRotation(rotation);
   players.insert({name, std::move(player)});
+  newPlayerSignal(name);
+  /*NOTE: maybe only spawn players at a specific time in the simulation cycle.
+   * e.g. insert new player in newPlayers map and merge this map with players at
+   * the end or start of the simulation cycle. That prevents wierdness and race
+   * conditions.
+   */
 }
 
 double Simulation::getRuntime() const { return runTime; }

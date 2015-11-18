@@ -43,6 +43,12 @@ int main() {
     // simulation.newPlayer(name, new Orbiter(20, 0.6));
   }
 
+  Slot<std::string> playerDeath([&simulation](std::string name) {
+    std::cout << name << " died! " << simulation.getNumPlayers()
+              << " Player left!" << std::endl;
+  });
+  simulation.deathSignal.connect(playerDeath);
+
   while (simulation.isRunning() && simulation.getRuntime() < 3 * 60 &&
          simulation.getNumPlayers() > 1) {
     simulation.update();

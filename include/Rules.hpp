@@ -10,6 +10,9 @@
 #define __RULES__
 
 #include "Vector.hpp"
+#include "json/json.h"
+
+#include <iostream>
 
 /**
   The rules of the game.
@@ -50,6 +53,11 @@ struct Rules {
             0.4,
             10};
   }
+
+  void load(std::istream in);
 };
+
+std::ostream &operator<<(std::ostream &os, const Rules &rules);
+std::istream &operator>>(std::istream &is, Rules &rules);
 
 #endif /* end of include guard: __RULES__ */
