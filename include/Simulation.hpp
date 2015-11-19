@@ -47,6 +47,9 @@ public:
 
   Signal<std::string> deathSignal;
   Signal<std::string> newPlayerSignal;
+  Signal<std::string, std::string> collisionSignal;
+  Signal<std::string, std::string> hitSignal;
+  Signal<std::string> outOfBoundsSignal;
 
 private:
   void updatePlayers();

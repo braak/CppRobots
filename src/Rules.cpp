@@ -12,6 +12,7 @@ std::istream &operator>>(std::istream &is, Rules &rules) {
   Rules defaultRules = Rules::defaultRules();
   Json::Value root;
   is >> root;
+
   rules.timeStep = root.get("timeStep", defaultRules.timeStep).asDouble();
   rules.scan_range = root.get("scan_range", defaultRules.scan_range).asDouble();
   rules.scan_proximity =

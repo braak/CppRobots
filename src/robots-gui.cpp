@@ -68,9 +68,10 @@ struct Player {
 */
 int main() {
   Rules rules;
-  std::ifstream ifs("Rules.json", std::ofstream::out);
-  ifs >> rules;
-  ifs.close();
+  std::ifstream inFile("Rules.json", std::ios::in);
+  inFile >> rules;
+  inFile.close();
+
   // std::cout << rules << std::endl;
   // unsigned int seed =
   //     std::chrono::system_clock::now().time_since_epoch().count();

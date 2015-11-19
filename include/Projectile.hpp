@@ -18,9 +18,12 @@ class Projectile {
   Rectangle body;
 
 public:
-  Projectile(const Rules &rules, Vector_d position, double direction);
+  Projectile(const Rules &rules, Vector_d position, double direction,
+             std::string owner);
   void update();
   const Rectangle &getBody() const;
+
+  const std::string owner;
 };
 
 #endif /* end of include guard: __PROJECTILE__ */

@@ -7,8 +7,10 @@
 */
 
 #include "Projectile.hpp"
-Projectile::Projectile(const Rules &rules, Vector_d position, double direction)
-    : rules(rules), body(rules.projectile_size, position, direction) {}
+Projectile::Projectile(const Rules &rules, Vector_d position, double direction,
+                       std::string owner)
+    : rules(rules), body(rules.projectile_size, position, direction),
+      owner(owner) {}
 
 void Projectile::update() {
   body.move(Vector_d::polar(body.getRotation(),

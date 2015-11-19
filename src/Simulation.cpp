@@ -35,7 +35,8 @@ void Simulation::updatePlayers() {
           direction,
           Vector_d(rules.robot_size.x, rules.projectile_size.x).magnitude());
       // create the Projectile
-      projectiles.push_back(Projectile(rules, porjectilePosition, direction));
+      projectiles.push_back(
+          Projectile(rules, porjectilePosition, direction, player.first));
     }
 
     // check collision between playeres
@@ -48,7 +49,7 @@ void Simulation::updatePlayers() {
         continue;
       }
       if (Collision(player.second, player2.second)) {
-        // ReportCollision(player1.second, player2.second);
+        collisionSignal(player.first, player2.first);
         player.second.takeDamage(rules.collision_damage);
       }
     }
@@ -57,7 +58,7 @@ void Simulation::updatePlayers() {
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
         pos.y < 0) {
-      // ReportOutOfBounds(player.second);
+      outOfBoundsSignal(player.first);
       player.second.takeDamage(rules.collision_damage);
     }
 
@@ -66,9 +67,10 @@ void Simulation::updatePlayers() {
          projectile != projectiles.end();) {
       Collision collision(player.second, *projectile);
       if (collision) {
-        // ReportHit(player1.second, projectile.owner);
+        // TODO: ReportHit(player1.second, projectile.owner);
         // deal damage to the player
         player.second.takeDamage(rules.projectile_damage);
+        hitSignal(player.first, projectile->owner);
         // remove projectile, and advance the iterator
         projectile = projectiles.erase(projectile);
       } else {
@@ -111,8 +113,11 @@ void Simulation::update() {
 
 void Simulation::newPlayer(std::string name, Agent *agent) {
 
-  std::uniform_real_distribution<double> x(0, rules.arena_size.x);
-  std::uniform_real_distribution<double> y(0, rules.arena_size.y);
+  const double safety = 0.1;
+  std::uniform_real_distribution<double> x(rules.arena_size.x * safety,
+                                           rules.arena_size.x * (1 - safety));
+  std::uniform_real_distribution<double> y(rules.arena_size.y * safety,
+                                           rules.arena_size.y * (1 - safety));
   std::uniform_real_distribution<double> rot(0, 2 * M_PI);
 
   newPlayer(name, agent, {x(generator), y(generator)}, rot(generator));
