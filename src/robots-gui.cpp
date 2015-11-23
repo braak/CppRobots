@@ -8,6 +8,7 @@
 #include "CppRobots.hpp"
 #include "SimulationSFML.hpp"
 #include "SimulationConsole.hpp"
+#include "pathUtility.hpp"
 
 #include "Agents/Orbiter.hpp"
 #include "Agents/Wanderer.hpp"
@@ -60,6 +61,9 @@ private:
                       std::to_string(simulation->getNumPlayers()) +
                       " players left");
     }
+    if (simulation->getNumPlayers() <= 1) {
+      simulation->log("Game Over!");
+    }
   };
 };
 
@@ -70,9 +74,14 @@ private:
 int main() {
   Rules rules;
 
-  std::ifstream inFile("Rules.json", std::ios::in);
-  inFile >> rules;
-  inFile.close();
+  std::ifstream inFile(selfpath() + "/Rules.json", std::ios::in);
+  if (inFile.is_open()) {
+    inFile >> rules;
+    inFile.close();
+  } else {
+    std::cout << "Unable to load Rules.json unsing defaults." << std::endl;
+    rules = Rules::defaultRules();
+  }
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 

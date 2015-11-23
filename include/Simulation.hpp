@@ -14,6 +14,7 @@
 #include "Rules.hpp"
 #include "Projectile.hpp"
 #include "SignalSlot.hpp"
+#include "pathUtility.hpp"
 
 #include <memory>
 #include <iostream>

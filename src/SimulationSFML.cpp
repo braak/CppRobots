@@ -19,10 +19,10 @@ SimulationSFML::SimulationSFML(const Rules &rules, unsigned int seed)
   window.setView(view);
 
   // Load resources
-  if (!font.loadFromFile(fontName)) {
-    if (!font.loadFromFile("bin/" + fontName)) {
-      throw std::runtime_error("unable to load font");
-    }
+  if (!font.loadFromFile(selfpath() + "/" + fontName)) {
+    // if (!font.loadFromFile("bin/" + fontName)) {
+    throw std::runtime_error("unable to load font");
+    // }
   }
   std::cout << "Font \"" << fontName << "\" loaded " << std::endl;
 
