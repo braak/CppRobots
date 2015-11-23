@@ -6,9 +6,8 @@
 */
 
 #include "CppRobots.hpp"
-#include "Simulation.hpp"
 #include "SimulationSFML.hpp"
-// #include "SimulationConsole.hpp"
+#include "SimulationConsole.hpp"
 
 #include "Agents/Orbiter.hpp"
 #include "Agents/Wanderer.hpp"
@@ -20,47 +19,54 @@
 #include <functional>
 #include <fstream>
 
-#include "json/json.h"
+template <class Sim> struct Match {
+  struct Player {
+    std::function<Agent *()> agentFactory;
+    int lives;
+  };
+  std::map<std::string, Player> players;
+  std::shared_ptr<Simulation> simulation;
+  int startingLives = 2;
 
-using namespace std::placeholders;
+  Match() : Match(Rules::defaultRules()){};
+  Match(Rules rules)
+      : Match(rules,
+              std::chrono::system_clock::now().time_since_epoch().count()){};
 
-struct Player {
-  std::function<Agent *()> agentFactory;
-  int lives;
+  Match(Rules rules, std::size_t seed) {
+    simulation = std::shared_ptr<Simulation>(new Sim(rules, seed));
+
+    // onDeath = std::bind(&Match::_onDeath, this, _1);
+    onDeath = [this](std::string name) { this->_onDeath(name); };
+    simulation->deathSignal.connect(onDeath);
+  };
+
+  void addPlayer(std::string name, std::function<Agent *()> agentFactory) {
+    Player player{agentFactory, startingLives};
+    players.insert({name, player});
+    simulation->newPlayer(name, agentFactory());
+  }
+
+  void run() {
+    while (simulation->isRunning()) {
+      simulation->update();
+    }
+  }
+
+  Slot<std::string> onDeath;
+
+private:
+  void _onDeath(std::string name) {
+    int lives = players[name].lives--;
+    // std::cout << name << " died! " << lives << " lives left" << std::endl;
+    if (lives > 0) {
+      simulation->newPlayer(name, players[name].agentFactory());
+    } else {
+      // std::cout << name << " lost " << simulation->getNumPlayers()
+      //           << " players left" << std::endl;
+    }
+  };
 };
-
-// struct Match {
-//   std::map<std::string, Player> players;
-//   std::shared_ptr<Simulation> simulation;
-//
-//   Match() : onDeath(std::bind(&Match::_onDeath, this, _1)) {
-//     std::size_t seed = std::hash<std::string>()("Not Random");
-//
-//     simulation = std::shared_ptr<Simulation>(
-//         new SimulationSFML(Rules::defaultRules(), seed));
-//
-//     simulation->deathSignal.connect(onDeath);
-//   };
-// void run(){
-//   while (simulation->isRunning()) {
-//     simulation->update();
-//   }
-// }
-//
-//   Slot<std::string> onDeath;
-//
-// private:
-//   void _onDeath(std::string name) {
-//     int lives = players[name].lives--;
-//     std::cout << name << " died! " << lives << " lives left" << std::endl;
-//     if (lives > 0) {
-//       simulation->newPlayer(name, players[name].agentFactory());
-//     } else {
-//       std::cout << name << " lost " << simulation->getNumPlayers()
-//                 << " players left" << std::endl;
-//     }
-//   };
-// };
 
 /**
     This is the main function of the program.
@@ -68,17 +74,16 @@ struct Player {
 */
 int main() {
   Rules rules;
+
   std::ifstream inFile("Rules.json", std::ios::in);
   inFile >> rules;
   inFile.close();
 
-  // std::cout << rules << std::endl;
   // unsigned int seed =
   //     std::chrono::system_clock::now().time_since_epoch().count();
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  std::shared_ptr<Simulation> simulation =
-      std::shared_ptr<Simulation>(new SimulationSFML(rules, seed));
+  Match<SimulationSFML> match(rules, seed);
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
@@ -86,40 +91,14 @@ int main() {
                 "Stuart",    "Tina", "Usain",   "Val",   "Wilhelm", "Xerxes",
                 "Yvonne",    "Zack"};
 
-  std::map<std::string, Player> players;
-  for (auto &name : names) {
-    players[name] = {[]() { return new Hunter(100, 20, 30); }, 10};
-    simulation->newPlayer(name, players[name].agentFactory());
-  }
-  // // create the players
-  // for (auto &name : names) {
-  //   /*simulation.newPlayer(name, new Wanderer(0.1, simulation.rules.v_max,
-  //                                           std::hash<std::string>()(name)));*/
+  auto hunterFactory = []() { return new Hunter(100, 20, 30); };
   //   // simulation.newPlayer(name, new Sniper());
   //   // simulation.newPlayer(name, new Follower(100, 100, 10));
   //   // simulation.newPlayer(name, new Orbiter(20, 0.6));
-  // }
-
-  // simulation.newPlayer("Hunter", new Hunter(100, 100, 30));
-  // simulation.newPlayer("Target", new Wanderer(0, 0),
-  //                      simulation.rules.arena_size / 2.0, 0.0);
-
-  Slot<std::string> playerDeath(
-      [simulation, &players](std::string name) mutable {
-        int lives = players[name].lives--;
-        std::cout << name << " died! " << lives << " lives left" << std::endl;
-        if (lives > 0) {
-          simulation->newPlayer(name, new Hunter(100, 20, 30));
-        } else {
-          std::cout << name << " lost " << simulation->getNumPlayers()
-                    << " players left" << std::endl;
-        }
-      });
-
-  simulation->deathSignal.connect(playerDeath);
-  while (simulation->isRunning()) {
-    simulation->update();
+  for (auto &name : names) {
+    match.addPlayer(name, hunterFactory);
   }
+  match.run();
 
   return 0;
 }

@@ -40,8 +40,9 @@ TEST(SignalTest, SlotFunctor) {
 TEST(SignalTest, SlotObserver) {
   struct Observer {
     Observer() : setX([this](int x_) { this->x = x_; }){};
-    Slot<int> setX;
     int getX() { return x; };
+
+    Slot<int> setX;
 
   private:
     int x;

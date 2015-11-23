@@ -32,8 +32,10 @@ template <class... Args> class Signal;
 */
 template <class... Args> class Slot : public std::function<void(Args...)> {
 public:
+  /**Default Constructor*/
+  Slot() {}
   /**
-  Constructor by initialisation
+  \brief Constructor by initialisation
 
   \tparam Fn A callable Object, like a function pointer, a Funtor or a lambda.
   */
@@ -121,8 +123,10 @@ public:
   \param slot The Slot to disconnect.
   */
   void disconnect(Slot<Args...> &slot) {
-    slots.erase(slot.id);
-    slot.signal = nullptr;
+    if (slot.signal == this) {
+      slots.erase(slot.id);
+      slot.signal = nullptr;
+    }
   }
 
   /**
@@ -133,7 +137,9 @@ public:
   */
   void operator()(Args... args) {
     for (auto &slot : slots) {
-      (*slot.second)(args...);
+      if (slot.second) {
+        (*slot.second)(args...);
+      }
     }
   }
 

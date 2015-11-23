@@ -67,7 +67,6 @@ void Simulation::updatePlayers() {
          projectile != projectiles.end();) {
       Collision collision(player.second, *projectile);
       if (collision) {
-        // TODO: ReportHit(player1.second, projectile.owner);
         // deal damage to the player
         player.second.takeDamage(rules.projectile_damage);
         hitSignal(player.first, projectile->owner);

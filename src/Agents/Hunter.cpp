@@ -17,7 +17,6 @@ Hunter::Hunter(double targetDistance, double K_beta, double K_distance)
 
 Action Hunter::update(Robot const &r) {
 
-  Vector_d targetPosition;
   double turretAngle;
   Vector_d deltaPosition;
 
@@ -26,13 +25,13 @@ Action Hunter::update(Robot const &r) {
   double rotation = r.getRotation();
   // TODO: seperate movement and shooting code. Add Wall avoidance.
   if (!targetRobot) {
-    targetPosition = r.rules.arena_size / 2.0;
+    Vector_d targetPosition = r.rules.arena_size / 2.0;
 
     deltaPosition = targetPosition - position;
 
     turretAngle = r.getTurretAngle() + r.rules.scan_angle;
   } else {
-    targetPosition = targetRobot->getPosition();
+    Vector_d targetPosition = targetRobot->getPosition();
 
     deltaPosition = targetPosition - position;
 
