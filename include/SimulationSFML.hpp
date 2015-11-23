@@ -34,11 +34,16 @@ private:
   const double zoom_speed = 0.8;
   double zoom_level = 1;
 
+  std::vector<std::string> logging;
+  int logIndex = 0;
+  const int logLength = 60;
+
 public:
   SimulationSFML(const Rules &rules, unsigned int seed);
 
-  void update();
-  bool isRunning() const;
+  void update() override;
+  bool isRunning() const override;
+  void log(std::string text) override;
 
 private:
   void drawProjectile(sf::RenderTarget &target,

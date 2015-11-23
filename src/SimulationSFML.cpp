@@ -26,9 +26,12 @@ SimulationSFML::SimulationSFML(const Rules &rules, unsigned int seed)
   }
   std::cout << "Font \"" << fontName << "\" loaded " << std::endl;
 
-  // set static artibutes
+  // set artibutes
   fps_counter.setFont(font);
   fps_counter.setCharacterSize(10);
+
+  //
+  logging.resize(logLength);
 }
 
 void SimulationSFML::update() {
@@ -88,6 +91,10 @@ void SimulationSFML::update() {
   window.display();
 
   frameTimer.endFrame();
+}
+
+void SimulationSFML::log(std::string text) {
+  logging[logIndex++ % logLength] = runtimeString() + ": " + text;
 }
 
 bool SimulationSFML::isRunning() const {
@@ -168,8 +175,19 @@ void SimulationSFML::drawUI(sf::RenderTarget &target) const {
                            static_cast<float>(target.getSize().y)}));
 
   target.draw(fps_counter);
-  // Other UI elements go here
 
+  const int spacing = 13;
+  sf::Text log_line("", font, 12);
+  log_line.move({0, spacing});
+  for (int i = 0; i < logLength; i++) {
+    const std::string &line = logging[(logIndex + i) % logLength];
+    if (!line.empty()) {
+      log_line.setString(line);
+      log_line.move({0, spacing});
+
+      target.draw(log_line);
+    }
+  }
   target.setView(old_view);
 }
 

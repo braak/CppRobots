@@ -19,7 +19,7 @@
 #include <functional>
 #include <fstream>
 
-template <class Sim> struct Match {
+struct Match {
   struct Player {
     std::function<Agent *()> agentFactory;
     int lives;
@@ -28,17 +28,11 @@ template <class Sim> struct Match {
   std::shared_ptr<Simulation> simulation;
   int startingLives = 2;
 
-  Match() : Match(Rules::defaultRules()){};
-  Match(Rules rules)
-      : Match(rules,
-              std::chrono::system_clock::now().time_since_epoch().count()){};
-
-  Match(Rules rules, std::size_t seed) {
-    simulation = std::shared_ptr<Simulation>(new Sim(rules, seed));
-
-    // onDeath = std::bind(&Match::_onDeath, this, _1);
+  Match(Simulation *sim) : simulation(sim) {
     onDeath = [this](std::string name) { this->_onDeath(name); };
     simulation->deathSignal.connect(onDeath);
+
+    simulation->log("Welcome to CppRobots v" + std::string(VERSION_SHORT));
   };
 
   void addPlayer(std::string name, std::function<Agent *()> agentFactory) {
@@ -58,12 +52,13 @@ template <class Sim> struct Match {
 private:
   void _onDeath(std::string name) {
     int lives = players[name].lives--;
-    // std::cout << name << " died! " << lives << " lives left" << std::endl;
+    simulation->log(name + " died! " + std::to_string(lives) + " lives left");
     if (lives > 0) {
       simulation->newPlayer(name, players[name].agentFactory());
     } else {
-      // std::cout << name << " lost " << simulation->getNumPlayers()
-      //           << " players left" << std::endl;
+      simulation->log(name + " lost! " +
+                      std::to_string(simulation->getNumPlayers()) +
+                      " players left");
     }
   };
 };
@@ -79,11 +74,9 @@ int main() {
   inFile >> rules;
   inFile.close();
 
-  // unsigned int seed =
-  //     std::chrono::system_clock::now().time_since_epoch().count();
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  Match<SimulationSFML> match(rules, seed);
+  Match match(new SimulationSFML(rules, seed));
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",

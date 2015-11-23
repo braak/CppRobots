@@ -17,19 +17,19 @@ class SimulationConsole : public Simulation {
 
 public:
   SimulationConsole(const Rules &rules, unsigned int seed)
-      : Simulation(rules, seed) {
-    std::cout << "Welcome to CppRobots v" << VERSION_SHORT << std::endl;
-  };
+      : Simulation(rules, seed){};
   void update() {
     Simulation::update();
-
-    std::cout << "runTime = " << int(runTime / 60) << ":" << fmod(runTime, 60)
-              << std::endl;
-
+    std::cout << runtimeString() << std::endl;
     for (auto const &player : players) {
-      std::cout << player.first << " at " << player.second.getPosition() << ", "
-                << player.second.getHealth() << " health" << std::endl;
+      // std::stringstream out;
+      std::cout << "\t" << player.first << " at " << player.second.getPosition()
+                << ", " << player.second.getHealth() << " health" << std::endl;
+      // log(out.str());
     }
+  }
+  void log(std::string text) override {
+    std::cout << runtimeString() << ": " << text << std::endl;
   }
 };
 
