@@ -141,6 +141,8 @@ double Simulation::getRuntime() const { return runTime; }
 int Simulation::getNumPlayers() const { return players.size(); }
 bool Simulation::isRunning() const { return true; }
 
+const std::map<std::string, Robot> &Simulation::getPlayers() { return players; }
+
 bool Simulation::inScanArea(Vector_d const &p1, double rotation,
                             Vector_d const &p2) const {
   const Vector_d v = p2 - p1;

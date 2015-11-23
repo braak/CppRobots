@@ -47,8 +47,10 @@ public:
   virtual double getRuntime() const;
   virtual int getNumPlayers() const;
   virtual bool isRunning() const;
-  virtual void exit(){};
+  virtual void finsish(){};
   virtual void log(std::string text) { (void)text; };
+  const std::map<std::string, Robot> &getPlayers();
+
   std::string runtimeString() {
 
     // time_t seconds(runTime);

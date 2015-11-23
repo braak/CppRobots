@@ -92,7 +92,7 @@ void SimulationSFML::update() {
   frameTimer.endFrame();
 }
 
-void SimulationSFML::exit() {
+void SimulationSFML::finsish() {
   // keep running until user closes window
   while (isRunning()) {
     update();

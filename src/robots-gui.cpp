@@ -20,7 +20,7 @@
 #include <functional>
 #include <fstream>
 
-struct Match {
+struct Game {
   struct Player {
     std::function<Agent *()> agentFactory;
     int lives;
@@ -30,7 +30,7 @@ struct Match {
   bool running = true;
   int startingLives = 2;
 
-  Match(Simulation *sim) : simulation(sim) {
+  Game(Simulation *sim) : simulation(sim) {
     onDeath = [this](std::string name) { this->_onDeath(name); };
     simulation->deathSignal.connect(onDeath);
 
@@ -47,7 +47,7 @@ struct Match {
     while (simulation->isRunning() && running) {
       simulation->update();
     }
-    simulation->exit();
+    simulation->finsish();
   }
 
   Slot<std::string> onDeath;
@@ -64,7 +64,10 @@ private:
                       " players left");
     }
     if (simulation->getNumPlayers() <= 1) {
+      std::string winner = simulation->getPlayers().begin()->first;
+      simulation->log(winner + " wins the game!");
       simulation->log("Game Over!");
+
       running = false;
     }
   };
@@ -82,13 +85,14 @@ int main() {
     inFile >> rules;
     inFile.close();
   } else {
-    std::cout << "Unable to load Rules.json unsing defaults." << std::endl;
+    std::cout << "Unable to load Rules.json. Using defaults instead."
+              << std::endl;
     rules = Rules::defaultRules();
   }
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  Match match(new SimulationConsole(rules, seed));
+  Game game(new SimulationSFML(rules, seed));
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
@@ -101,9 +105,9 @@ int main() {
   //   // simulation.newPlayer(name, new Follower(100, 100, 10));
   //   // simulation.newPlayer(name, new Orbiter(20, 0.6));
   for (auto &name : names) {
-    match.addPlayer(name, hunterFactory);
+    game.addPlayer(name, hunterFactory);
   }
-  match.run();
+  game.run();
 
   return 0;
 }
