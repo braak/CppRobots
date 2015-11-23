@@ -24,7 +24,6 @@ SimulationSFML::SimulationSFML(const Rules &rules, unsigned int seed)
     throw std::runtime_error("unable to load font");
     // }
   }
-  std::cout << "Font \"" << fontName << "\" loaded " << std::endl;
 
   // set artibutes
   fps_counter.setFont(font);
@@ -93,6 +92,12 @@ void SimulationSFML::update() {
   frameTimer.endFrame();
 }
 
+void SimulationSFML::exit() {
+  // keep running until user closes window
+  while (isRunning()) {
+    update();
+  }
+}
 void SimulationSFML::log(std::string text) {
   logging[logIndex++ % logLength] = runtimeString() + ": " + text;
 }

@@ -27,6 +27,7 @@ struct Match {
   };
   std::map<std::string, Player> players;
   std::shared_ptr<Simulation> simulation;
+  bool running = true;
   int startingLives = 2;
 
   Match(Simulation *sim) : simulation(sim) {
@@ -43,9 +44,10 @@ struct Match {
   }
 
   void run() {
-    while (simulation->isRunning()) {
+    while (simulation->isRunning() && running) {
       simulation->update();
     }
+    simulation->exit();
   }
 
   Slot<std::string> onDeath;
@@ -63,6 +65,7 @@ private:
     }
     if (simulation->getNumPlayers() <= 1) {
       simulation->log("Game Over!");
+      running = false;
     }
   };
 };
@@ -85,7 +88,7 @@ int main() {
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  Match match(new SimulationSFML(rules, seed));
+  Match match(new SimulationConsole(rules, seed));
 
   auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
                 "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",

@@ -47,6 +47,7 @@ public:
   virtual double getRuntime() const;
   virtual int getNumPlayers() const;
   virtual bool isRunning() const;
+  virtual void exit(){};
   virtual void log(std::string text) { (void)text; };
   std::string runtimeString() {
 
