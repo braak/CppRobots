@@ -15,6 +15,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <algorithm>
 
 /**
     This is the main function of the program.
@@ -22,8 +23,9 @@
 */
 int main() {
   Rules rules;
+  Json::Value names;
 
-  std::ifstream inFile(selfpath() + "/Rules.json", std::ios::in);
+  std::ifstream inFile(selfpath() + "/config/Rules.json", std::ios::in);
   if (inFile.is_open()) {
     inFile >> rules;
     inFile.close();
@@ -41,19 +43,22 @@ int main() {
   Game game(new SimulationConsole(rules, seed));
 #endif
 
-  auto names = {"Albert",    "Bob",  "Charlie", "Daisy", "Eric",    "Frank",
-                "Guinevere", "Hiro", "Isabel",  "Julia", "Kate",    "Ludwig",
-                "Marge",     "Nemo", "Oscar",   "Paige", "Quentin", "Romeo",
-                "Stuart",    "Tina", "Usain",   "Val",   "Wilhelm", "Xerxes",
-                "Yvonne",    "Zack"};
+  std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);
+  if (!nameFile.is_open()) {
+    throw std::runtime_error("unable to load Names.json");
+  } else {
+    nameFile >> names;
+    if (!names.isArray()) {
+      throw std::runtime_error("Names.json is not an array of names");
+    }
+    nameFile.close();
+  }
 
   auto hunterFactory = []() { return new Hunter(100, 20, 30); };
-  //   // simulation.newPlayer(name, new Sniper());
-  //   // simulation.newPlayer(name, new Follower(100, 100, 10));
-  //   // simulation.newPlayer(name, new Orbiter(20, 0.6));
-  for (auto &name : names) {
-    game.addPlayer(name, hunterFactory);
+  for (auto const &name : names) {
+    game.addPlayer(name.asString(), hunterFactory);
   }
+
   game.run();
 
   return 0;

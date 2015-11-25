@@ -25,6 +25,7 @@ class Game {
   std::shared_ptr<Simulation> simulation;
 
   Slot<std::string> _onDeath;
+  Slot<> _onPostSimulation;
 
   int startingLives = 2;
   bool running = true;
@@ -33,6 +34,9 @@ public:
   Game(Simulation *sim) : simulation(sim) {
     _onDeath = [this](std::string name) { this->onDeath(name); };
     simulation->deathSignal.connect(_onDeath);
+
+    _onPostSimulation = [this]() { this->onPostSimulation(); };
+    simulation->postSimulationSignal.connect(_onPostSimulation);
 
     simulation->log("Welcome to CppRobots v" + std::string(VERSION_SHORT));
   }
@@ -47,6 +51,8 @@ public:
     while (simulation->isRunning() && running) {
       simulation->update();
     }
+    _onDeath.disconnect();
+    _onPostSimulation.disconnect();
     simulation->finish();
   }
 
@@ -60,14 +66,19 @@ public:
                       std::to_string(simulation->getNumPlayers()) +
                       " players left");
     }
+  };
+  virtual void onPostSimulation() {
     if (simulation->getNumPlayers() <= 1) {
-      std::string winner = simulation->getPlayers().begin()->first;
-      simulation->log(winner + " wins the game!");
+      auto &players = simulation->getPlayers();
+      if (!players.empty()) {
+        std::string winner = players.begin()->first;
+        simulation->log(winner + " wins the game!");
+      }
       simulation->log("Game Over!");
 
       running = false;
     }
-  };
+  }
 };
 
 #endif /* end of include guard: __CPPROBOTS_GAME__ */

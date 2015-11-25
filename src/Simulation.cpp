@@ -78,6 +78,7 @@ void Simulation::updatePlayers() {
       }
     }
   }
+  postSimulationSignal();
 }
 
 void Simulation::updateProjectiles() {

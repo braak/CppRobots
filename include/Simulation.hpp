@@ -72,6 +72,8 @@ public:
   Signal<std::string, std::string> hitSignal;
   Signal<std::string> outOfBoundsSignal;
 
+  Signal<> postSimulationSignal;
+
 private:
   void updatePlayers();
   void updateProjectiles();
