@@ -18,3 +18,11 @@
 #include "Action.hpp"
 #include "Collision.hpp"
 #include "SignalSlot.hpp"
+#include "pathUtility.hpp"
+#include "Game.hpp"
+
+#include "SimulationConsole.hpp"
+
+#ifdef USE_SFML
+#include "SimulationSFML.hpp"
+#endif

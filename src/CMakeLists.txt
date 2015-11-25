@@ -22,11 +22,11 @@ file(GLOB AGENT_SOURCES
 add_library(CppRobotsAgents ${AGENT_SOURCES})
 target_link_libraries(CppRobotsAgents CppRobots)
 
-# The program for commandline use.
-add_executable(robots robots.cpp)
-target_link_libraries(robots CppRobots CppRobotsAgents)
 
-# The second program uses SFLM to display the simulation
+
+add_executable(robots robots.cpp)
+
+# find out if SFML can be used
 find_package(SFML 2 COMPONENTS system window graphics)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
@@ -35,14 +35,18 @@ if(SFML_FOUND)
     add_library(CppRobotsSFML  SimulationSFML.cpp)
     target_link_libraries(CppRobotsSFML ${SFML_LIBRARIES})
 
-    # create the executable
-    add_executable(robots-gui robots-gui.cpp)
-    target_link_libraries(robots-gui ${SFML_LIBRARIES} CppRobots CppRobotsSFML CppRobotsAgents)
+    # create the executable for use with UI
+    target_link_libraries(robots ${SFML_LIBRARIES} CppRobots CppRobotsSFML CppRobotsAgents)
 
     # copy all rescource files to the runtime directory
     file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+    add_definitions(-DUSE_SFML)
 else(SFML_FOUND)
-    message(WARNING "robots-gui will not be build, because SFML was not found.")
+  # create the executable for use with Cconsole
+  target_link_libraries(robots CppRobots CppRobotsAgents)
+
+  message(WARNING "robots will not be build with UI support, because SFML was not found.")
 endif(SFML_FOUND)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)

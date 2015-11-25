@@ -47,30 +47,22 @@ public:
   virtual double getRuntime() const;
   virtual int getNumPlayers() const;
   virtual bool isRunning() const;
-  virtual void finsish(){};
+  virtual void finish(){};
   virtual void log(std::string text) { (void)text; };
   const std::map<std::string, Robot> &getPlayers();
 
   std::string runtimeString() {
 
-    // time_t seconds(runTime);
-    // tm *p = gmtime(&seconds);
-
     std::stringstream rt;
-
-    // int runTimeInt = runTime;
 
     // int days = runTimeInt / 60 / 60 / 24;
     // int hours = int(runTime / 60 / 60) % 24;
     int minutes = int(runTime / 60);
-    // int seconds = runTimeInt % 60;
     float seconds = fmod(runTime, 60);
 
-    // rt << std::setfill('0') << std::setw(2) << hours << ":";
     rt << minutes << ":";
     rt << std::setfill('0') << std::setw(6) << std::fixed
        << std::setprecision(3) << seconds;
-    // rt << std::setfill('0') << std::setw(3) << milliseconds;
     return rt.str();
   }
 

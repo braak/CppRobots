@@ -43,7 +43,7 @@ public:
 
   void update() override;
   bool isRunning() const override;
-  virtual void finsish() override;
+  virtual void finish() override;
   void log(std::string text) override;
 
 private:

@@ -50,11 +50,7 @@ TEST(SignalTest, SlotObserver) {
 
   Observer observer;
 
-  Signal<int> setObserverX;
-
-  observer.setX.connect(setObserverX);
-
-  setObserverX(19);
+  observer.setX(19);
 
   EXPECT_EQ(19, observer.getX());
 }

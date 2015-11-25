@@ -31,7 +31,7 @@ public:
   void log(std::string text) override {
     std::cout << runtimeString() << ": " << text << std::endl;
   }
-  virtual void finsish() override { std::cin.get(); }
+  virtual void finish() override { std::cin.get(); }
 };
 
 #endif /* end of include guard: __SIMULATION_CONSOLE__ */
