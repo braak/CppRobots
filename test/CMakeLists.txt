@@ -18,10 +18,6 @@ if(GTEST_FOUND)
   #include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
   #set(GTEST_LIBRARIES "lib/libgtest.a lib/libgtest_main.a")
 
-  add_executable(testPose testPose.cpp)
-  target_link_libraries(testPose CppRobots ${GTEST_LIBRARIES} pthread)
-  add_test(UnitTestPose testPose)
-
   add_executable(testVector testVector.cpp)
   target_link_libraries(testVector CppRobots ${GTEST_LIBRARIES} pthread)
   add_test(UnitTestVector testVector)

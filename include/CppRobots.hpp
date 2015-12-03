@@ -8,7 +8,6 @@
 
 #include "version.h"
 #include "Robot.hpp"
-#include "Pose.hpp"
 #include "Simulation.hpp"
 #include "Rules.hpp"
 #include "Rectangle.hpp"

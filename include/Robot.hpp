@@ -15,7 +15,6 @@
 #include <memory>
 #include <algorithm>
 
-#include "Pose.hpp"
 #include "Rectangle.hpp"
 #include "Rules.hpp"
 #include "Action.hpp"

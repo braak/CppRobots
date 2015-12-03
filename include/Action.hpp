@@ -10,7 +10,7 @@
 #define __ACTION__
 
 /**
-\brief  Action to be perfomes during a timeStep.
+\brief  Action to be perfomed by a Robot during a timeStep.
 */
 struct Action {
   double v; //!< The desired speed of the Robot.
