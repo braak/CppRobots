@@ -7,16 +7,36 @@
 
 #include "pathUtility.hpp"
 
-std::string selfpath() {
 #ifdef __linux__
+
+#include <unistd.h>
+#include <libgen.h>
+#include <climits>
+#include <cerrno>
+#include <cstring>
+
+std::string selfpath() {
   char buff[PATH_MAX];
-  ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+  ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
   if (len != -1) {
     buff[len] = '\0';
     return std::string(dirname(buff));
   }
-  throw std::runtime_error("unable to find executable path");
-#endif
-  // This may be right.
+  throw std::runtime_error("Unable to find executable path :" +
+                           std::string(std::strerror(errno)));
+}
+
+/* NOTE: for OS X see
+https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dyld.3.html
+
+for Windows see https://msdn.microsoft.com/en-us/library/ms683197.aspx
+ */
+#else
+
+#warning Platform not supported by pathUtility. Behaviour of functions may not be as expected.
+
+std::string selfpath() {
+  // This is correct some of the time.
   return ".";
 }
+#endif

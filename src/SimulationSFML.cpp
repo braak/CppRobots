@@ -187,7 +187,7 @@ void SimulationSFML::drawUI(sf::RenderTarget &target) const {
   for (int i = 0; i < logLength; i++) {
     const std::string &line = logging[(logIndex + i) % logLength];
     if (!line.empty()) {
-      log_line.setString(line);
+      log_line.setString(sf::String::fromUtf8(line.begin(), line.end()));
       log_line.move({0, spacing});
 
       target.draw(log_line);
@@ -199,7 +199,7 @@ void SimulationSFML::drawUI(sf::RenderTarget &target) const {
 void SimulationSFML::drawLable(sf::RenderTarget &target,
                                const std::string &name,
                                const Vector_d &position) const {
-  sf::Text name_tag(name, font, 15);
+  sf::Text name_tag(sf::String::fromUtf8(name.begin(), name.end()), font, 15);
   name_tag.setOrigin(0.5 * name_tag.getLocalBounds().width, 0);
   name_tag.setPosition({(float)position.x, (float)position.y + 15});
 

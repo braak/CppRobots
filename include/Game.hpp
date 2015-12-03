@@ -31,6 +31,7 @@ class Game {
   bool running = true;
 
 public:
+  Game() : simulation(nullptr){};
   Game(Simulation *sim) : simulation(sim) {
     _onDeath = [this](std::string name) { this->onDeath(name); };
     simulation->deathSignal.connect(_onDeath);

@@ -15,7 +15,6 @@
 
 #include <chrono>
 #include <fstream>
-#include <algorithm>
 
 /**
     This is the main function of the program.
@@ -37,21 +36,29 @@ int main() {
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-#ifdef USE_SFML
+  //   std::map<std::string, std::function<Simulation *(Rules, std::size_t)>>
+  //       simulators{
+  // #ifdef USE_SFML
+  //           {"SFML",
+  //            [](Rules rules, std::size_t seed) {
+  //              return new SimulationSFML(rules, seed);
+  //            }},
+  // #endif
+  //           {"Console", [](Rules rules, std::size_t seed) {
+  //             return new SimulationConsole(rules, seed);
+  //           }}};
+  //   Game game(simulators.at("SFML")(rules, seed));
+
   Game game(new SimulationSFML(rules, seed));
-#else
-  Game game(new SimulationConsole(rules, seed));
-#endif
 
   std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);
   if (!nameFile.is_open()) {
-    throw std::runtime_error("unable to load Names.json");
-  } else {
-    nameFile >> names;
-    if (!names.isArray()) {
-      throw std::runtime_error("Names.json is not an array of names");
-    }
-    nameFile.close();
+    throw std::runtime_error("Unable to load Names.json");
+  }
+  nameFile >> names;
+  nameFile.close();
+  if (!names.isArray()) {
+    throw std::runtime_error("Names.json is not an array.");
   }
 
   auto hunterFactory = []() { return new Hunter(100, 20, 30); };

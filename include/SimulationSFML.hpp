@@ -36,14 +36,14 @@ private:
 
   std::vector<std::string> logging;
   int logIndex = 0;
-  const int logLength = 60;
+  const int logLength = 70;
 
 public:
   SimulationSFML(const Rules &rules, unsigned int seed);
 
   void update() override;
   bool isRunning() const override;
-  virtual void finish() override;
+  void finish() override;
   void log(std::string text) override;
 
 private:
