@@ -15,6 +15,7 @@ FrameTimer::~FrameTimer() {}
 
 void FrameTimer::startFrame(bool wait) {
   if (wait) {
+    // auto wake_up_time = startOfFrame + targetTime;
     std::this_thread::sleep_until(startOfFrame + targetTime);
   }
   startOfFrame = std::chrono::high_resolution_clock::now();

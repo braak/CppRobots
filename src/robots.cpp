@@ -36,19 +36,6 @@ int main() {
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  //   std::map<std::string, std::function<Simulation *(Rules, std::size_t)>>
-  //       simulators{
-  // #ifdef USE_SFML
-  //           {"SFML",
-  //            [](Rules rules, std::size_t seed) {
-  //              return new SimulationSFML(rules, seed);
-  //            }},
-  // #endif
-  //           {"Console", [](Rules rules, std::size_t seed) {
-  //             return new SimulationConsole(rules, seed);
-  //           }}};
-  //   Game game(simulators.at("SFML")(rules, seed));
-
   Game game(new SimulationSFML(rules, seed));
 
   std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);

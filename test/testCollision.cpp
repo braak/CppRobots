@@ -1,5 +1,5 @@
-#include "Collision.hpp"
 #include "Rectangle.hpp"
+#include "Collision.hpp"
 #include <gtest/gtest.h>
 
 TEST(CollisionTest, Overlap) {

@@ -21,11 +21,12 @@ class Game {
     int lives;
   };
 
-  std::map<std::string, Player> players;
-  std::shared_ptr<Simulation> simulation;
-
   Slot<std::string> _onDeath;
   Slot<> _onPostSimulation;
+
+protected:
+  std::map<std::string, Player> players;
+  std::shared_ptr<Simulation> simulation;
 
   int startingLives = 2;
   bool running = true;
