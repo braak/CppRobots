@@ -1,7 +1,7 @@
 /**
 *   \copyright Copyright 2015 Jan-Niklas Braak. This project is released under
 * the MIT License, see the file LICENSE.md for rights and limitations.
-*   \file Game.hpp
+*   \file Game.cpp
 *   \author Jan-Niklas Braak
 */
 

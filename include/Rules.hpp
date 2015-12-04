@@ -18,23 +18,27 @@
   The rules of the game.
 */
 struct Rules {
-  double timeStep;          //!<
-  double scan_range;        //!< Vision range of the Robot.
-  double scan_proximity;    //!< Vision range of the Robot.
-  double scan_angle;        //!< Field of Veiw of the Robot.
-  Vector_d robot_size;      //!< size of the Robot.
-  Vector_d arena_size;      //!< size of the Arena.
-  double v_max;             //!< Maximal velocity of the Robot.
-  double v_min;             //!< Minimal velocity of the Robot.
-  double w_max;             //!< Maximal turning rate of the Robot.
-  double turret_w_max;      //!< Maximal turning rate of the Robots turret.
-  double collision_damage;  //!< Damage taken from collision per timeStep.
-  double max_health;        //!< Maximal Health of a Robtot.
-  Vector_d projectile_size; //!< size of the Robot.
-  double projectile_speed;
-  double projectile_cooldown;
-  double projectile_damage;
+  double timeStep;            //!< The time one Simulation takes.
+  double scan_range;          //!< Vision range of the Robot.
+  double scan_proximity;      //!< Vision range of the Robot.
+  double scan_angle;          //!< Field of Veiw of the Robot.
+  Vector_d robot_size;        //!< Size of the Robot.
+  Vector_d arena_size;        //!< Size of the Arena.
+  double v_max;               //!< Maximal velocity of the Robot.
+  double v_min;               //!< Minimal velocity of the Robot.
+  double w_max;               //!< Maximal turning rate of the Robot.
+  double turret_w_max;        //!< Maximal turning rate of the Robots. turret.
+  double collision_damage;    //!< Damage taken from collision per timeStep.
+  double max_health;          //!< Maximal Health of a Robtot.
+  Vector_d projectile_size;   //!< Size of the Robot.
+  double projectile_speed;    //!< Speed of a Projectile.
+  double projectile_cooldown; //!< Time between shoots.
+  double projectile_damage;   //!< Damage a Projectile deals.
 
+  /**
+    Default Rules.
+    \return Rules initialized with default values.
+  */
   constexpr static Rules defaultRules() {
     return {1 / 60.0,
             1000.0,
@@ -53,8 +57,6 @@ struct Rules {
             0.4,
             10};
   }
-
-  void load(std::istream in);
 };
 
 std::ostream &operator<<(std::ostream &os, const Rules &rules);

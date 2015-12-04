@@ -26,7 +26,7 @@ public:
   /**
     \brief Constructor.
 
-    \param gen a Random Number Generator
+    \param seed Seed for a random number generator
     \param delta_w the maximal change in turning rate per time step.
     \param v the velocity.
   */

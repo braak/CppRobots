@@ -81,7 +81,7 @@ void Simulation::updatePlayers() {
   simulationStepSignal();
 }
 
-std::string Simulation::runtimeString() {
+std::string Simulation::runtimeString() const {
   std::stringstream rt;
 
   // int days = runTimeInt / 60 / 60 / 24;

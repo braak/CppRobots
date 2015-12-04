@@ -1,7 +1,7 @@
 /**
 *   \copyright Copyright 2015 Jan-Niklas Braak. This project is released under
 * the MIT License, see the file LICENSE.md for rights and limitations.
-*   \file Simulation.cpp
+*   \file Simulation.hpp
 *   \author Jan-Niklas Braak
 */
 #ifndef __SIMULATION__
@@ -72,7 +72,7 @@ public:
   /**
     Add a new player.
 
-    \parma name The name of the player.
+    \param name The name of the player.
     \param agent The Agent used to controll the player.
     \param position The starting position of the player.
     \param rotation The starting rotation of the player.
