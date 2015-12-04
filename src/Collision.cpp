@@ -49,8 +49,8 @@ Collision::Collision(const Rectangle &rect1, const Rectangle &rect2) {
 
   for (const auto &axis : axes1) {
     // Project both Rectangles onto the axis
-    Collision::Projection p1 = project(rect1, axis);
-    Collision::Projection p2 = project(rect2, axis);
+    Projection p1 = project(rect1, axis);
+    Projection p2 = project(rect2, axis);
     if (!p1.overlap(p2)) {
       // if the Projections don't overlap we have a seperating axis, the
       // Rectangles don't collide.
@@ -61,8 +61,8 @@ Collision::Collision(const Rectangle &rect1, const Rectangle &rect2) {
 
   for (const auto &axis : axes2) {
     // Project both Rectangles onto the axis
-    Collision::Projection p1 = project(rect1, axis);
-    Collision::Projection p2 = project(rect2, axis);
+    Projection p1 = project(rect1, axis);
+    Projection p2 = project(rect2, axis);
     if (!p1.overlap(p2)) {
       // if the Projections don't overlap we have a seperating axis, the
       // Rectangles don't collide.

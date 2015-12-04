@@ -10,77 +10,83 @@
 
 #include "SignalSlot.hpp"
 #include "Simulation.hpp"
+#include "version.h"
 
 #include <functional>
 #include <map>
 #include <memory>
+#include <string>
 
+/**
+  \brief A Class that encapsulates the Game logic of the program.
+*/
 class Game {
+  Slot<std::string> _onDeath;
+  Slot<> _onSimulationStep;
+
+protected:
+  /**
+  \brief Structure, that holds the data of a Player.
+  */
   struct Player {
+    /**
+      \brief A factory function for Agents.
+    */
     std::function<Agent *()> agentFactory;
+    /**
+      \brief Number of lives of the Player.
+    */
     int lives;
   };
 
-  Slot<std::string> _onDeath;
-  Slot<> _onPostSimulation;
-
-protected:
+  /**
+    \brief Players in the game.
+  */
   std::map<std::string, Player> players;
+  /**
+    \brief Pointer to the Simulation used by the Game.
+  */
   std::shared_ptr<Simulation> simulation;
 
+  /**
+    \brief Number of lives a Player starts with.
+  */
   int startingLives = 2;
+  /**
+    \brief Wheter the Game is currently running.
+  */
   bool running = true;
 
 public:
-  Game() : simulation(nullptr){};
-  Game(Simulation *sim) : simulation(sim) {
-    _onDeath = [this](std::string name) { this->onDeath(name); };
-    simulation->deathSignal.connect(_onDeath);
+  /**
+  \brief Create a new Game using the given Simulation.
 
-    _onPostSimulation = [this]() { this->onPostSimulation(); };
-    simulation->postSimulationSignal.connect(_onPostSimulation);
+  \param simulation A pointer to a Simulation.
+  */
+  Game(Simulation *simulation);
 
-    simulation->log("Welcome to CppRobots v" + std::string(VERSION_SHORT));
-  }
+  /**
+    /brief Adds a player to the Game.
 
-  void addPlayer(std::string name, std::function<Agent *()> agentFactory) {
-    Player player{agentFactory, startingLives};
-    players.insert({name, player});
-    simulation->newPlayer(name, agentFactory());
-  }
+    \param name The name of the player.
+    \param agentFactory A funtion, that returns an Agent.
+  */
+  void addPlayer(std::string name, std::function<Agent *()> agentFactory);
 
-  void run() {
-    while (simulation->isRunning() && running) {
-      simulation->update();
-    }
-    _onDeath.disconnect();
-    _onPostSimulation.disconnect();
-    simulation->finish();
-  }
+  /**
+    \brief Run the Game until it is finished.
+  */
+  void run();
 
-  virtual void onDeath(std::string name) {
-    int lives = players[name].lives--;
-    if (lives > 0) {
-      simulation->log(name + " died! " + std::to_string(lives) + " lives left");
-      simulation->newPlayer(name, players[name].agentFactory());
-    } else {
-      simulation->log(name + " lost! " +
-                      std::to_string(simulation->getNumPlayers()) +
-                      " players left");
-    }
-  };
-  virtual void onPostSimulation() {
-    if (simulation->getNumPlayers() <= 1) {
-      auto &players = simulation->getPlayers();
-      if (!players.empty()) {
-        std::string winner = players.begin()->first;
-        simulation->log(winner + " wins the game!");
-      }
-      simulation->log("Game Over!");
-
-      running = false;
-    }
-  }
+  /**
+    \brief Function, thet is called when a player dies.
+    \param name The name of the plyer, thet died.
+    */
+  virtual void onDeath(std::string name);
+  /**
+    \brief Function, that is called once per simulation step.
+  */
+  virtual void onSimulationStep();
 };
 
 #endif /* end of include guard: __CPPROBOTS_GAME__ */

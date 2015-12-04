@@ -72,7 +72,7 @@ public:
   Signal<std::string, std::string> hitSignal;
   Signal<std::string> outOfBoundsSignal;
 
-  Signal<> postSimulationSignal;
+  Signal<> simulationStepSignal;
 
 private:
   void updatePlayers();
