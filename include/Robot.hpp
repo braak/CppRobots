@@ -45,6 +45,17 @@ private:
   // Methodes
 public:
   /**
+  Constructs a Robot with a specified timeStep. The timeStep determins the
+  simulation speed.
+  \param rules the Rules of the game.
+  \param agent the Agent ust to controll the Robot.
+  */
+  Robot(const Rules &rules, Agent *agent);
+
+  // Robot(const Rules &rules, Agent *agent, Vector_d position, double
+  // rotation);
+
+  /**
   Get method for the position of the Robot.
   \return the position of the Robot.
   */
@@ -81,13 +92,6 @@ public:
 
 private:
   friend class Simulation;
-  /**
-  Constructs a Robot with a specified timeStep. The timeStep determins the
-  simulation speed.
-  \param rules the Rules of the game.
-  \param agent the Agent ust to controll the Robot.
-  */
-  Robot(const Rules &rules, Agent *agent);
 
   /**
   updates the position and orientation of the Robot

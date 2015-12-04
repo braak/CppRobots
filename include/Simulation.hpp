@@ -22,56 +22,141 @@
 #include <list>
 #include <map>
 #include <iomanip>
-// #include <time.h>
 
+/**
+  A class that encapsulates the simulation logic.
+*/
 class Simulation {
 public:
+  /**
+    The Rules used in the Simulation.
+  */
   const Rules rules;
 
 protected:
-  using KeyValuePair = std::pair<std::string, Robot>;
+  /**
+    Storage of the players of the game and their names.
+  */
   std::map<std::string, Robot> players;
+  /**
+    List of Projectiles, that are currently active.
+  */
   std::list<Projectile> projectiles;
 
-  std::default_random_engine generator;
-
+  /**
+    Runtime of the Simulation, in simulation time, not realtime
+  */
   double runTime = 0;
 
-public:
-  Simulation(const Rules &rules, unsigned int seed);
-  virtual void newPlayer(std::string name, Agent *agent);
-  virtual void newPlayer(std::string name, Agent *agent, Vector_d position,
-                         double rotation);
-  virtual void update();
+  /**
+    Engine used for ramdomisation.
+  */
+  std::default_random_engine generator;
 
-  virtual double getRuntime() const;
-  virtual int getNumPlayers() const;
-  virtual bool isRunning() const;
-  virtual void finish(){};
-  virtual void log(std::string text) { (void)text; };
+public:
+  /**
+    Constructor.
+
+    \param rules Rules used in the Simulation.
+    \param seed Seed used for random number generation.
+  */
+  Simulation(const Rules &rules, unsigned int seed);
+
+  /**
+    Get a list of players and their names.
+
+    \return a list of players and their names.
+  */
   const std::map<std::string, Robot> &getPlayers();
 
-  std::string runtimeString() {
+  /**
+    Add a new player.
 
-    std::stringstream rt;
+    \parma name The name of the player.
+    \param agent The Agent used to controll the player.
+    \param position The starting position of the player.
+    \param rotation The starting rotation of the player.
+  */
+  virtual void newPlayer(std::string name, Agent *agent, Vector_d position,
+                         double rotation);
 
-    // int days = runTimeInt / 60 / 60 / 24;
-    // int hours = int(runTime / 60 / 60) % 24;
-    int minutes = int(runTime / 60);
-    float seconds = fmod(runTime, 60);
+  /**
+    Add a new player with a random position and rotation.
 
-    rt << minutes << ":";
-    rt << std::setfill('0') << std::setw(6) << std::fixed
-       << std::setprecision(3) << seconds;
-    return rt.str();
-  }
+    \param name The name of the player.
+    \param agent The Agent used to controll the player.
+  */
+  virtual void newPlayer(std::string name, Agent *agent);
 
+  /**
+    Run one step of the simmulation.
+  */
+  virtual void update();
+  /**
+    Finishes the simulation.
+  */
+  virtual void finish();
+
+  /**
+    Return whether the Simulation is currently running.
+    \return whether the Simulation is currently running.
+  */
+  virtual bool isRunning() const;
+
+  /**
+    Add a line of text to the log.
+    \param text Line of text to add to the log.
+  */
+  virtual void log(std::string text);
+
+  /**
+    Get the runtime as a string.
+    \return The runtime as a string.
+  */
+  std::string runtimeString() const;
+  /**
+    Get the runtime as a number.
+    \return The runtime as a number.
+  */
+  virtual double getRuntime() const;
+
+  /**
+    Get the number of player in the game.
+
+    \return the number of player in the game.
+  */
+  virtual int getNumPlayers() const;
+
+  /**
+    Signal raised when a player dies.
+    \param (1) the name of the player that died
+  */
   Signal<std::string> deathSignal;
+  /**
+    Signal raised when a new player enters the game.
+    \param (1) the name of the new player
+  */
   Signal<std::string> newPlayerSignal;
+  /**
+    Signal raised when two players collide
+    \param (1) the name of the first player
+    \param (2) the name of the second player
+  */
   Signal<std::string, std::string> collisionSignal;
+  /**
+    Signal raised when a player gets hit by a projectile
+    \param (1) the name of the player that got hit.
+    \param (2) the name of owner of the projectile.
+  */
   Signal<std::string, std::string> hitSignal;
+  /**
+    Signal raised when a player is out of bounds
+    \param (1) the name of the player that  is out of bounds.
+  */
   Signal<std::string> outOfBoundsSignal;
-
+  /**
+    Signal raised once per simulation step.
+  */
   Signal<> simulationStepSignal;
 
 private:

@@ -80,7 +80,7 @@ void SimulationSFML::update() {
   for (auto const &player : players) {
     drawPlayer(window, player.first, player.second);
   }
-  // darw all projectiles
+  // draw all projectiles
   for (auto const &projectile : projectiles) {
     drawProjectile(window, projectile);
   }
@@ -116,6 +116,7 @@ void SimulationSFML::drawProjectile(sf::RenderTarget &target,
   rect.setRotation(degrees(body.getRotation()));
   target.draw(rect);
 }
+
 void SimulationSFML::drawRobot(sf::RenderTarget &target,
                                const Robot &robot) const {
   Rectangle body = robot.getBody();

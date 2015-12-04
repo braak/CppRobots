@@ -81,6 +81,20 @@ void Simulation::updatePlayers() {
   simulationStepSignal();
 }
 
+std::string Simulation::runtimeString() {
+  std::stringstream rt;
+
+  // int days = runTimeInt / 60 / 60 / 24;
+  // int hours = int(runTime / 60 / 60) % 24;
+  int minutes = int(runTime / 60);
+  float seconds = fmod(runTime, 60);
+
+  rt << minutes << ":";
+  rt << std::setfill('0') << std::setw(6) << std::fixed << std::setprecision(3)
+     << seconds;
+  return rt.str();
+}
+
 void Simulation::updateProjectiles() {
   // move the projectile
   for (auto &projectle : projectiles) {
@@ -162,6 +176,9 @@ bool Simulation::inScanArea(Vector_d const &p1, double rotation,
 
   return in_segment;
 }
+
+void Simulation::finish() {}
+void Simulation::log(std::string text) { (void)text; }
 
 void Simulation::check_scan(Robot &robot) {
   std::list<std::shared_ptr<Robot>> scanTargets;
