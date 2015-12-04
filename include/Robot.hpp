@@ -29,7 +29,9 @@ class Agent;
 class Robot {
   // Data and declarations
 public:
-  bool shooting;
+  /**
+    The Rules used in the Simulation.
+  */
   const Rules &rules;
 
 private:
@@ -41,6 +43,8 @@ private:
   // double v;
   std::shared_ptr<Agent> agent;
   double cooldown;
+
+  bool shooting;
 
   // Methodes
 public:
@@ -74,20 +78,33 @@ public:
   const Rectangle &getBody() const;
 
   /**
-  get a list of all visible Robots.
-  \return the list of visible Robots.
+    Get a list of all visible Robots.
+    \return the list of visible Robots.
   */
-  std::list<std::shared_ptr<Robot>> scanAll() const;
-
-  std::shared_ptr<Robot> scanClosest() const;
-
-  std::shared_ptr<Robot> scanAny() const;
+  const std::list<std::shared_ptr<Robot>> scanAll() const;
 
   /**
-  returns the current health of the Robot.
+    Get the closest visible Robot.
+    \return the closest visible Robot.
+  */
+  std::shared_ptr<const Robot> scanClosest() const;
+  /**
+    Get one visible Robot.
+    \return One visible Robot.
+  */
+  std::shared_ptr<const Robot> scanAny() const;
+
+  /**
+  Get the current health of the Robot.
+  \return the current health of the Robot.
   */
   double getHealth() const;
 
+  /**
+  Get the angle of the turret relative to the body.
+
+  \return the angle of the turret relative to the body.
+  */
   double getTurretAngle() const;
 
 private:

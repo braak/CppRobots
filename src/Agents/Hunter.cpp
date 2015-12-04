@@ -20,7 +20,7 @@ Action Hunter::update(Robot const &r) {
   double turretAngle;
   Vector_d deltaPosition;
 
-  std::shared_ptr<Robot> targetRobot = r.scanClosest();
+  auto targetRobot = r.scanClosest();
   Vector_d position = r.getPosition();
   double rotation = r.getRotation();
   // TODO: seperate movement and shooting code. Add Wall avoidance.

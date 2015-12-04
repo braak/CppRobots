@@ -59,7 +59,21 @@ struct Rules {
   }
 };
 
+/**
+  Output stream Operator.
+  Write the Rules to the stream as a Json object.
+  \param os The Output stream.
+  \param rules The Rules.
+  \return The Output stream.
+*/
 std::ostream &operator<<(std::ostream &os, const Rules &rules);
+/**
+  Input stream Operator.
+  Read the Rules from the stream as a Json object.
+  \param is The Input stream.
+  \param rules The Rules.
+  \return The Input stream.
+*/
 std::istream &operator>>(std::istream &is, Rules &rules);
 
 #endif /* end of include guard: __RULES__ */

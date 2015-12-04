@@ -15,7 +15,7 @@
 #include <algorithm>
 
 /**
-  \brief A  rudimentary Agent, that drives around randomly (wanders).
+  \brief A  rudimentary Agent, that moves around randomly (wanders).
 */
 class Wanderer final : public Agent {
   const double v;

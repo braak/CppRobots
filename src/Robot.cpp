@@ -10,9 +10,8 @@
 #include <sstream>
 
 Robot::Robot(const Rules &rules, Agent *agent_)
-    : shooting(false), rules(rules), body(rules.robot_size),
-      health(rules.max_health),
-      agent(std::shared_ptr<Agent>(std::move(agent_))) {}
+    : rules(rules), body(rules.robot_size), health(rules.max_health),
+      agent(std::shared_ptr<Agent>(std::move(agent_))), shooting(false) {}
 
 void Robot::setPosition(Vector_d position) { body.setPosition(position); }
 Vector_d Robot::getPosition() const { return body.getPosition(); }
@@ -56,9 +55,11 @@ void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
   scanTargets = scanTargets_;
 }
 
-std::list<std::shared_ptr<Robot>> Robot::scanAll() const { return scanTargets; }
+const std::list<std::shared_ptr<Robot>> Robot::scanAll() const {
+  return scanTargets;
+}
 
-std::shared_ptr<Robot> Robot::scanClosest() const {
+std::shared_ptr<const Robot> Robot::scanClosest() const {
   if (scanTargets.empty()) {
     return nullptr;
   }
@@ -74,7 +75,7 @@ std::shared_ptr<Robot> Robot::scanClosest() const {
   return target;
 }
 
-std::shared_ptr<Robot> Robot::scanAny() const {
+std::shared_ptr<const Robot> Robot::scanAny() const {
   if (scanTargets.empty()) {
     return nullptr;
   }

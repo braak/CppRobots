@@ -13,7 +13,7 @@ Follower::Follower(double target_distance, double K_distance, double K_beta)
 }
 
 Action Follower::update(Robot const &r) {
-  std::shared_ptr<Robot> target_robot = r.scanClosest();
+  auto target_robot = r.scanClosest();
 
   if (!target_robot) {
     // If no visible Robot, turn in circle.

@@ -12,6 +12,9 @@
 #include "Vector.hpp"
 #include <vector>
 
+/**
+  Tests a collision between two objects.
+*/
 class Collision {
   bool collision;
   // Vector_d MTV;
@@ -29,21 +32,34 @@ class Collision {
   static std::vector<Vector_d> getAxes(const Rectangle &rect);
 
 public:
+  /**
+    Default constructor.
+
+    A default constructed Collision represents no Collision.
+  */
   Collision();
 
   // Collision(const Circle &circ1, const Circle &circ2);
   // Collision(const Rectangle &rect, const Circle &circ);
   // Collision(const Circle &circ, const Rectangle &rect);
 
+  /**
+    Collisoion between two Rectangles.
+  */
   Collision(const Rectangle &rect1, const Rectangle &rect2);
 
+  /**
+    Collision between two objects that have a body(i.e. they have a getBody
+    function.)
+  */
   template <class T, class U>
   Collision(const T &val1, const U &val2)
       : Collision(val1.getBody(), val2.getBody()) {}
 
+  /**
+    Test if there was a collision.
+  */
   explicit operator bool() const;
-
-  static bool testCollision(const Rectangle &rect1, const Rectangle &rect2);
 };
 
 #endif /* end of include guard: __COLLISION__ */

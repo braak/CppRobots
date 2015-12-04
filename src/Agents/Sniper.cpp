@@ -13,8 +13,7 @@
 Sniper::Sniper() {}
 
 Action Sniper::update(Robot const &r) {
-  // return {0, 0, r.getTurretAngle() - r.rules.scan_angle, false};
-  std::shared_ptr<Robot> target_robot = r.scanClosest();
+  auto target_robot = r.scanClosest();
 
   Vector_d position = r.getPosition();
   double rotation = r.getRotation();

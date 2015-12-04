@@ -74,7 +74,3 @@ Collision::Collision(const Rectangle &rect1, const Rectangle &rect2) {
 }
 
 Collision::operator bool() const { return collision; }
-
-bool Collision::testCollision(const Rectangle &rect1, const Rectangle &rect2) {
-  return static_cast<bool>(Collision(rect1, rect2));
-}
