@@ -23,8 +23,7 @@
 class SimulationSFML : public Simulation {
 private:
   const std::string window_name = "CppRobot Gui " + std::string(VERSION_SHORT);
-  const std::string fontName = "resources/font/liberation-fonts-ttf-2.00.1/"
-                               "LiberationSans-Regular.ttf";
+  const std::string fontName = "resources/font/noto/NotoSans-Regular.ttf";
   sf::RenderWindow window;
   FrameTimer frameTimer;
 
