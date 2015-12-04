@@ -34,4 +34,7 @@ make doc
 # Copyright and license
 Copyright 2015 Jan-Niklas Braak.
 
-This project is released under the MIT License, see the file LICENSE.md for rights and limitations.
+This project is released under the MIT License, see the file [LICENSE.md](LICENSE.md) for rights and limitations.
+
+This project uses the [Noto](https://github.com/googlei18n/noto-fonts) font. It is Licensed under the SIL Open Font License,
+Version 1.1.

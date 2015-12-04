@@ -20,6 +20,9 @@
 #include <random>
 #include <iostream>
 
+/**
+  Simulation, that displays its results graphicly using the SFML library.
+*/
 class SimulationSFML : public Simulation {
 private:
   const std::string window_name = "CppRobot Gui " + std::string(VERSION_SHORT);
@@ -38,11 +41,34 @@ private:
   const int logLength = 70;
 
 public:
+  /**
+    Constructor.
+
+    \param rules Rules used in the Simulation.
+    \param seed Seed used for random number generation.
+  */
   SimulationSFML(const Rules &rules, unsigned int seed);
 
+  /**
+    Run one step of the simmulation.
+  */
   void update() override;
+  /**
+    Return whether the Simulation is currently running.
+    The Simulation runns aslong as its Window is open.
+    \return whether the Simulation is currently running.
+  */
   bool isRunning() const override;
+  /**
+    Finishes the simulation by waiting for the user to close the window.
+  */
   void finish() override;
+  /**
+    Add a line of text to the log.
+
+    The log is displayed in the window.
+    \param text Line of text to add to the log.
+  */
   void log(std::string text) override;
 
 private:

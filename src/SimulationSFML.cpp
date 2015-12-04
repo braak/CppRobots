@@ -20,9 +20,7 @@ SimulationSFML::SimulationSFML(const Rules &rules, unsigned int seed)
 
   // Load resources
   if (!font.loadFromFile(selfpath() + "/" + fontName)) {
-    // if (!font.loadFromFile("bin/" + fontName)) {
     throw std::runtime_error("unable to load font");
-    // }
   }
 
   // set artibutes
