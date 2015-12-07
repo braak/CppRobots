@@ -10,6 +10,7 @@
 
 #include "SignalSlot.hpp"
 #include "Simulation.hpp"
+#include "ViewSFML.hpp"
 #include "version.h"
 
 #include <functional>
@@ -48,10 +49,12 @@ protected:
   */
   std::shared_ptr<Simulation> simulation;
 
+  std::shared_ptr<View> view;
+
   /**
     \brief Number of lives a Player starts with.
   */
-  int startingLives = 2;
+  int startingLives = 0;
   /**
     \brief Wheter the Game is currently running.
   */
@@ -63,7 +66,7 @@ public:
 
   \param simulation A pointer to a Simulation.
   */
-  Game(Simulation *simulation);
+  Game(Simulation *simulation, View *view);
 
   /**
     /brief Adds a player to the Game.
@@ -79,8 +82,8 @@ public:
   void run();
 
   /**
-    \brief Function, thet is called when a player dies.
-    \param name The name of the plyer, thet died.
+    \brief Function, that is called when a player dies.
+    \param name The name of the player, that died.
     */
   virtual void onDeath(std::string name);
   /**

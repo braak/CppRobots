@@ -36,7 +36,8 @@ int main() {
 
   std::size_t seed = std::hash<std::string>()("Not Random");
 
-  Game game(new SimulationSFML(rules, seed));
+  Game game(new Simulation(rules, seed), new ViewSFML(rules));
+  // Game game(new Simulation(rules, seed), new ViewConsole());
 
   std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);
   if (!nameFile.is_open()) {

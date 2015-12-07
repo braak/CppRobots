@@ -69,6 +69,8 @@ public:
   */
   const std::map<std::string, Robot> &getPlayers();
 
+  const std::list<Projectile> &getProjectiles();
+
   /**
     Add a new player.
 
@@ -92,22 +94,12 @@ public:
     Run one step of the simmulation.
   */
   virtual void update();
-  /**
-    Finishes the simulation.
-  */
-  virtual void finish();
 
   /**
     Return whether the Simulation is currently running.
     \return whether the Simulation is currently running.
   */
   virtual bool isRunning() const;
-
-  /**
-    Add a line of text to the log.
-    \param text Line of text to add to the log.
-  */
-  virtual void log(std::string text);
 
   /**
     Get the runtime as a string.

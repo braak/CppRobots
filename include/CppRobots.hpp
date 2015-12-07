@@ -19,9 +19,10 @@
 #include "SignalSlot.hpp"
 #include "pathUtility.hpp"
 #include "Game.hpp"
+#include "View.hpp"
 
-#include "SimulationConsole.hpp"
+#include "ViewConsole.hpp"
 
 #ifdef USE_SFML
-#include "SimulationSFML.hpp"
+#include "ViewSFML.hpp"
 #endif

@@ -158,6 +158,10 @@ bool Simulation::isRunning() const { return true; }
 
 const std::map<std::string, Robot> &Simulation::getPlayers() { return players; }
 
+const std::list<Projectile> &Simulation::getProjectiles() {
+  return projectiles;
+}
+
 bool Simulation::inScanArea(Vector_d const &p1, double rotation,
                             Vector_d const &p2) const {
   const Vector_d v = p2 - p1;
@@ -176,9 +180,6 @@ bool Simulation::inScanArea(Vector_d const &p1, double rotation,
 
   return in_segment;
 }
-
-void Simulation::finish() {}
-void Simulation::log(std::string text) { (void)text; }
 
 void Simulation::check_scan(Robot &robot) {
   std::list<std::shared_ptr<Robot>> scanTargets;

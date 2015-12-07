@@ -32,7 +32,8 @@ if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
 
     # The library used by programms using SFML
-    add_library(CppRobotsSFML  SimulationSFML.cpp)
+    add_library(CppRobotsSFML ViewSFML.cpp)
+
     target_link_libraries(CppRobotsSFML ${SFML_LIBRARIES})
 
     # create the executable for use with UI
