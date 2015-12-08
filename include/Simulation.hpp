@@ -65,11 +65,16 @@ public:
   /**
     Get a list of players and their names.
 
-    \return a list of players and their names.
+    \return a map of Robots acceseable by their names.
   */
-  const std::map<std::string, Robot> &getPlayers();
+  const std::map<std::string, Robot> &getPlayers() const;
 
-  const std::list<Projectile> &getProjectiles();
+  /**
+    Get a list of active Projectiles.
+
+    \return a list of Projectiles.
+  */
+  const std::list<Projectile> &getProjectiles() const;
 
   /**
     Add a new player.
@@ -123,33 +128,33 @@ public:
     Signal raised when a player dies.
     \param (1) the name of the player that died
   */
-  Signal<std::string> deathSignal;
+  mutable Signal<std::string> deathSignal;
   /**
     Signal raised when a new player enters the game.
     \param (1) the name of the new player
   */
-  Signal<std::string> newPlayerSignal;
+  mutable Signal<std::string> newPlayerSignal;
   /**
     Signal raised when two players collide
     \param (1) the name of the first player
     \param (2) the name of the second player
   */
-  Signal<std::string, std::string> collisionSignal;
+  mutable Signal<std::string, std::string> collisionSignal;
   /**
     Signal raised when a player gets hit by a projectile
     \param (1) the name of the player that got hit.
     \param (2) the name of owner of the projectile.
   */
-  Signal<std::string, std::string> hitSignal;
+  mutable Signal<std::string, std::string> hitSignal;
   /**
     Signal raised when a player is out of bounds
     \param (1) the name of the player that  is out of bounds.
   */
-  Signal<std::string> outOfBoundsSignal;
+  mutable Signal<std::string> outOfBoundsSignal;
   /**
     Signal raised once per simulation step.
   */
-  Signal<> simulationStepSignal;
+  mutable Signal<> simulationStepSignal;
 
 private:
   void updatePlayers();

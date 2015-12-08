@@ -8,13 +8,41 @@
 #ifndef __CPPROBOTS_VIEW__
 #define __CPPROBOTS_VIEW__
 
+#include "Simulation.hpp"
+
+#include <memory>
+
+/**
+  Abstract class for displaying the Simulation.
+*/
 class View {
 public:
-  virtual void setSimulation(std::shared_ptr<Simulation> sim) = 0;
+  /**
+    Set wich Simulation to display.
+  */
+  virtual void setSimulation(std::shared_ptr<const Simulation> sim) = 0;
+
+  /**
+    Handles all input from the user.
+  */
   virtual void input() = 0;
+  /**
+    Handles all output.
+  */
   virtual void output() = 0;
+  /**
+    Finisches the User interaction.
+  */
   virtual void finish() = 0;
+  /**
+    Tells wheter the View is running.
+    \return true if the View is active, false otherwise.
+  */
   virtual bool isRunning() const = 0;
+  /**
+    Add a line of text to the log.
+    \param text The line of text to add to the log.
+  */
   virtual void log(std::string text) = 0;
 };
 

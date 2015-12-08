@@ -156,9 +156,11 @@ double Simulation::getRuntime() const { return runTime; }
 int Simulation::getNumPlayers() const { return players.size(); }
 bool Simulation::isRunning() const { return true; }
 
-const std::map<std::string, Robot> &Simulation::getPlayers() { return players; }
+const std::map<std::string, Robot> &Simulation::getPlayers() const {
+  return players;
+}
 
-const std::list<Projectile> &Simulation::getProjectiles() {
+const std::list<Projectile> &Simulation::getProjectiles() const {
   return projectiles;
 }
 

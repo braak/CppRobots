@@ -49,6 +49,9 @@ protected:
   */
   std::shared_ptr<Simulation> simulation;
 
+  /**
+  \brief Pointer to the View used for User interaction.
+  */
   std::shared_ptr<View> view;
 
   /**
@@ -65,6 +68,7 @@ public:
   \brief Create a new Game using the given Simulation.
 
   \param simulation A pointer to a Simulation.
+  \param view A Pointer to a View.
   */
   Game(Simulation *simulation, View *view);
 

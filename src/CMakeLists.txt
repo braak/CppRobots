@@ -13,7 +13,7 @@ endif()
 
 
 # A library used by all programs
-add_library(CppRobots FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp pathUtility.cpp jsoncpp.cpp)
+add_library(CppRobots FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES

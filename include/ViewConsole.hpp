@@ -8,33 +8,21 @@
 #ifndef __CPPROBOTS_VIEW_CONSOLE__
 #define __CPPROBOTS_VIEW_CONSOLE__
 
+#include "View.hpp"
+
+/**
+  A View that displays the state and progress of the simulation on the console.
+*/
 class ViewConsole : public View {
-  std::shared_ptr<Simulation> simulation;
+  std::shared_ptr<const Simulation> simulation;
 
 public:
-  void setSimulation(std::shared_ptr<Simulation> sim) override {
-    simulation = sim;
-  }
-
-  virtual void input() override{};
-  virtual void output() override {
-    if (!simulation) {
-      throw std::runtime_error("No Simulation was set for this View.");
-    }
-    std::cout << simulation->runtimeString() << std::endl;
-    for (auto const &player : simulation->getPlayers()) {
-      std::cout << "\t" << player.first << " at " << player.second.getPosition()
-                << ", " << player.second.getHealth() << " health" << std::endl;
-    }
-  };
-  virtual void finish() override { std::cin.get(); };
-  virtual bool isRunning() const override { return true; };
-  void log(std::string text) override {
-    if (!simulation) {
-      throw std::runtime_error("No Simulation was set for this View.");
-    }
-    std::cout << simulation->runtimeString() << ": " << text << std::endl;
-  }
+  void setSimulation(std::shared_ptr<const Simulation> sim) override;
+  void input() override;
+  void output() override;
+  void finish() override;
+  bool isRunning() const override;
+  void log(std::string text) override;
 };
 
 #endif /* end of include guard: __CPPROBOTS_VIEW_CONSOLE__ */
