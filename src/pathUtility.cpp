@@ -25,14 +25,24 @@ std::string selfpath() {
   throw std::runtime_error("Unable to find executable path :" +
                            std::string(std::strerror(errno)));
 }
+#elif _WINDOWS
+#include <windows.h>
+#include "Shlwapi.h"
 
+#pragma comment(lib, "shlwapi.lib")
+std::string selfpath() {
+  WCHAR path[MAX_PATH];
+  GetModuleFileNameW(NULL, path, MAX_PATH);
+  PathRemoveFileSpecW(path);
+
+  std::wstring ws(path);
+  return std::string(ws.begin(), ws.end());
+}
+
+#else
 /* NOTE: for OS X see
 https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dyld.3.html
-
-for Windows see https://msdn.microsoft.com/en-us/library/ms683197.aspx
  */
-#else
-
 #warning Platform not supported by pathUtility. Behaviour of functions may not be as expected.
 
 std::string selfpath() {

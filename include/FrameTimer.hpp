@@ -16,8 +16,8 @@
 */
 class FrameTimer {
 private:
+  std::chrono::duration<double> timeStep;
   std::chrono::duration<double> frameTime;
-  std::chrono::duration<double> targetTime;
   std::chrono::high_resolution_clock::time_point startOfFrame;
 
 public:
@@ -25,41 +25,28 @@ public:
   Constructs a FrameTimer object with the specified target time.
   \param targetTime the frame tiem targeted by the Frametimer.
   */
-  FrameTimer(float targetTime);
+  // FrameTimer(std::chrono::duration<double> timeStep);
   /**
   Default destructor.
   */
   virtual ~FrameTimer();
 
+  void setTimeStep(std::chrono::duration<double> timeStep);
   /**
-  This method is called to signal the start of a frame.
-    \param wait Wheter to wait for the next frame or not.
+  This method is called to signal the transition to a new frame.
+    \param wait when true sleep until next frame
   */
-  void startFrame(bool wait = false);
-  /**
-  This method is called to signal the end of a frame.
+  void sync(bool wait = true);
 
-  If wait is true it lets the current thread sleep until the targetTime is
-  reached.
-
-
-  */
-  void endFrame();
-
-  /**
-  Returns the current framerate.
-  \return the current framerate
-  */
-  float getFps();
   /**
   Returns the duration of the previous frame.
   */
-  float getFrameTime();
+  std::chrono::duration<double> getFrameTime();
   /**
   Returns the framerate and the frametime in a human readable format.
   \return s string in the form "<framerate> (<frametime> ms)"
   */
-  std::string getOutput();
+  std::string getOutput() const;
 };
 
 #endif /* end of include guard: __FRAME_TIMER__ */

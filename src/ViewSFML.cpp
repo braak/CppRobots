@@ -10,9 +10,9 @@
 ViewSFML::ViewSFML() : ViewSFML(nullptr) {}
 
 ViewSFML::ViewSFML(Simulation *sim)
-    : simulation(sim), window(sf::VideoMode::getDesktopMode(), window_name),
-      logging(logLength) {
+    : window(sf::VideoMode::getDesktopMode(), window_name), logging(logLength) {
 
+  setSimulation(std::shared_ptr<Simulation>(sim));
   // Load resources
   if (!font.loadFromFile(selfpath() + "/" + fontName)) {
     throw std::runtime_error("unable to load font " + fontName);
@@ -32,6 +32,8 @@ void ViewSFML::setSimulation(std::shared_ptr<const Simulation> sim) {
   view.setCenter(
       {(float)rules.arena_size.x / 2, (float)rules.arena_size.y / 2});
   window.setView(view);
+
+  frameTimer.setTimeStep(std::chrono::duration<double>(rules.timeStep));
 }
 
 void ViewSFML::input() {
@@ -66,10 +68,11 @@ void ViewSFML::output() {
     throw std::runtime_error("No Simulation was set for this View.");
   }
 
+  frameTimer.sync();
+
   /*NOTE: to get better perfomance for drawing only create only create the
    * Graphical objets once and update their state here.
   */
-
   // clear-draw-display cycle
   window.clear(sf::Color::Black);
 
@@ -211,9 +214,11 @@ void ViewSFML::drawUI(sf::RenderTarget &target) const {
   sf::Vector2f size = (sf::Vector2f)target.getSize();
   target.setView(sf::View({0.f, 0.f, size.x, size.y}));
 
-  const int spacing = 13;
+  sf::Text fps_counter(frameTimer.getOutput(), font, 12);
+  target.draw(fps_counter);
+
+  const int spacing = 14;
   sf::Text log_line("", font, 12);
-  // log_line.move({0, spacing});
   for (int i = 0; i < logLength; i++) {
     const std::string &line = logging[(logIndex + i) % logLength];
     if (!line.empty()) {

@@ -8,31 +8,29 @@
 #include "FrameTimer.hpp"
 #include <sstream>
 
-FrameTimer::FrameTimer(float targetTime)
-    : targetTime(targetTime),
-      startOfFrame(std::chrono::high_resolution_clock::now()) {}
+// FrameTimer::FrameTimer(std::chrono::duration<double> timeStep)
+//     : timeStep(timeStep),
+//       startOfFrame(std::chrono::high_resolution_clock::now()) {}
 FrameTimer::~FrameTimer() {}
+void FrameTimer::setTimeStep(std::chrono::duration<double> timeStep_) {
+  timeStep = timeStep_;
+}
 
-void FrameTimer::startFrame(bool wait) {
+void FrameTimer::sync(bool wait) {
   if (wait) {
-    // auto wake_up_time = startOfFrame + targetTime;
-    std::this_thread::sleep_until(startOfFrame + targetTime);
+    std::this_thread::sleep_until(startOfFrame + timeStep);
   }
-  startOfFrame = std::chrono::high_resolution_clock::now();
-}
 
-void FrameTimer::endFrame() {
-  std::chrono::high_resolution_clock::time_point endOfFrame;
-  endOfFrame = std::chrono::high_resolution_clock::now();
+  auto endOfFrame = std::chrono::high_resolution_clock::now();
   frameTime = endOfFrame - startOfFrame;
+  startOfFrame = endOfFrame;
 }
 
-float FrameTimer::getFps() { return 1.0 / frameTime.count(); }
+std::chrono::duration<double> FrameTimer::getFrameTime() { return frameTime; }
 
-float FrameTimer::getFrameTime() { return frameTime.count(); }
-
-std::string FrameTimer::getOutput() {
+std::string FrameTimer::getOutput() const {
   std::stringstream outputString;
-  outputString << getFps() << "(" << getFrameTime() * 1000 << " ms)";
+  outputString << 1.0 / frameTime.count() << "(" << frameTime.count() * 1000
+               << " ms)";
   return outputString.str();
 }

@@ -11,6 +11,7 @@
 #include "Simulation.hpp"
 #include "Rectangle.hpp"
 #include "View.hpp"
+#include "FrameTimer.hpp"
 #include "version.h"
 
 #include <SFML/System.hpp>
@@ -19,6 +20,8 @@
 #include <string>
 #include <random>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 /**
   A View that displays the state and progress of the simulation graphicly using
@@ -35,11 +38,13 @@ private:
   const int logLength = 70;
 
   std::shared_ptr<const Simulation> simulation;
-  // Rules &rules;
 
   sf::RenderWindow window;
   std::vector<std::string> logging;
   sf::Font font;
+
+  FrameTimer frameTimer;
+  // std::chrono::high_resolution_clock::time_point startOfFrame;
 
 public:
   ViewSFML();
