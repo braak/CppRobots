@@ -22,15 +22,14 @@ private:
 
 public:
   /**
-  Constructs a FrameTimer object with the specified target time.
-  \param targetTime the frame tiem targeted by the Frametimer.
-  */
-  // FrameTimer(std::chrono::duration<double> timeStep);
-  /**
   Default destructor.
   */
   virtual ~FrameTimer();
 
+  /**
+  Set the targeted duration of frames.
+  \param timeStep The targeted duration of frames.
+  */
   void setTimeStep(std::chrono::duration<double> timeStep);
   /**
   This method is called to signal the transition to a new frame.
