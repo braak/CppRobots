@@ -3,15 +3,23 @@ The goal of CppRobots is the creation of a C++ framework for simulating AI-drive
 
 # Building #
 
-The following sections will explain how to get and compile the project. Currently only Ubuntu systems are fully explained. If you are an expert feel free to deviate from the steps below. 
+The following sections will explain how to get and compile the project. Currently only Ubuntu systems are fully explained. If you are an expert feel free to deviate from the steps below.
 
 ## Requirements ##
 
+This project needs the following things:
+* A C++11-standard-compliant compiler
+* make
+* cmake
+* The [SFML 2](http://www.sfml-dev.org/) Library.
+
+
+### On Ubuntu ###
 On Ubuntu install the following Packages:
-* `git` (optional)
 * `cmake`
 * `build-essential`
 * `libsfml-dev`
+* `git` (optional)
 * `doxygen` (optional)
 
 Just run the following command:
