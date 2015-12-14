@@ -2,8 +2,48 @@
 The goal of CppRobots is the creation of a C++ framework for simulating AI-driven robots in a virtual environment. CppRobots was inspired by [CROBOTS](http://crobots.deepthought.it/home.php), a programming game first published in	december 1985. CppRobots does not intend to be a replacement for CROBOTS.
 
 # Building #
+
+The following sections will explain how to get and compile the project. Currently only Ubuntu systems are fully explained. If you are an expert feel free to deviate from the steps below. 
+
+## Requirements ##
+
+On Ubuntu install the following Packages:
+* `git` (optional)
+* `cmake`
+* `build-essential`
+* `libsfml-dev`
+* `doxygen` (optional)
+
+Just run the following command:
+~~~~
+sudo apt-get install git cmake build-essential libsfml-dev doxygen
+~~~~
+
+
+To install googletest go to https://github.com/google/googletest and follow their advice. Otherwise here is a quick way to do it (No guaranties):
+
+~~~~~~~~~~~~~
+git clone https://github.com/google/googletest
+cd googletest
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+~~~~~~~~~~~~~
+## Getting the Source ##
+
+To download the project run
+~~~~
+git clone https://github.com/braak/CppRobots
+~~~~
+
+Or download and extract the Zip file: https://github.com/braak/CppRobots/archive/master.zip
+
+## Compiling ##
 To build the project use `cmake` and `make`
 ~~~~~~~~~~~~~
+cd CppRobots
 mkdir build
 cd build
 cmake ..
