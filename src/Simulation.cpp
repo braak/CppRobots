@@ -189,21 +189,20 @@ const std::list<Projectile> &Simulation::getProjectiles() const {
 
 bool Simulation::inScanArea(Vector_d const &p1, double rotation,
                             Vector_d const &p2) const {
-  const Vector_d v = p2 - p1;
+  // Vector form robot to the target.
+  const auto v = p2 - p1;
 
-  // const bool in_range = v.magnitude() < rules.scan_range;
   if (v.magnitude() < rules.scan_proximity) {
+    // targets are always visible when they are in scan_proximity range.
     return true;
   } else if (v.magnitude() > rules.scan_range) {
-    // early out, we don't have to check the angles.
+    // targets are never visible if they are out of scan_range.
     return false;
   }
 
-  const double beta = angDiffRadians(rotation, v.angle());
-  const bool in_segment =
-      -rules.scan_angle / 2 < beta && beta < rules.scan_angle / 2;
-
-  return in_segment;
+  // If the Target is visible depends if it is within the Arc of Vision.
+  const auto angle = angDiffRadians(rotation, v.angle());
+  return -rules.scan_angle / 2 < angle && angle < rules.scan_angle / 2;
 }
 
 void Simulation::check_scan(Robot &robot) {
@@ -212,9 +211,10 @@ void Simulation::check_scan(Robot &robot) {
     if (&robot == &player2.second) {
       continue;
     }
-    Vector_d pose1 = robot.getPosition();
-    double rotation = wrapRadians(robot.getRotation() + robot.getTurretAngle());
-    Vector_d pose2 = player2.second.getPosition();
+    const Vector_d pose1 = robot.getPosition();
+    const double rotation =
+        wrapRadians(robot.getRotation() + robot.getTurretAngle());
+    const Vector_d pose2 = player2.second.getPosition();
     if (inScanArea(pose1, rotation, pose2)) {
       scanTargets.push_back(std::make_shared<Robot>(player2.second));
     }

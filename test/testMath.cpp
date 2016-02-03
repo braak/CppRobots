@@ -3,15 +3,15 @@
 #include "mathUtility.hpp"
 
 TEST(MathTest, wrap) {
-  EXPECT_DOUBLE_EQ(5.0, wrap(1.0, 6.0, 2.0));
-  EXPECT_DOUBLE_EQ(4.0, wrap(4.0, 6.0, 2.0));
-  EXPECT_DOUBLE_EQ(3.0, wrap(7.0, 6.0, 2.0));
+  EXPECT_DOUBLE_EQ(5.0, wrap(1.0, 2.0, 6.0));
+  EXPECT_DOUBLE_EQ(4.0, wrap(4.0, 2.0, 6.0));
+  EXPECT_DOUBLE_EQ(3.0, wrap(7.0, 2.0, 6.0));
 }
 
 TEST(MathTest, clamp) {
-  EXPECT_DOUBLE_EQ(2.0, clamp(1.0, 6.0, 2.0));
-  EXPECT_DOUBLE_EQ(4.0, clamp(4.0, 6.0, 2.0));
-  EXPECT_DOUBLE_EQ(6.0, clamp(7.0, 6.0, 2.0));
+  EXPECT_DOUBLE_EQ(2.0, clamp(1.0, 2.0, 6.0));
+  EXPECT_DOUBLE_EQ(4.0, clamp(4.0, 2.0, 6.0));
+  EXPECT_DOUBLE_EQ(6.0, clamp(7.0, 2.0, 6.0));
 }
 
 TEST(MathTest, lerp) {

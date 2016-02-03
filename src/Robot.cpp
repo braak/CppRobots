@@ -27,8 +27,8 @@ void Robot::update() {
   }
   const Action a = agent->update(*this);
 
-  const double v = clamp(a.v, rules.v_max, rules.v_min);
-  const double w = clamp(a.w, rules.w_max, -rules.w_max);
+  const double v = clamp(a.v, rules.v_min, rules.v_max);
+  const double w = clamp(a.w, -rules.w_max, rules.w_max);
 
   // move forward in the current direction
   body.move(Vector_d::polar(body.getRotation(), v * rules.timeStep));
@@ -38,8 +38,8 @@ void Robot::update() {
   // turn turret
   const double turretTurnRate =
       clamp(angDiffRadians(a.turretAngle, turretAngle),
-            rules.turret_w_max * rules.timeStep,
-            -rules.turret_w_max * rules.timeStep);
+            -rules.turret_w_max * rules.timeStep,
+            rules.turret_w_max * rules.timeStep);
   turretAngle += turretTurnRate;
 
   // reduce cooldown
@@ -48,7 +48,7 @@ void Robot::update() {
   if (cooldown < 0 && a.shooting) {
     // reset cooldown
     cooldown = rules.projectile_cooldown;
-    // tell the simulation
+    // tell the simulation we want to shoot
     shooting = true;
   }
 }
@@ -63,6 +63,10 @@ const std::list<std::shared_ptr<Robot>> Robot::scanAll() const {
   /* NOTE: How to cheat: Robots are only supposed to see its targets. However,
    * an Agent can call any scan function on the Robots it can see. That way an
    * Agent can 'search' for more Robots then it can see.
+   *
+   * The scan functions should not return a real Robot but a "Target" object.
+   * This object should be lightweight, because many instances of it will be
+   * generated. The Robot only has to store the Target objects.
    */
   return scanTargets;
 }
@@ -71,16 +75,18 @@ std::shared_ptr<const Robot> Robot::scanClosest() const {
   if (scanTargets.empty()) {
     return nullptr;
   }
-  std::shared_ptr<Robot> target = scanTargets.front();
-  for (const auto &currentTarget : scanTargets) {
-    const Vector_d vector_a = target->getPosition() - body.getPosition();
-    const Vector_d vector_b = currentTarget->getPosition() - body.getPosition();
+  // cache our position
+  const auto position = body.getPosition();
+  // function, that compares teh distance of two Robots to us
+  auto comp = [=](const std::shared_ptr<Robot> &left,
+                  const std::shared_ptr<Robot> &right) {
+    const auto distance_left = left->getPosition() - position;
+    const auto distance_right = right->getPosition() - position;
 
-    if (vector_a.magnitude() > vector_b.magnitude()) {
-      target = currentTarget;
-    }
-  }
-  return target;
+    return distance_left.magnitude() < distance_right.magnitude();
+  };
+
+  return *std::min_element(scanTargets.begin(), scanTargets.end(), comp);
 }
 
 std::shared_ptr<const Robot> Robot::scanAny() const {

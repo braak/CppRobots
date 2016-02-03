@@ -28,17 +28,17 @@ template <class T> constexpr T modulus(T a, T n) {
 
 /**
   Limits the range a value can take by wraping it around.
-  \f$ wrap(value, upperLimit, lowerLimit) = value -
+  \f$ wrap(value, lowerLimit, upperLimit) = value -
   \left\lfloor\frac{value - lowerLimit}{upperLimit - lowerLimit}\right\rfloor
   (upperLimit - lowerLimit)
   \f$
 
   \param value the value to clamp.
-  \param upperLimit the upper limit of the value.
   \param lowerLimit The lower limit of the value.
+  \param upperLimit the upper limit of the value.
   \return the wraped value.
 */
-template <class T> constexpr T wrap(T value, T upperLimit, T lowerLimit) {
+template <class T> constexpr T wrap(T value, T lowerLimit, T upperLimit) {
   return value -
          floor((value - lowerLimit) / (upperLimit - lowerLimit)) *
              (upperLimit - lowerLimit);
@@ -47,7 +47,7 @@ template <class T> constexpr T wrap(T value, T upperLimit, T lowerLimit) {
 
 /**
   Limits the range a value can take by 'clamping' it.
-  \f$ clamp(value, upperLimit, lowerLimit)= \begin{cases}
+  \f$ clamp(value, lowerLimit, upperLimit)= \begin{cases}
       upperLimit &  \text{ if } value \gt upperLimit \\
       lowerLimit &  \text{ if } value \lt lowerLimit \\
       value &  \text{ otherwise }
@@ -57,7 +57,7 @@ template <class T> constexpr T wrap(T value, T upperLimit, T lowerLimit) {
   \param lowerLimit The lower limit of the value.
   \return the claped value.
 */
-template <class T> constexpr T clamp(T value, T upperLimit, T lowerLimit) {
+template <class T> constexpr T clamp(T value, T lowerLimit, T upperLimit) {
   /* NOTE: we are using conditional expressions(the ternary operator "?:") to
      allow clamp to be a constexpr. Using ordinary if-else statements the
      fuction body would look like this:
