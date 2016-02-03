@@ -105,7 +105,8 @@ TEST(VectorTest, PolarUnit) {
   Vector_d p1(cos(angle), sin(angle));
   Vector_d p2 = Vector_d::polar(angle);
 
-  EXPECT_EQ(p1, p2);
+  EXPECT_DOUBLE_EQ(p1.x, p2.x);
+  EXPECT_DOUBLE_EQ(p1.y, p2.y);
 }
 
 TEST(VectorTest, Polar) {

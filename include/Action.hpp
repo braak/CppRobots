@@ -13,10 +13,10 @@
 \brief  Action to be perfomed by a Robot during a timeStep.
 */
 struct Action {
-  double v; //!< The desired speed of the Robot.
-  double w; //!< The desired turning rate of the Robot.
-  double turretAngle;
-  bool shooting;
+  double v;           //!< The desired speed of the Robot.
+  double w;           //!< The desired turning rate of the Robot.
+  double turretAngle; //<! The desired angle of the turret.
+  bool shooting;      //<! Whether to shoot or not.
 };
 
 #endif /* end of include guard: __ACTION__ */

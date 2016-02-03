@@ -11,12 +11,13 @@
 Wanderer::Wanderer(double delta_w, double v, unsigned int seed) : v(v), w(0) {
   std::default_random_engine gen(seed);
   std::normal_distribution<double> distribution(0, delta_w);
-  rng = std::bind(distribution, gen);
+  random = std::bind(distribution, gen);
 }
 
 Action Wanderer::update(Robot const &r) {
-  w += rng();
-  // prevent windup by limiting the turning rate.
-  w = std::min(std::max(w, -r.rules.w_max), r.rules.w_max);
-  return {v, w, w / r.rules.w_max / M_PI / 2, false};
+  // integrate a random number
+  w += random();
+  // prevent windup by limiting the turning rate to the maximal output.
+  w = clamp(w, -r.rules.w_max, r.rules.w_max);
+  return {v, w, 0, false};
 }

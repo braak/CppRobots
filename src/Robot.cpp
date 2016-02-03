@@ -25,26 +25,30 @@ void Robot::update() {
   if (!agent) {
     throw std::runtime_error("No Agent was set for this Robot.");
   }
-  Action a = agent->update(*this);
+  const Action a = agent->update(*this);
 
   const double v = clamp(a.v, rules.v_max, rules.v_min);
   const double w = clamp(a.w, rules.w_max, -rules.w_max);
 
   // move forward in the current direction
   body.move(Vector_d::polar(body.getRotation(), v * rules.timeStep));
-  // turn
+  // turn body
   body.rotate(w * rules.timeStep);
 
+  // turn turret
   const double turretTurnRate =
       clamp(angDiffRadians(a.turretAngle, turretAngle),
             rules.turret_w_max * rules.timeStep,
             -rules.turret_w_max * rules.timeStep);
   turretAngle += turretTurnRate;
 
-  // shoot
+  // reduce cooldown
   cooldown -= rules.timeStep;
+  // shoot
   if (cooldown < 0 && a.shooting) {
+    // reset cooldown
     cooldown = rules.projectile_cooldown;
+    // tell the simulation
     shooting = true;
   }
 }
@@ -56,6 +60,10 @@ void Robot::setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets_) {
 }
 
 const std::list<std::shared_ptr<Robot>> Robot::scanAll() const {
+  /* NOTE: How to cheat: Robots are only supposed to see its targets. However,
+   * an Agent can call any scan function on the Robots it can see. That way an
+   * Agent can 'search' for more Robots then it can see.
+   */
   return scanTargets;
 }
 
@@ -92,17 +100,6 @@ double Robot::takeDamage(double damage) {
 
 double Robot::getTurretAngle() const { return turretAngle; }
 
-double Robot::limitRate(double oldVal, double newVal, double maxRate,
-                        double minRate) {
-  double turnRate = (newVal - oldVal) / rules.timeStep;
-  if (turnRate > maxRate) {
-    return oldVal + maxRate * rules.timeStep;
-  } else if (turnRate < minRate) {
-    return oldVal + minRate * rules.timeStep;
-  } else {
-    return newVal;
-  }
-}
 std::ostream &operator<<(std::ostream &os, const Robot &obj) {
   os << "<Robot at " << obj.body.getPosition() << ">";
   return os;

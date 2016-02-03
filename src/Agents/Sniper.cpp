@@ -13,27 +13,23 @@
 Sniper::Sniper() {}
 
 Action Sniper::update(Robot const &r) {
-  auto target_robot = r.scanClosest();
-
-  Vector_d position = r.getPosition();
-  double rotation = r.getRotation();
+  const auto target_robot = r.scanClosest();
 
   if (!target_robot) {
-    return {0, 0, r.getTurretAngle() + r.rules.scan_angle, false};
+    const auto turretAngle = r.getTurretAngle() + r.rules.scan_angle;
+    return {0, 0, turretAngle, false};
   }
 
-  Vector_d targetPosition = target_robot->getPosition();
-  Vector_d deltaPosition = targetPosition - position;
+  const auto position = r.getPosition();
+  const auto rotation = r.getRotation();
 
-  double angle = wrapRadians(deltaPosition.angle() - rotation);
+  const auto targetPosition = target_robot->getPosition();
+  const auto deltaPosition = targetPosition - position;
 
-  bool shooting;
-  double beta = angDiffRadians(angle, r.getTurretAngle());
-  if (-0.01 < beta && beta < 0.01) {
-    shooting = true;
-  } else {
-    shooting = false;
-  }
+  const auto turretAngle = wrapRadians(deltaPosition.angle() - rotation);
 
-  return {0, 0, angle, shooting};
+  const auto beta = angDiffRadians(turretAngle, r.getTurretAngle());
+  const bool shooting = abs(beta) < 0.01;
+
+  return {0, 0, turretAngle, shooting};
 }

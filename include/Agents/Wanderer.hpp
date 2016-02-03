@@ -12,7 +12,10 @@
 #include "Agent.hpp"
 #include "Robot.hpp"
 
+#include "mathUtility.hpp"
+
 #include <algorithm>
+#include <random>
 
 /**
   \brief A  rudimentary Agent, that moves around randomly (wanders).
@@ -20,7 +23,7 @@
 class Wanderer final : public Agent {
   const double v;
   double w;
-  std::function<double(void)> rng;
+  std::function<double(void)> random;
 
 public:
   /**

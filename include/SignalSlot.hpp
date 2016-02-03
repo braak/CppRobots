@@ -18,8 +18,8 @@ template <class... Args> class Signal;
 /**
   \brief The endpoint of a Signal-Slot connection.
 
-  A Signal-Slot   system is a cariation of the Observer pattern, the Signal is
-  the 'Subject' and   the Slot is the 'Observer'. The main difference is, that
+  A Signal-Slot   system is a variation of the Observer pattern, the Signal is
+  the 'Subject' and the Slot is the 'Observer'. The main difference is, that
   no internal state is managed (at least not by deafult).
 
   A Slot will be called when its connected Signal is called.
@@ -32,25 +32,19 @@ template <class... Args> class Signal;
 */
 template <class... Args> class Slot : public std::function<void(Args...)> {
 public:
-  /**Default Constructor*/
-  Slot() {}
   /**
-  \brief Constructor by initialisation
-
-  \tparam Fn A callable Object, like a function pointer, a Funtor or a lambda.
+    Inherited Constructors.
   */
-  template <class Fn> Slot(Fn fn) : std::function<void(Args...)>(fn) {}
+  using std::function<void(Args...)>::function;
 
   /**
   \brief Destructor.
-
   The Destructor automaticaly disconnects the Slot from its Signal.
   */
   ~Slot() { disconnect(); }
 
   /**
   \brief Connects the Slot to a Signal.
-
   The old Signal will be disconnected.
   \param newSignal the new Signal.
   */
@@ -70,7 +64,7 @@ public:
 
 private:
   Signal<Args...> *signal = nullptr;
-  std::size_t id;
+  std::size_t id = 0;
   friend class Signal<Args...>; //!< Acces used to connect Signal and Slot
 };
 
@@ -145,7 +139,7 @@ public:
 
 private:
   std::map<std::size_t, Slot<Args...> *> slots;
-  std::size_t nextID;
+  std::size_t nextID = 1;
 };
 
 #endif /* end of include guard: __SIGNAL_SLOT__ */

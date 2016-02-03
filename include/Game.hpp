@@ -22,8 +22,8 @@
   \brief A Class that encapsulates the Game logic of the program.
 */
 class Game {
-  Slot<std::string> _onDeath;
-  Slot<> _onSimulationStep;
+  Slot<std::string> _onDeath{[this](std::string name) { this->onDeath(name); }};
+  Slot<> _onSimulationStep{[this]() { this->onSimulationStep(); }};
 
 protected:
   /**
@@ -31,7 +31,8 @@ protected:
   */
   struct Player {
     /**
-      \brief A factory function for Agents.
+      \brief A factory function for Agents. This function is called when the
+      Player (re)spawns.
     */
     std::function<Agent *()> agentFactory;
     /**
@@ -65,7 +66,7 @@ protected:
 
 public:
   /**
-  \brief Create a new Game using the given Simulation.
+  \brief Create a new Game using the given Simulation and View.
 
   \param simulation A pointer to a Simulation.
   \param view A Pointer to a View.
@@ -76,7 +77,7 @@ public:
     /brief Adds a player to the Game.
 
     \param name The name of the player.
-    \param agentFactory A funtion, that returns an Agent.
+    \param agentFactory A funtion, that returns a new Agent.
   */
   void addPlayer(std::string name, std::function<Agent *()> agentFactory);
 

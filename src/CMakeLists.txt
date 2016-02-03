@@ -8,12 +8,13 @@ CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
 
 # A library used by all programs
-add_library(CppRobots FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
+set(CPP_ROPOTS_LIBRARIES FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
+add_library(CppRobots ${CPP_ROPOTS_LIBRARIES})
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES
@@ -21,8 +22,6 @@ file(GLOB AGENT_SOURCES
 )
 add_library(CppRobotsAgents ${AGENT_SOURCES})
 target_link_libraries(CppRobotsAgents CppRobots)
-
-
 
 add_executable(robots robots.cpp)
 
@@ -51,6 +50,7 @@ else(SFML_FOUND)
 endif(SFML_FOUND)
     file(COPY ${CMAKE_SOURCE_DIR}/config DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -g -O0")
 elseif(MSVC)
@@ -60,6 +60,7 @@ elseif(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
   endif()
 endif()
+
 
 find_package(Git)
 if(GIT_FOUND)

@@ -10,17 +10,50 @@
 Simulation::Simulation(const Rules &rules_, unsigned int seed)
     : rules(rules_), generator(seed) {}
 
+void Simulation::update() {
+  updateProjectiles();
+  updatePlayers();
+
+  // remove players that don't have health left.
+  auto pred = [](const std::pair<const std::string, Robot> &robot) {
+    return robot.second.getHealth() <= 0;
+  };
+  auto it = players.begin();
+  while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
+    std::string name = it->first;
+    players.erase(it++);
+    deathSignal(name);
+  }
+
+  simulationStepSignal();
+  runTime += rules.timeStep;
+}
+
 void Simulation::updatePlayers() {
+  /*NOTE: The Simulation behaves as if events during a turn happen simultaneous.
+   * That way the simulation is deterministic, even though (partial) events may
+   * occur in an arbitrary order. This is archived by applying types of event in
+   * a particular order. E.g. player movements never influence each other.
+   * Collisions never influence each other. But movement influences Collision.
+   * Therefor if movement and collision were interleaved, the order of events
+   * would matter. By splitting movement and collision, the order of events does
+   * not matter.
+   * If an event can influence events of its type, this system won’t work. One
+   * solution to this problem is to split the event in parts, that influence
+   * each other but not themselves.
+   */
+
   // set vision for all players
   for (auto &player : players) {
     check_scan(player.second);
   }
-  // Player Actions
+
+  // Player Actions(Movement)
   for (auto &player : players) {
     player.second.update();
   }
 
-  // resolve Player Actions
+  // resolve Player Actions(Shooting)
   for (auto &player : players) {
     // see if any player wants to shoot
     if (player.second.shooting) {
@@ -38,9 +71,11 @@ void Simulation::updatePlayers() {
       projectiles.push_back(
           Projectile(rules, porjectilePosition, direction, player.first));
     }
+  }
 
+  // resolve Player collision
+  for (auto &player : players) {
     // check collision between playeres
-    // std::list<Robot *> collisions;
     // NOTE: currently we check each pair of players twice, once for
     // Collision(A,B) and once for Collision(B,A).
     for (auto const &player2 : players) {
@@ -53,7 +88,10 @@ void Simulation::updatePlayers() {
         player.second.takeDamage(rules.collision_damage);
       }
     }
+  }
 
+  // resolve out-of-Bound events
+  for (auto &player : players) {
     // check if any player is outside the arena
     Vector_d pos = player.second.getPosition();
     if (pos.x > rules.arena_size.x || pos.y > rules.arena_size.y || pos.x < 0 ||
@@ -61,7 +99,10 @@ void Simulation::updatePlayers() {
       outOfBoundsSignal(player.first);
       player.second.takeDamage(rules.collision_damage);
     }
+  }
 
+  // resolve collision between players and projectiles
+  for (auto &player : players) {
     // check collision between player and projectile
     for (auto projectile = projectiles.begin();
          projectile != projectiles.end();) {
@@ -78,21 +119,6 @@ void Simulation::updatePlayers() {
       }
     }
   }
-  simulationStepSignal();
-}
-
-std::string Simulation::runtimeString() const {
-  std::stringstream rt;
-
-  // int days = runTimeInt / 60 / 60 / 24;
-  // int hours = int(runTime / 60 / 60) % 24;
-  int minutes = int(runTime / 60);
-  float seconds = fmod(runTime, 60);
-
-  rt << minutes << ":";
-  rt << std::setfill('0') << std::setw(6) << std::fixed << std::setprecision(3)
-     << seconds;
-  return rt.str();
 }
 
 void Simulation::updateProjectiles() {
@@ -107,22 +133,19 @@ void Simulation::updateProjectiles() {
            pos.x < 0 || pos.y < 0;
   });
 }
-void Simulation::update() {
-  updateProjectiles();
-  updatePlayers();
 
-  // remove players that don't have health left.
-  auto pred = [](const std::pair<const std::string, Robot> &robot) {
-    return robot.second.getHealth() <= 0;
-  };
-  auto it = players.begin();
-  while ((it = std::find_if(it, players.end(), pred)) != players.end()) {
-    std::string name = it->first;
-    players.erase(it++);
-    deathSignal(name);
-  }
+std::string Simulation::runtimeString() const {
+  std::stringstream rt;
 
-  runTime += rules.timeStep;
+  // int days = runTimeInt / 60 / 60 / 24;
+  // int hours = int(runTime / 60 / 60) % 24;
+  int minutes = int(runTime / 60);
+  float seconds = fmod(runTime, 60);
+
+  rt << minutes << ":";
+  rt << std::setfill('0') << std::setw(6) << std::fixed << std::setprecision(3)
+     << seconds;
+  return rt.str();
 }
 
 void Simulation::newPlayer(std::string name, Agent *agent) {

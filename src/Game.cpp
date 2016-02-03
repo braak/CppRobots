@@ -9,10 +9,7 @@
 
 Game::Game(Simulation *sim, View *view_) : simulation(sim), view(view_) {
   view->setSimulation(simulation);
-  _onDeath = [this](std::string name) { this->onDeath(name); };
   simulation->deathSignal.connect(_onDeath);
-
-  _onSimulationStep = [this]() { this->onSimulationStep(); };
   simulation->simulationStepSignal.connect(_onSimulationStep);
 
   view->log("Welcome to CppRobots v" + std::string(VERSION_SHORT));
@@ -36,7 +33,9 @@ void Game::run() {
 }
 
 void Game::onDeath(std::string name) {
-  int lives = players[name].lives--;
+  auto &lives = players[name].lives;
+
+  lives--;
   if (lives > 0) {
     view->log(name + " died! " + std::to_string(lives) + " lives left");
     simulation->newPlayer(name, players[name].agentFactory());

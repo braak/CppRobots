@@ -5,6 +5,10 @@
 *   \author Jan-Niklas Braak
 */
 
+/** \addtogroup math
+ *  @{
+ */
+
 #ifndef __VECTOR__
 #define __VECTOR__
 
@@ -260,3 +264,5 @@ using Vector_f = Vector<float>;  //!< Vector specialization for float
 using Vector_d = Vector<double>; //!< Vector specialization for double
 
 #endif /* end of include guard: __VECTOR__ */
+
+/** @}*/

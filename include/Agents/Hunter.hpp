@@ -13,6 +13,8 @@
 #include "Robot.hpp"
 #include "Angles.hpp"
 
+#include "mathUtility.hpp"
+
 #include <iostream>
 /**
   \brief An Agent that shoots the closes visible Robot.

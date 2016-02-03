@@ -21,16 +21,16 @@ class Follower final : public Agent {
 private:
   double target_distance;
   double K_distance;
-  double K_beta;
+  double K_angle;
 
 public:
   /**
   Construct a Follower with the given Controll parameters.
-  \param target_distance how close the Follower trys to get to it's target.
+  \param target_distance how close the Follower trys to get to its target.
   \param K_distance gain of the distance controller.
-  \param K_beta gain of the angle controller.
+  \param K_angle gain of the angle controller.
   */
-  Follower(double target_distance, double K_distance, double K_beta);
+  Follower(double target_distance, double K_distance, double K_angle);
 
   /**
   During each time step the Follower trys to get clother to the closes visible

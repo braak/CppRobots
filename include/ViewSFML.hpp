@@ -47,6 +47,9 @@ private:
   // std::chrono::high_resolution_clock::time_point startOfFrame;
 
 public:
+  /**
+    Default constructor.
+  */
   ViewSFML();
   /**
     Constructor.

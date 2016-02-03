@@ -59,6 +59,12 @@ void ViewSFML::input() {
       if (event.key.code == sf::Keyboard::Key::Escape) {
         window.close();
       }
+      if (event.key.code == sf::Keyboard::Key::Space) {
+        // window.close();
+        static int num = 0;
+        window.capture().saveToFile("screenshot" + std::to_string(num++) +
+                                    ".png");
+      }
     }
   }
 }

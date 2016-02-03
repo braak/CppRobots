@@ -1,5 +1,6 @@
 #include "SignalSlot.hpp"
 #include <gtest/gtest.h>
+#include <functional>
 
 TEST(SignalTest, SlotLabbda) {
   bool wascalled = false;
@@ -30,21 +31,18 @@ TEST(SignalTest, SlotFunctor) {
   EXPECT_TRUE(slot.target<SetTrueFunctor>()->wasCalled);
 }
 
-TEST(SignalTest, SlotObserver) {
-  struct Observer {
-    Observer() : x(0){};
-    int getX() { return x; };
-    Slot<int> setX = [this](int x_) { this->x = x_; };
-
-  private:
-    int x;
+TEST(SignalTest, SlotFunctorRef) {
+  struct SetTrueFunctor {
+    bool wasCalled = false;
+    void operator()() { wasCalled = true; };
   };
 
-  Observer observer{};
-  observer.setX(19);
-
-  EXPECT_EQ(19, observer.getX());
+  SetTrueFunctor functor{};
+  Slot<> slot(std::ref(functor));
+  slot();
+  EXPECT_TRUE(functor.wasCalled);
 }
+
 TEST(SignalTest, SlotMultipleParameter) {
   int val = 0;
   Slot<int, int> slot([&val](int x, int y) { val = x + y; });
@@ -183,6 +181,32 @@ TEST(SignalTest, SlotSignalDoubleDisconnect) {
   signal();
 
   EXPECT_FALSE(wasCalled);
+}
+
+TEST(SignalTest, SlotObserver) {
+  struct Observer {
+    Observer() : x(0){};
+    int getX() { return x; };
+    Slot<int> setX{[this](int x_) { x = x_; }};
+
+  private:
+    int x;
+  };
+
+  Observer observer{};
+  observer.setX(19);
+
+  EXPECT_EQ(19, observer.getX());
+
+  Signal<int> signal;
+
+  observer.setX.connect(signal);
+  signal(21);
+  EXPECT_EQ(21, observer.getX());
+
+  observer.setX.disconnect();
+  signal(23);
+  EXPECT_EQ(21, observer.getX());
 }
 
 int main(int argc, char **argv) {

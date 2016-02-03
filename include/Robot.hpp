@@ -19,6 +19,7 @@
 #include "Rules.hpp"
 #include "Action.hpp"
 #include "Agent.hpp"
+#include "mathUtility.hpp"
 
 class Agent;
 
@@ -140,26 +141,14 @@ private:
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
 
   /**
-  Method that is called each time ther is a collision.
+  Method that is called each time there is a collision.
   */
   // NOTE: we could pass the collision target so we can do better collision
-  // resulution
+  // resolution
   void onCollision();
 
   double takeDamage(double damage);
 
-private:
-  template <class T>
-  const T &clamp(const T &value, const T &upperLimit, const T &lowerLimit) {
-    if (value > upperLimit) {
-      return upperLimit;
-    } else if (value < lowerLimit) {
-      return lowerLimit;
-    }
-    return value;
-  }
-  double limitRate(double oldVal, double newVal, double maxRate,
-                   double minRate);
   friend std::ostream &operator<<(std::ostream &os, const Robot &obj);
 };
 

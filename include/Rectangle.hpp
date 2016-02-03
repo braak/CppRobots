@@ -11,6 +11,7 @@
 #include <vector>
 #include <math.h>
 #include <ostream>
+
 #include "Vector.hpp"
 #include "Angles.hpp"
 
