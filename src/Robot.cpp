@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Robot.cpp
@@ -77,7 +78,7 @@ std::shared_ptr<const Robot> Robot::scanClosest() const {
   }
   // cache our position
   const auto position = body.getPosition();
-  // function, that compares teh distance of two Robots to us
+  // function, that compares the distance of two Robots to us
   auto comp = [=](const std::shared_ptr<Robot> &left,
                   const std::shared_ptr<Robot> &right) {
     const auto distance_left = left->getPosition() - position;
