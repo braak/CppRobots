@@ -1,8 +1,8 @@
 # Creating an Agent #
 
-Before trying to create your own Agent compile an run the Program at least once.
-
 **Warning: This Text is incomplete and may contain errors.**
+
+Before trying to create your own Agent compile an run the Program at least once. See [README](README.md) for instructions on how to do that.
 
 ## The short version
 
@@ -11,15 +11,17 @@ Before trying to create your own Agent compile an run the Program at least once.
 * place the source file in `src/Agents`
 * overload the `update` method and return a valid `Action`.
 * modify `robots.cpp` so it uses your Agent.
-* run cmake and make
+* rerun cmake
+* rebuild the project
 
-It is important that you run cmake and not just make, because make doesn't know about your Agent yet.
+It's important that you run `cmake` not just `make`, because make doesn't know about your Agent yet.
 
 ## Robots ##
 
 Your Agent gets a reference to the Robot it controls as the parameter of `update`. Your Agent can use the information given by the Robots public interface to make its decisions.
 
-For developing an Agent it is important understand how the Simulation handles time. The Simulation updates everything at a constant rate. So instead of moving smoothly the Robots skip forward every step of the simulation. From the outside it looks smooth because the time between steps is very small, usually 33.3 milliseconds or less. An Agent gets to make one Devision every time step.
+For developing an Agent it's important understand how the Simulation handles time. The Simulation updates everything at a constant rate. Instead of moving smoothly the Robots skip forward every step of the simulation. From the outside it looks smooth because the time between steps is small, in most cases 33.3 milliseconds or less. An Agent gets to make one Devision every time step.
+
 
 <!-- Time step -->
 
@@ -32,16 +34,16 @@ For developing an Agent it is important understand how the Simulation handles ti
 ## Movement ##
 
 Lets look a Robot movement and how an Agent can influence it.
-First, what does it mean for a Robot to move? An Object in 2D-Space, like the Robot, can perform two types of movement, translation and rotation.[[1]](https://en.wikipedia.org/wiki/Rigid_transformation) It can change its position and its rotation. Our Robot has an additional restriction, it can not move (translate) sidewards. Different types of vehicles have different restrictions. A car, for example, can't move sidewards and additionally can not turn on the spot.<!-- [...](https://en.wikipedia.org/wiki/Parallel_parking) -->
+First, what does it mean for a Robot to move? An Object in 2D-Space, like the Robot, can perform two types of movement, translation and rotation.[[1]](https://en.wikipedia.org/wiki/Rigid_transformation) It can change its position and its rotation. Our Robot has an additional restriction, it can not move (translate) sidewards. Different types of vehicles have different restrictions. A car, for example, can't move sidewards and additionally can not turn on a point.<!-- [...](https://en.wikipedia.org/wiki/Parallel_parking) -->
 A train is even more constrained, it can only follow a set path. Our Robot is modeled after a differential drive robots, like a autonomous robotic vacuum cleaner or the [Turtle] educational robot.
 
 Additionally the speed and turning rate of the Robot are restricted. The Robot has a maximal forward velocity \f$ v_{max}\f$ a minimal forward velocity \f$ v_{min}\f$ (usualy negativ) and a maximal angular velocity \f$ \omega_{max} \f$. These variables depend on your configuration and are stored in Simulation::rules, Robots have  references to the Rules. This document uses 'speed' and to refer to 'forward velocity' and 'turn rate' to refer to 'angular velocity'.
 
-| name                                 | variable         | default value|
-|--------------------------------------|---------------------------|-----|
-| forward velocity or \f$ v_{max}\f$   | [v_max](\ref Rules::v_max)| 100 |
-| backwards velocity or \f$ v_{min}\f$ | [v_min](\ref Rules::v_min)| -30 |
-| turn rate or \f$ \omega_{max}\f$     | [w_max](\ref Rules::w_max)| 0.6 |
+| name                                 | variable               | default value|
+|--------------------------------------|--------------------------------|------|
+| Maximal velocity \f$ v_{max}\f$      | [v_max](\ref Rules::v_max)     | 100  |
+| Minimal velocity \f$ v_{min}\f$      | [v_min](\ref Rules::v_min)     | -30  |
+| Maximal turning rate \f$ \omega_{max}\f$ | [w_max](\ref Rules::w_max) | 0.6  |
 
 Acceleration is not restricted in the Simulation.
 
@@ -79,7 +81,7 @@ Each time Step a random value is added to the turn rate `w`, that way `w` change
 Now that we can move lets try interacting with our environment in a more meaningful way. To do that we will make our Robot 'see' other Robots. First it is important to know how vision works in the simulation.
 
 Each Robot has a arc of vision centered on its turret. That means the Robot always looks in the direction of the turret. The Vision of the Robot is limited by the scan range and scan angle.
-Additionally the Robot senses targets in its immediate proximity, independent of the angle.
+In addition the Robot senses targets in its immediate proximity, independent of the angle.
 These variables depend on your configuration and are stored in Simulation::rules. The following table shows their default values.
 
 | name           | variable                                     | default value|
@@ -92,17 +94,12 @@ These variables depend on your configuration and are stored in Simulation::rules
 TODO:  An Image of the arc of vision would be cool.
  -->
 
-There are multiple methods for finding targets. They are:
-* [scanClosest]
-* [scanAny]
-* [scanAll]
+To find a target the Agent can use one of the 'scan' functions provided by Robot. The functions [scanClosest](@ref Robot::scanClosest), [scanAny](@ref Robot::scanAny) and [scanAll](@ref Robot::scanAll) are provided.
+[scanClosest](@ref Robot::scanClosest) returns a pointer to the closest target in the robots arc of vision.
+[scanAny](@ref Robot::scanAny) returns a pointer to any robot, this method is more efficient than [scanClosest](@ref Robot::scanClosest).
+[scanAll](@ref Robot::scanAll) returns a list of Robots so the Agent can search them itself.
 
-[scanClosest] returns a pointer to the closest target in the robots arc of vision.
-
-[scanAny] returns a pointer to any robot, this method is more efficient than [scanClosest].
-
-[scanAll] returns a list of Robots so the Agent can search them itself.
-
+In the following example we will use [scanClosest](@ref Robot::scanClosest) to find the closest visible Robot and follow it. We will try to keep a constant distance so we don't crash into the target. If we can't see any Robot we will turn on the spot until we see one.
 
 ~~~~{.cpp}
 Action Follower::update(Robot const &r) {
@@ -110,10 +107,7 @@ Action Follower::update(Robot const &r) {
 
   if (!target_robot) {
     // If no visible Robot, turn in circle.
-    // NOTE: for faster turning, we could also turn our turret, but we'd have to
-    // be careful not to overshoot. Also navigating to the target gets a bit
-    // more complex that way.
-    const double w = -r.rules.scan_angle / r.rules.timeStep;
+    const auto w = -r.rules.scan_angle / r.rules.timeStep;
     return {0, w, 0, false};
   }
 
@@ -124,12 +118,12 @@ Action Follower::update(Robot const &r) {
   // get our targets position
   const auto target_position = target_robot->getPosition();
   // calculate vector from our position to the target.
-  const auto diff = target_position - position;
+  const auto deltaPosition = target_position - position;
 
   // calculate the error value of our distance to desired distance.
-  const auto distance_error = diff.magnitude() - target_distance;
+  const auto distance_error = deltaPosition.magnitude() - target_distance;
   // calculate the error value of our rotation to desired rotation.
-  const auto angle_error = angDiffRadians(diff.angle(), rotation);
+  const auto angle_error = angDiffRadians(deltaPosition.angle(), rotation);
 
   // Apply simple proportional controllers to our errors. Using K_distance and
   // K_angle as gain
@@ -140,9 +134,59 @@ Action Follower::update(Robot const &r) {
 }
 ~~~~
 
+`target_robot` holds the std::shared_ptr, that is returned by `scanClosest`. If the pointer is Null we turn on the spot by having zero velocity and constant turn rate. The turn rate we choose makes sure that we never turn more than [scan_angle](\ref Rules::scan_angle) each time step. The actual turning rate may be lower than what we request depending on the value of [w_max](\ref Rules::w_max).
+
+If `target_robot` is not Null it contains the closest target and we can use it.
+At first we use vector math to find the vector from our position to the target and store it in `deltaPosition`. The magnitude of `deltaPosition` is our distance from the target. Its angle is the direction in which we must turn to face the target. The Vector class helps us with that.
+
+Next we will calculate the distance error and the angle error. The distance error tells us how far away we are from the desired distance. It can be calculated by subtracting the target distance from the actual distance. The distance error is zero when we are at the desired distance, positive if we are to far away from the target and negative if we are to close.
+The angle error is similar, it tells us how far we have to turn and in what direction. It is the difference between the desired angle and our current rotation.  However we can't use simple subtraction to calculate it. The distance between two angles can have two values, one for clockwise and one for counterclockwise, we want the smallest of the two. We use angDiffRadians for that.
+
+Finally we use two Proportional controllers to minimize the distance and angle error. A Proportional controller multiplies the error of a system with a constant factor and feeds it back into the system. In our system the speed is proportional to the distance error. That implies the following behavior:
+* the further away we are the faster we drive,
+* the closer we are the slower we drive,
+* if we are at the target distance the speed is zero,
+* and if the error is negative we drive backwards.
+
+As long we are pointing at the target that is exactly the correct behavior. To ensure thats the case we use the second Proportional controller. The turning rate is proportional to the angle error, which means that we always turn in the direction of the target.
+
+See [Math.md](Math.md) for more information on vectors, angles and general utility functions used in CppRobots.
+
+<!--
+TODO: getter
+-->
+
+
+## Shooting ##
 
 
 
+~~~{.cpp}
+Action Sniper::update(Robot const &r) {
+  const auto target_robot = r.scanClosest();
+
+  if (!target_robot) {
+    const auto turretAngle =
+        wrapRadians(r.getTurretAngle() + r.rules.scan_angle);
+    return {0, 0, turretAngle, false};
+  }
+
+  const auto position = r.getPosition();
+  const auto rotation = r.getRotation();
+
+  const auto targetPosition = target_robot->getPosition();
+  const auto deltaPosition = targetPosition - position;
+
+  const auto turretAngle = wrapRadians(deltaPosition.angle() - rotation);
+  const auto turret_error = angDiffRadians(turretAngle, r.getTurretAngle());
+  const auto shooting = fabs(turret_error) < 0.01;
+
+  return {0, 0, angle, shooting};
+}
+~~~
+
+<!-- const auto turret_angle = wrapRadians(rotation + r.getTurretAngle());
+const auto error = abs(angDiffRadians(turret_angle, deltaPosition.angle())); -->
 
 <!--
 TODO: turning turret
@@ -155,41 +199,8 @@ TODO: double projectile_speed;
 TODO: double projectile_cooldown;
 TODO: double projectile_damage;
 TODO: double turret_w_max;      
--->
 
-
-
-## Shooting ##
-
-~~~{.cpp}
-Action Sniper::update(Robot const &r) {
-  const auto target_robot = r.scanClosest();
-
-  if (!target_robot) {
-    return {0, 0, r.getTurretAngle() + r.rules.scan_angle, false};
-  }
-
-  const auto position = r.getPosition();
-  const auto rotation = r.getRotation();
-
-  const auto targetPosition = target_robot->getPosition();
-  const auto deltaPosition = targetPosition - position;
-
-  const auto angle = wrapRadians(deltaPosition.angle() - rotation);
-
-  const auto beta = angDiffRadians(angle, r.getTurretAngle());
-  const bool shooting = -0.01 < beta && beta < 0.01;
-
-  return {0, 0, angle, shooting};
-}
-~~~
-
-
-<!--
-TODO: getter
-TODO: Vector math
-TODO: Angles
-TODO: proportional controllers
+TODO: arena size
 -->
 
 
@@ -256,8 +267,5 @@ Action Hunter::update(Robot const &r) {
 * [Boids].
 
 
-[scanAny]: @ref Robot::scanAny
-[scanClosest]: @ref Robot::scanClosest
-[scanAll]: @ref Robot::scanAll
 [Turtle]: https://en.wikipedia.org/wiki/Turtle_(robot)
 [Boids]: http://www.red3d.com/cwr/boids/

@@ -8,7 +8,17 @@ CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+    message(ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -g -O0")
+elseif(MSVC)
+  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+  endif()
 endif()
 
 
@@ -48,19 +58,8 @@ else(SFML_FOUND)
 
   message(WARNING "robots will not be build with UI support, because SFML was not found.")
 endif(SFML_FOUND)
-    file(COPY ${CMAKE_SOURCE_DIR}/config DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -g -O0")
-elseif(MSVC)
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-endif()
-
+file(COPY ${CMAKE_SOURCE_DIR}/config DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 find_package(Git)
 if(GIT_FOUND)
@@ -69,11 +68,13 @@ if(GIT_FOUND)
     OUTPUT_VARIABLE  VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    #parse the version information into pieces.
-  string(REGEX REPLACE "^v([0-9]+)\\..*" "\\1" VERSION_MAJOR "${VERSION}")
-  string(REGEX REPLACE "^v[0-9]+\\.([0-9]+).*" "\\1" VERSION_MINOR "${VERSION}")
-  string(REGEX REPLACE "^v[0-9]+\\.[0-9]+[-.]([0-9]+).*" "\\1" VERSION_PATCH "${VERSION}")
-  string(REGEX REPLACE "^v[0-9]+\\.[0-9]+[-.][0-9]+-([^-]*)(-.*)?" "\\1" VERSION_SHA1 "${VERSION}")
+  string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)[-.]([0-9]+)-([^-]*)-(.*)?" "\\1;\\2;\\3;\\4;\\5;" VERSION_LIST "${VERSION}")
+  list(GET VERSION_LIST 0 VERSION_MAJOR)
+  list(GET VERSION_LIST 1 VERSION_MINOR)
+  list(GET VERSION_LIST 2 VERSION_PATCH)
+  list(GET VERSION_LIST 3 VERSION_SHA1)
+  list(GET VERSION_LIST 4 VERSION_POSTFIX)
+
 else()
   message(WARNING "Git not found, could not generate version information.")
   set(VERSION "unknown")

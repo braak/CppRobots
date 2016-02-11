@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Follower.cpp
@@ -20,7 +21,7 @@ Action Follower::update(Robot const &r) {
     // NOTE: for faster turning, we could also turn our turret, but we'd have to
     // be carefull not to overshoot. Also navigating to the target gets a bit
     // more complex that way.
-    const double w = -r.rules.scan_angle / r.rules.timeStep;
+    const auto w = -r.rules.scan_angle / r.rules.timeStep;
     return {0, w, 0, false};
   }
 
@@ -31,12 +32,12 @@ Action Follower::update(Robot const &r) {
   // get our targets position
   const auto target_position = target_robot->getPosition();
   // calculate vector from our position to the target.
-  const auto diff = target_position - position;
+  const auto deltaPosition = target_position - position;
 
   // calculate the error value of our distance to desired distance.
-  const auto distance_error = diff.magnitude() - target_distance;
+  const auto distance_error = deltaPosition.magnitude() - target_distance;
   // calculate the error value of our rotation to desired rotation.
-  const auto angle_error = angDiffRadians(diff.angle(), rotation);
+  const auto angle_error = angDiffRadians(deltaPosition.angle(), rotation);
 
   // Apply simple proportional controllers to our errors. Using K_distance and
   // K_angle as gain

@@ -69,6 +69,7 @@ If Cmake finds [gtest](https://github.com/google/googletest) on the system it wi
 * `testRectangle`
 * `testCollision`
 * `testSignal`
+* `testMath`
 
 
 ## Documentation ##

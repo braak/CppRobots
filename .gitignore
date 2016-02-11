@@ -29,3 +29,7 @@
 
 # Build folder
 build/
+
+# local project options
+.clang_complete
+.atom-build.json

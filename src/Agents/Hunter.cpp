@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Hunter.cpp
@@ -12,8 +13,8 @@
 
 #include <iostream>
 
-Hunter::Hunter(double targetDistance, double K_beta, double K_distance)
-    : targetDistance(targetDistance), K_beta(K_beta), K_distance(K_distance) {}
+Hunter::Hunter(double targetDistance, double K_perp, double K_straight)
+    : targetDistance(targetDistance), K_perp(K_perp), K_straight(K_straight) {}
 
 Action Hunter::update(Robot const &r) {
 
@@ -55,10 +56,10 @@ Action Hunter::update(Robot const &r) {
 
   // turn perpandicular to the target
   const auto perp = Vector_d(deltaPosition).rotate(M_PI / 2);
-  const auto beta_error = angDiffRadians(perp.angle(), rotation);
+  const auto perp_error = angDiffRadians(perp.angle(), rotation);
 
   // turn toward the target
-  const auto angle_error = angDiffRadians(deltaPosition.angle(), rotation);
+  const auto straight_error = angDiffRadians(deltaPosition.angle(), rotation);
 
   // How far are we away from the target distance, as a value from -1 to 1.
   const auto distance_error = std::min(
@@ -69,13 +70,13 @@ Action Hunter::update(Robot const &r) {
   // target distance we drive fully perpendicular, if we are farher away we
   // drive toward the target and if we are to close we drive away from the
   // tarrget (due to the negatice sign of the distance error)
-  const auto w =
-      lerp(beta_error * K_beta, angle_error * K_distance, distance_error);
+  const auto w_perp = perp_error * K_perp;
+  const auto w_straight = straight_error * K_straight;
+  const auto w = lerp(w_perp, w_straight, distance_error);
 
   // Is the target in front of the turret (within 0.01rad)? If yes then shoot.
-  const auto shooting =
-      abs(angDiffRadians(turretAngle, r.getTurretAngle())) < 0.01 &&
-      targetRobot;
+  const auto turret_error = angDiffRadians(turretAngle, r.getTurretAngle());
+  const auto shooting = fabs(turret_error) < 0.01 && targetRobot;
 
   // drive at full speed.
   const auto v = r.rules.v_max;

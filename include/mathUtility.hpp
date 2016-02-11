@@ -1,4 +1,5 @@
-/*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+/*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file mathUtility.hpp
 *   \author Jan-Niklas Braak
@@ -59,8 +60,9 @@ template <class T> constexpr T wrap(T value, T lowerLimit, T upperLimit) {
 */
 template <class T> constexpr T clamp(T value, T lowerLimit, T upperLimit) {
   /* NOTE: we are using conditional expressions(the ternary operator "?:") to
-     allow clamp to be a constexpr. Using ordinary if-else statements the
-     fuction body would look like this:
+     allow clamp to be a constexpr in C++11 (this was fixed in C++14). Using
+     ordinary if-else statements the fuction body would look like
+     this:
 
      if (value > upperLimit) {
        return upperLimit;
@@ -69,8 +71,8 @@ template <class T> constexpr T clamp(T value, T lowerLimit, T upperLimit) {
      }
      return value;
   */
-  return (upperLimit < value) ? upperLimit
-                              : ((value < lowerLimit) ? lowerLimit : value);
+  return (upperLimit < value) ? upperLimit : (value < lowerLimit) ? lowerLimit
+                                                                  : value;
 }
 
 /**
@@ -78,7 +80,7 @@ template <class T> constexpr T clamp(T value, T lowerLimit, T upperLimit) {
   \param v0 the first value.
   \param v1 the second value.
   \param t interpolation amount. A value between 0 and 1.
-  \return the interpolate value.-
+  \return the interpolate value.
 */
 template <class T, class U = double> constexpr T lerp(T v0, T v1, U t) {
   return (1 - t) * v0 + t * v1;

@@ -7,6 +7,8 @@
 *   \author Jan-Niklas Braak
 */
 
+#include <cmath>
+
 #include "Agents/Sniper.hpp"
 #include "Angles.hpp"
 #include "math.h"
@@ -17,7 +19,8 @@ Action Sniper::update(Robot const &r) {
   const auto target_robot = r.scanClosest();
 
   if (!target_robot) {
-    const auto turretAngle = r.getTurretAngle() + r.rules.scan_angle;
+    const auto turretAngle =
+        wrapRadians(r.getTurretAngle() + r.rules.scan_angle);
     return {0, 0, turretAngle, false};
   }
 
@@ -28,9 +31,8 @@ Action Sniper::update(Robot const &r) {
   const auto deltaPosition = targetPosition - position;
 
   const auto turretAngle = wrapRadians(deltaPosition.angle() - rotation);
-
-  const auto beta = angDiffRadians(turretAngle, r.getTurretAngle());
-  const bool shooting = abs(beta) < 0.01;
+  const auto turret_error = angDiffRadians(turretAngle, r.getTurretAngle());
+  const auto shooting = fabs(turret_error) < 0.01;
 
   return {0, 0, turretAngle, shooting};
 }

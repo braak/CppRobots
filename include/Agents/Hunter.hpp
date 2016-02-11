@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Hunter.hpp
@@ -21,14 +22,14 @@
 */
 class Hunter final : public Agent {
   double targetDistance;
-  double K_beta;
-  double K_distance;
+  double K_perp;
+  double K_straight;
 
 public:
   /**
   Construct a Hunter.
   */
-  Hunter(double targetDistanc, double K_beta, double K_distance);
+  Hunter(double targetDistanc, double K_perp, double K_straight);
 
   /**
   During each time step the Hunter trys to get clother to the closes visible

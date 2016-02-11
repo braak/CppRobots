@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file Vector.hpp
 *   \author Jan-Niklas Braak
@@ -90,7 +91,7 @@ public:
   Unary Minus.
   \return the inverse of the Vector.
   */
-  constexpr Vector<T> operator-() { return Vector(-x, -y); }
+  constexpr Vector<T> operator-() const { return Vector(-x, -y); }
 
   /**
   Rotates the Vector by the given rotation.
