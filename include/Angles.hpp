@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file Angles.hpp
 *   \author Jan-Niklas Braak

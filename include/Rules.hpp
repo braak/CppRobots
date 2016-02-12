@@ -27,12 +27,12 @@ struct Rules {
   double v_max;               //!< Maximal velocity of the Robot.
   double v_min;               //!< Minimal velocity of the Robot.
   double w_max;               //!< Maximal turning rate of the Robot.
-  double turret_w_max;        //!< Maximal turning rate of the Robots. turret.
+  double turret_w_max;        //!< Maximal turning rate of the Robots turret.
   double collision_damage;    //!< Damage taken from collision per timeStep.
   double max_health;          //!< Maximal Health of a Robtot.
   Vector_d projectile_size;   //!< Size of the Robot.
   double projectile_speed;    //!< Speed of a Projectile.
-  double projectile_cooldown; //!< Time between shoots.
+  double projectile_cooldown; //!< Time between shots.
   double projectile_damage;   //!< Damage a Projectile deals.
 
   /**

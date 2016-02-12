@@ -23,8 +23,8 @@ endif()
 
 
 # A library used by all programs
-set(CPP_ROPOTS_LIBRARIES FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
-add_library(CppRobots ${CPP_ROPOTS_LIBRARIES})
+set(CPP_ROBOTS_LIBRARIES FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
+add_library(CppRobots ${CPP_ROBOTS_LIBRARIES})
 
 # A library, that contains all Agents
 file(GLOB AGENT_SOURCES
@@ -68,12 +68,12 @@ if(GIT_FOUND)
     OUTPUT_VARIABLE  VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)[-.]([0-9]+)-([^-]*)-(.*)?" "\\1;\\2;\\3;\\4;\\5;" VERSION_LIST "${VERSION}")
+  string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)[-.]([0-9]+)-([^-]*)(-.*)?" "\\1;\\2;\\3;\\4" VERSION_LIST "${VERSION}")
   list(GET VERSION_LIST 0 VERSION_MAJOR)
   list(GET VERSION_LIST 1 VERSION_MINOR)
   list(GET VERSION_LIST 2 VERSION_PATCH)
   list(GET VERSION_LIST 3 VERSION_SHA1)
-  list(GET VERSION_LIST 4 VERSION_POSTFIX)
+  # list(GET VERSION_LIST 4 VERSION_POSTFIX)
 
 else()
   message(WARNING "Git not found, could not generate version information.")

@@ -44,13 +44,13 @@ int main() {
 
   // load list of names
   Json::Value names;
-  {
-    std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);
-    if (!nameFile.is_open()) {
-      throw std::runtime_error("Unable to load Names.json");
-    }
-    nameFile >> names;
+
+  std::ifstream nameFile(selfpath() + "/config/Names.json", std::ios::in);
+  if (!nameFile.is_open()) {
+    throw std::runtime_error("Unable to load Names.json");
   }
+  nameFile >> names;
+  nameFile.close();
 
   if (!names.isArray()) {
     throw std::runtime_error("Names.json is not an array.");
@@ -59,10 +59,10 @@ int main() {
   // add players
   const auto hunterFactory = []() { return new Hunter(100, 20, 30); };
   // const auto sniperFactory = []() { return new Sniper(); };
-
   for (auto const &name : names) {
     // auto seed = std::hash<std::string>()(name.asString());
-    // const auto wandererFactory = [=]() { return new Wanderer(0.1, 40, seed);
+    // const auto wandererFactory = [=]() {
+    //   return new Wanderer(0.1, 40, seed);
     // };
     game.addPlayer(name.asString(), hunterFactory);
   }
