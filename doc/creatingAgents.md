@@ -20,25 +20,17 @@ It's important that you run `cmake` not just `make`, except for a header only cl
 
 
 
-### Time ###
+### Time and Distance ###
 
-For developing an Agent it's important understand how the Simulation handles time. The Simulation updates everything at a constant rate. Instead of moving smoothly the Robots skip forward every step of the simulation. From the outside it looks smooth because the time between steps is small, in most cases 33.3 milliseconds or less. An Agent gets to make one Devision every time step.
+For developing an Agent it's important understand how the Simulation handles time. The Simulation updates everything at a constant rate. Instead of moving smoothly the Robots skip forward every step of the simulation. From the outside it looks smooth because the time between steps is small. An Agent gets to make one Devision every time step.
 
+In the Simulation time is measured in seconds. However one second in the simulation is not always one second in realtime. The Simulation may run slower or faster. Each step of the simulation takes always `timeStep` seconds in simulation time, that simplifies calculation of speeds and other time dependent variables.
 
-<!-- Time step -->
+Distances are measured in 'units', a unit can't be translated into real live distances without reference. 30 units might mean 30 meters or 30 inch or half a nautical mile. If you want to imagine the Robots as real thing I suggest the conversion 1 unit = 1 cm. A Robot with a default size would be as big as a toy car. The arena would be about the size of a Volleyball field. A Projectile would be the size of a ping pong ball.
 
-### Components of the virtual Robot ###
+The following table shows four parameter ralated to Time and Distance. These parameter depend on your configuration and are stored in Simulation::rules, Robots have references to the Rules.
 
-A Robot consists of two basic parts, the body and the turret. The body is a Rectangle and represents the Robots position, rotation and size. If the bodies of two Robots overlap they both take damage. When a Projectile collides with the body of a robot the robot takes damage. To access the body of a Robot the function Robot::getBody() is provided. Robot::getPosition() and Robot::getRotation() are shortcuts to the position and rotation of the body.
-
-The position of turret is always in the center of the Robot. The turret has a rotation relative to the body. The rotation can be accessed by Robot::getTurretAngle(). The direction of the turret influences what the robot can see and in what direction it shoots.
-
-<!-- ### Collision ### -->
-
-
-### Dimentions ###
-
-| name              | variable                                 | default value |
+| Name              | Parameter                                | Default value |
 |-------------------|----------------------------------------------|----------|
 | Time step         | [timeStep](\ref Rules::timeStep)             | 1 / 60.0 |
 | Robot size        | [robot_size](\ref Rules::robot_size)         | {30, 18} |
@@ -46,10 +38,18 @@ The position of turret is always in the center of the Robot. The turret has a ro
 | Projectile size   | [projectile_size](\ref Rules::projectile_size) | {4, 4} |
 
 
+### Components of the virtual Robot ###
+
+A Robot consists of two basic parts, the body and the turret. The body is a Rectangle and represents the Robots position, rotation and size. If the bodies of two Robots overlap they both take damage. When a Projectile collides with the body of a robot the robot takes damage. To access the body of a Robot the function Robot::getBody() is provided. Robot::getPosition() and Robot::getRotation() are shortcuts to the position and rotation of the body.
+
+The position of turret is always in the center of the Robot. The turret has a rotation relative to the body. The rotation can be accessed by Robot::getTurretAngle(). The direction of the turret influences what the robot can see and in what direction it shoots.
+
+
+
 ### Health ###
 
 
-| name              | variable                                 | default value |
+| Name              | Parameter                                | Default value |
 |-------------------|----------------------------------------------------|-----|
 | Maximal Health    | [max_health](\ref Rules::max_health)               | 100 |
 | Projectile damage | [projectile_damage](\ref Rules::projectile_damage) | 5   |
@@ -66,9 +66,9 @@ Lets look a Robot movement and how an Agent can influence it.
 First, what does it mean for a Robot to move? An Object in 2D-Space, like the Robot, can perform two types of movement, translation and rotation.[[1]](https://en.wikipedia.org/wiki/Rigid_transformation) It can change its position and its rotation. Our Robot has an additional restriction, it can not move (translate) sidewards. Different types of vehicles have different restrictions. A car, for example, can't move sidewards and additionally can not turn on a point.<!-- [...](https://en.wikipedia.org/wiki/Parallel_parking) -->
 A train is even more constrained, it can only follow a set path. Our Robot is modeled after a differential drive robots, like a autonomous robotic vacuum cleaner or the [Turtle] educational robot.
 
-Additionally the speed and turning rate of the Robot are restricted. The Robot has a maximal forward velocity \f$ v_{max}\f$ a minimal forward velocity \f$ v_{min}\f$ (usualy negativ) and a maximal angular velocity \f$ \omega_{max} \f$. These variables depend on your configuration and are stored in Simulation::rules, Robots have  references to the Rules. This document uses 'speed' and to refer to 'forward velocity' and 'turn rate' to refer to 'angular velocity'.
+Additionally the speed and turning rate of the Robot are restricted. The Robot has a maximal forward velocity \f$ v_{max}\f$ a minimal forward velocity \f$ v_{min}\f$ (usualy negativ) and a maximal angular velocity \f$ \omega_{max} \f$. This document uses 'speed' and to refer to 'forward velocity' and 'turn rate' to refer to 'angular velocity'.
 
-| name                                 | variable               | default value|
+| Name                                 | Parameter              | Default value|
 |--------------------------------------|--------------------------------|------|
 | Maximal velocity \f$v_{max}\f$      | [v_max](\ref Rules::v_max)     | 100  |
 | Minimal velocity \f$v_{min}\f$      | [v_min](\ref Rules::v_min)     | -30  |
@@ -88,7 +88,7 @@ Each Robot has a arc of vision centered on its turret. That means the Robot alwa
 In addition the Robot senses targets in its immediate proximity, independent of the angle.
 These variables depend on your configuration and are stored in Simulation::rules. The following table shows their default values.
 
-| name           | variable                                     | default value|
+| Name           | Parameter                                    | Default value|
 |----------------|-----------------------------------------------|-------------|
 | Scan range     | [scan_range](\ref Rules::scan_range)          | 1000        |
 | Scan angle     | [scan_angle](\ref Rules::scan_angle)| \f$ \pi/3\f$  |
@@ -106,7 +106,7 @@ To find a target the Agent can use one of the 'scan' functions provided by Robot
 
 ### Shooting ###
 
-| name           | variable                                     | default value|
+| Name           | Parameter                                    | Default value|
 |----------------|-----------------------------------------------|-------------|
 | Turret turn rate | [turret_w_max](\ref Rules::turret_w_max)    | 3.14        |
 | Projectile speed  | [projectile_speed](\ref Rules::projectile_speed)| 1000  |
