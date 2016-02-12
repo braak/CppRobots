@@ -25,6 +25,7 @@ int main() {
 
   // load Rules
   Rules rules;
+  std::cout << rules << std::endl;
   std::ifstream inFile(selfpath() + "/config/Rules.json", std::ios::in);
   if (inFile.is_open()) {
     inFile >> rules;
@@ -32,7 +33,7 @@ int main() {
   } else {
     std::cout << "Unable to load Rules.json. Using defaults instead."
               << std::endl;
-    rules = Rules::defaultRules();
+    // rules = Rules::defaultRules();
   }
 
   // generate "random" seed
