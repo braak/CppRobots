@@ -6,12 +6,12 @@
 *   \file Hunter.cpp
 *   \author Jan-Niklas Braak
 */
+#include <cmath>
+#include <iostream>
 
 #include "Agents/Hunter.hpp"
 #include "Angles.hpp"
-#include "math.h"
-
-#include <iostream>
+#include "mathUtility.hpp"
 
 Hunter::Hunter(double targetDistance, double K_perp, double K_straight)
     : targetDistance(targetDistance), K_perp(K_perp), K_straight(K_straight) {}
@@ -62,11 +62,16 @@ Action Hunter::update(Robot const &r) {
   const auto straight_error = angDiffRadians(deltaPosition.angle(), rotation);
 
   // How far are we away from the target distance, as a value from -1 to 1.
-  const auto distance_error = std::min(
-      (deltaPosition.magnitude() - targetDistance) / targetDistance, 1.0);
+  // const auto distance_error =
+  //     clamp(1.0 - targetDistance / deltaPosition.magnitude(), -1.0, 1.0);
 
-  // Put it all together. Linearly interpolate between driving toward the target
-  // and driving perpendicular to it depending on the distance. So that at the
+  const auto distance_error =
+      clamp((deltaPosition.magnitude() / targetDistance - 1.0), -1.0, 1.0);
+
+  // Put it all together. Linearly interpolate between driving toward the
+  // target
+  // and driving perpendicular to it depending on the distance. So that at
+  // the
   // target distance we drive fully perpendicular, if we are farher away we
   // drive toward the target and if we are to close we drive away from the
   // tarrget (due to the negatice sign of the distance error)

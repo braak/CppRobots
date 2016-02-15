@@ -174,10 +174,10 @@ Action Sniper::update(Robot const &r) {
   const auto position = r.getPosition();
   const auto rotation = r.getRotation();
 
-  const auto targetPosition = target_robot->getPosition();
-  const auto deltaPosition = targetPosition - position;
+  const auto target_position = target_robot->getPosition();
+  const auto delta_position = target_position - position;
 
-  const auto turretAngle = wrapRadians(deltaPosition.angle() - rotation);
+  const auto turretAngle = wrapRadians(delta_position.angle() - rotation);
   const auto turret_error = angDiffRadians(turretAngle, r.getTurretAngle());
   const auto shooting = fabs(turret_error) < 0.01;
 
@@ -231,7 +231,7 @@ Action Hunter::update(Robot const &r) {
     turretAngle = deltaPosition.angle() - rotation;
   }
 
-  // turn perpandicular to the target
+  // turn perpendicular to the target
   const auto perp = Vector_d(deltaPosition).rotate(M_PI / 2);
   const auto beta_error = angDiffRadians(perp.angle(), rotation);
 
