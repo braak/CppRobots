@@ -65,7 +65,7 @@ Action Hunter::update(Robot const &r) {
   //     clamp(1.0 - targetDistance / deltaPosition.magnitude(), -1.0, 1.0);
 
   const auto distance_error =
-      clamp((deltaPosition.magnitude() / targetDistance - 1.0), -1.0, 1.0);
+      clamp((delta_position.magnitude() / targetDistance - 1.0), -1.0, 1.0);
 
   // Put it all together. Linearly interpolate between driving toward the
   // target
