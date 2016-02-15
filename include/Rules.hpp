@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Rules.hpp
@@ -18,45 +19,22 @@
   The rules of the game.
 */
 struct Rules {
-  double timeStep;            //!< The time one Simulation takes.
-  double scan_range;          //!< Vision range of the Robot.
-  double scan_proximity;      //!< Vision range of the Robot.
-  double scan_angle;          //!< Field of Veiw of the Robot.
-  Vector_d robot_size;        //!< Size of the Robot.
-  Vector_d arena_size;        //!< Size of the Arena.
-  double v_max;               //!< Maximal velocity of the Robot.
-  double v_min;               //!< Minimal velocity of the Robot.
-  double w_max;               //!< Maximal turning rate of the Robot.
-  double turret_w_max;        //!< Maximal turning rate of the Robots. turret.
-  double collision_damage;    //!< Damage taken from collision per timeStep.
-  double max_health;          //!< Maximal Health of a Robtot.
-  Vector_d projectile_size;   //!< Size of the Robot.
-  double projectile_speed;    //!< Speed of a Projectile.
-  double projectile_cooldown; //!< Time between shoots.
-  double projectile_damage;   //!< Damage a Projectile deals.
-
-  /**
-    Default Rules.
-    \return Rules initialized with default values.
-  */
-  constexpr static Rules defaultRules() {
-    return {1 / 60.0,
-            1000.0,
-            100,
-            M_PI / 3,
-            {30, 18},
-            {1500, 1000},
-            100,
-            -30,
-            0.6,
-            3.14,
-            5,
-            100,
-            {4, 4},
-            1000,
-            0.4,
-            10};
-  }
+  double timeStep = 1 / 60.0;         //!< The time one Simulation takes.
+  double scan_range = 1000;           //!< Vision range of the Robot.
+  double scan_proximity = 100;        //!< Vision range of the Robot.
+  double scan_angle = M_PI / 3;       //!< Field of Veiw of the Robot.
+  Vector_d robot_size = {30, 18};     //!< Size of the Robot.
+  Vector_d arena_size = {1500, 1000}; //!< Size of the Arena.
+  double v_max = 100;                 //!< Maximal velocity of the Robot.
+  double v_min = -30;                 //!< Minimal velocity of the Robot.
+  double w_max = 0.6;                 //!< Maximal turning rate of the Robot.
+  double turret_w_max = 3.14;  //!< Maximal turning rate of the Robots turret.
+  double collision_damage = 5; //!< Damage taken from collision per timeStep.
+  double max_health = 100;     //!< Maximal Health of a Robtot.
+  Vector_d projectile_size = {4, 4}; //!< Size of the Robot.
+  double projectile_speed = 1000;    //!< Speed of a Projectile.
+  double projectile_cooldown = 0.4;  //!< Time between shots.
+  double projectile_damage = 10;     //!< Damage a Projectile deals.
 };
 
 /**

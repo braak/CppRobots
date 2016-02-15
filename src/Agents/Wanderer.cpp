@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Wanderer.cpp
@@ -12,6 +13,7 @@ Wanderer::Wanderer(double delta_w, double v, unsigned int seed) : v(v), w(0) {
   std::default_random_engine gen(seed);
   std::normal_distribution<double> distribution(0, delta_w);
   random = std::bind(distribution, gen);
+  // random = [&]() { return distribution(gen); };
 }
 
 Action Wanderer::update(Robot const &r) {

@@ -17,49 +17,48 @@ Hunter::Hunter(double targetDistance, double K_perp, double K_straight)
     : targetDistance(targetDistance), K_perp(K_perp), K_straight(K_straight) {}
 
 Action Hunter::update(Robot const &r) {
-
-  const auto targetRobot = r.scanClosest();
+  const auto target_robot = r.scanClosest();
   const auto position = r.getPosition();
   const auto rotation = r.getRotation();
 
   // TODO: seperate movement and shooting code. Add Wall avoidance.
-  double turretAngle;
-  Vector_d deltaPosition;
+  double turret_angle;
+  Vector_d delta_position;
 
-  if (!targetRobot) {
+  if (!target_robot) {
     // Set the center of the arena as target.
     const auto targetPosition = r.rules.arena_size / 2.0;
-    deltaPosition = targetPosition - position;
+    delta_position = targetPosition - position;
 
     // Rotate the Turret to scan for targets
-    turretAngle = r.getTurretAngle() + r.rules.scan_angle;
+    turret_angle = r.getTurretAngle() + r.rules.scan_angle;
   } else {
     // Set the found Robot as Target.
-    const auto targetPosition = targetRobot->getPosition();
-    deltaPosition = targetPosition - position;
+    const auto targetPosition = target_robot->getPosition();
+    delta_position = targetPosition - position;
 
     // Aim at target
-    turretAngle = deltaPosition.angle() - rotation;
+    turret_angle = delta_position.angle() - rotation;
   }
 
   /*  // if a target exists, it is the target position, otherwise go to the
     center
     const auto targetPosition =
-        targetRobot ? targetRobot->getPosition() : r.rules.arena_size / 2.0;
-    const auto deltaPosition = targetPosition - position;
+        target_robot ? target_robot->getPosition() : r.rules.arena_size / 2.0;
+    const auto delta_position = targetPosition - position;
 
     // if a target exists turn the turret toward it, otherwise rotate
-    const auto turretAngle = targetRobot
-                                 ? deltaPosition.angle() - rotation
+    const auto turret_angle = target_robot
+                                 ? delta_position.angle() - rotation
                                  : r.getTurretAngle() + r.rules.scan_angle;
 */
 
   // turn perpandicular to the target
-  const auto perp = Vector_d(deltaPosition).rotate(M_PI / 2);
+  const auto perp = Vector_d(delta_position).rotate(M_PI / 2);
   const auto perp_error = angDiffRadians(perp.angle(), rotation);
 
   // turn toward the target
-  const auto straight_error = angDiffRadians(deltaPosition.angle(), rotation);
+  const auto straight_error = angDiffRadians(delta_position.angle(), rotation);
 
   // How far are we away from the target distance, as a value from -1 to 1.
   // const auto distance_error =
@@ -80,11 +79,11 @@ Action Hunter::update(Robot const &r) {
   const auto w = lerp(w_perp, w_straight, distance_error);
 
   // Is the target in front of the turret (within 0.01rad)? If yes then shoot.
-  const auto turret_error = angDiffRadians(turretAngle, r.getTurretAngle());
-  const auto shooting = fabs(turret_error) < 0.01 && targetRobot;
+  const auto turret_error = angDiffRadians(turret_angle, r.getTurretAngle());
+  const auto shooting = fabs(turret_error) < 0.01 && target_robot;
 
   // drive at full speed.
   const auto v = r.rules.v_max;
 
-  return {v, w, turretAngle, shooting};
+  return {v, w, turret_angle, shooting};
 }

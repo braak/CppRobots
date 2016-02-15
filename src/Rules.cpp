@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Rules.cpp
@@ -9,7 +10,7 @@
 #include "Rules.hpp"
 
 std::istream &operator>>(std::istream &is, Rules &rules) {
-  Rules defaultRules = Rules::defaultRules();
+  Rules defaultRules = Rules();
   Json::Value root;
   is >> root;
 

@@ -80,6 +80,12 @@ public:
   const Rectangle &getBody() const;
 
   /**
+  Get method for the Robot body.
+  \return the body of the Robot.
+  */
+  Rectangle &getBody();
+
+  /**
     Get a list of all visible Robots.
     \return the list of visible Robots.
   */
