@@ -36,6 +36,10 @@ public:
   Robot.
   */
   virtual Action update(Robot const &r) override;
+
+private:
+  double turn_perpendicular(double ang, double rotation) const;
+  double turn_toward(double ang, double rotation) const;
 };
 
 #endif /* end of include guard: __HUNTER__ */

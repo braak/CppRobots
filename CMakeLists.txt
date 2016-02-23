@@ -5,7 +5,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin CACHE FILEPATH "Where
 set(CMAKE_DOC_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc CACHE FILEPATH "Where to put the documentation.")
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE FILEPATH "Where to put the libraries.")
 
-set(GTEST_ROOT "~/googletest/googletest" CACHE FILEPATH "Where to googletest is installed")
+set(GTEST_ROOT "~/googletest" CACHE FILEPATH "Where to googletest is installed")
 
 set(AUTOGEN_WARNING "This file was generated automatically by cmake. Changes to this file will be lost if the code is regenerated.")
 
@@ -16,4 +16,9 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 subdirs(src)
 subdirs(doc)
-subdirs(test)
+
+IF(IS_DIRECTORY ${GTEST_ROOT})
+  subdirs(test)
+else(IS_DIRECTORY ${GTEST_ROOT})
+  message(WARNING "GTEST_ROOT is not a valid directory. Unit Tests will not be generated.")
+endif(IS_DIRECTORY ${GTEST_ROOT})

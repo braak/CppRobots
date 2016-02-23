@@ -25,7 +25,6 @@ int main() {
 
   // load Rules
   Rules rules;
-  std::cout << rules << std::endl;
   std::ifstream inFile(selfpath() + "/config/Rules.json", std::ios::in);
   if (inFile.is_open()) {
     inFile >> rules;

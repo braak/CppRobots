@@ -63,12 +63,16 @@ TEST(VectorTest, Cast) {
 
 TEST(VectorTest, Rotation) {
   Vector_i p(4, 0);
-  p.rotate(M_PI);
 
-  EXPECT_EQ(Vector_i(-4, 0), p);
+  p.rotate(M_PI);
+  // EXPECT_EQ(Vector_i(-4, 0), p);
+  EXPECT_DOUBLE_EQ(-4, p.x);
+  EXPECT_DOUBLE_EQ(0, p.y);
 
   p.rotate(M_PI / 2);
-  EXPECT_EQ(Vector_i(0, -4), p);
+  EXPECT_DOUBLE_EQ(0, p.x);
+  EXPECT_DOUBLE_EQ(-4, p.y);
+  // EXPECT_EQ(Vector_i(0, -4), p);
 }
 
 TEST(VectorTest, DotProduct) {
@@ -115,7 +119,9 @@ TEST(VectorTest, Polar) {
   Vector_d p1(13 * cos(angle), 13 * sin(angle));
   Vector_d p2 = Vector_d::polar(angle, magnitude);
 
-  EXPECT_EQ(p1, p2);
+  // EXPECT_EQ(p1, p2);
+  EXPECT_DOUBLE_EQ(p1.x, p2.x);
+  EXPECT_DOUBLE_EQ(p1.y, p2.y);
 }
 
 int main(int argc, char **argv) {

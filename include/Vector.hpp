@@ -110,7 +110,7 @@ public:
     The magnitude of the Vector.
     \return the magnitude of the Vector.
   */
-  constexpr T magnitude() const { return sqrt(pow(x, 2) + pow(y, 2)); }
+  constexpr T magnitude() const { return sqrt(x * x + y * y); }
 
   /**
     The angle of the Vector.

@@ -28,8 +28,8 @@
 *.app
 
 # Build folder
-build/
+build*/
 
-# local project options
+# Local project options
 .clang_complete
 .atom-build.json

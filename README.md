@@ -27,6 +27,10 @@ Just run the following command:
 sudo apt-get install git cmake build-essential libsfml-dev doxygen
 ~~~~
 
+To use googletest clone or download the repository at https://github.com/google/googletest. Set GTEST_ROOT in cmake to the root of that repository.
+
+<!--
+NOTE: this is no longer needed.
 
 To install googletest go to https://github.com/google/googletest and follow their advice. Otherwise here is a quick way to do it (No guaranties):
 
@@ -38,7 +42,7 @@ cd build
 cmake ..
 make
 sudo make install
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~ -->
 ## Getting the Source ##
 
 To download the project run
