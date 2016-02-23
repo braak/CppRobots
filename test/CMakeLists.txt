@@ -1,19 +1,17 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+IF(NOT IS_DIRECTORY ${GTEST_ROOT})
+  message(WARNING "GTEST_ROOT is not a valid directory. Unit Tests will not be generated.")
+  return()
+endif(NOT IS_DIRECTORY ${GTEST_ROOT})
 
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-endif()
-
+enable_testing()
 
 # include Gtest and build
 subdirs(${GTEST_ROOT})
 include_directories(${GTEST_ROOT}/include)
 set(GTEST_LIBRARIES gtest gtest_main)
 
+include(CTest)
 
 macro(add_unit_test test_name target_test libraries)
   add_executable(${target_test} ${target_test}.cpp)
@@ -23,10 +21,7 @@ macro(add_unit_test test_name target_test libraries)
   set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target_test})
 endmacro(add_unit_test)
 
-include(CTest)
 if(BUILD_TESTING)
-  enable_testing()
-
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   include_directories(${GTEST_INCLUDE_DIRS})
   # include_directories(${CMAKE_SOURCE_DIR}/src)

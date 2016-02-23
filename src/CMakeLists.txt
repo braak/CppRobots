@@ -1,27 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-#set(CMAKE_CXX_STANDARD 11)
-#set(CXX_STANDARD_REQUIRED ON)
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-    message(ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -g -O0")
-elseif(MSVC)
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-endif()
-
-
 # A library used by all programs
 set(CPP_ROBOTS_LIBRARIES FrameTimer.cpp Robot.cpp Simulation.cpp Vector.cpp Rectangle.cpp Collision.cpp Projectile.cpp Rules.cpp Game.cpp ViewConsole.cpp pathUtility.cpp jsoncpp.cpp)
 add_library(CppRobots ${CPP_ROBOTS_LIBRARIES})
@@ -53,7 +31,7 @@ if(SFML_FOUND)
 
     add_definitions(-DUSE_SFML)
 else(SFML_FOUND)
-  # create the executable for use with Cconsole
+  # create the executable for use with Console
   target_link_libraries(robots CppRobots CppRobotsAgents)
 
   message(WARNING "robots will not be build with UI support, because SFML was not found.")
