@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file Collision.hpp
 *   \author Jan-Niklas Braak
@@ -16,6 +17,9 @@
   Tests a collision between two objects.
 */
 class Collision {
+  // NOTE: currently this does not need to be its own class. But with the
+  // introduction of a MTV it is more usefull to have the result of a collision
+  // test in one class.
   bool collision;
   // Vector_d MTV;
 
@@ -58,6 +62,22 @@ public:
 
   /**
     Test if there was a collision.
+
+    controll structures in C++ will try to explicitly cast a type to see if it
+    is true. so the following sniped will be valid:
+
+    \code{.cpp}
+      if(Collision(r1, r2)){
+        // do stuff
+      }
+    \endcode
+    However assignment to a boolean variable or use in a function that expects
+    a boolean requires explicit conversion:
+    \code{.cpp}
+      auto collision = Collision(r1, r2);
+      bool hit = (bool) collision;
+      foo((bool) collision);
+    \endcode
   */
   explicit operator bool() const;
 };

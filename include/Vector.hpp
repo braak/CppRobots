@@ -24,7 +24,7 @@ public:
   /**
   Default Contructor.
   */
-  constexpr Vector() : x(0), y(0){};
+  constexpr Vector() : Vector(0, 0){};
 
   /**
   Constructor.
@@ -34,14 +34,12 @@ public:
   constexpr Vector(T x, T y) : x(x), y(y){};
 
   /**
-    Constructor.
-
     Constructs a Vector from any other type of Vector.
     \param vector any type of vector.
   */
   template <typename U>
   explicit constexpr Vector(const Vector<U> &vector)
-      : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y)) {}
+      : Vector(static_cast<T>(vector.x), static_cast<T>(vector.y)) {}
 
   /**
     Inplace addition of Vectors.
@@ -51,9 +49,12 @@ public:
   Vector<T> &operator+=(const Vector<T> &rhs) {
     x += rhs.x;
     y += rhs.y;
-
     return *this;
   }
+  // constexpr Vector<T> &operator+=(const Vector<T> &rhs) {
+  //   return *this = Vector<T>(x + rhs.x, y + rhs.y);
+  // }
+
   /**
     Inplace subtraction of Vectors.
     \param rhs right hand side of the operation.
@@ -87,6 +88,7 @@ public:
 
     return *this;
   }
+
   /**
   Unary Minus.
   \return the inverse of the Vector.
@@ -102,9 +104,12 @@ public:
     const double x_ = x * cos(rotation) - y * sin(rotation);
     y = x * sin(rotation) + y * cos(rotation);
     x = x_;
-
     return *this;
   }
+  // constexpr Vector<T> &rotate(double rotation) {
+  //   return *this = Vector<T>(x * cos(rotation) - y * sin(rotation),
+  //                            x * sin(rotation) + y * cos(rotation));
+  // }
 
   /**
     The magnitude of the Vector.

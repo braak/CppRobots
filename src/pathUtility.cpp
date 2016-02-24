@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file pathUtility.cpp
 *   \author Jan-Niklas Braak
@@ -25,6 +26,7 @@ std::string selfpath() {
   throw std::runtime_error("Unable to find executable path :" +
                            std::string(std::strerror(errno)));
 }
+
 #elif _WINDOWS
 #include <windows.h>
 #include "Shlwapi.h"

@@ -26,8 +26,10 @@ void Robot::update() {
   if (!agent) {
     throw std::runtime_error("No Agent was set for this Robot.");
   }
+  // get the Action to perform from the agent.
   const Action a = agent->update(*this);
 
+  // limmit speed and turn rate
   const double v = clamp(a.v, rules.v_min, rules.v_max);
   const double w = clamp(a.w, -rules.w_max, rules.w_max);
 
@@ -79,12 +81,12 @@ std::shared_ptr<const Robot> Robot::scanClosest() const {
   // cache our position
   const auto position = body.getPosition();
   // function, that compares the distance of two Robots to us
-  auto comp = [=](const std::shared_ptr<Robot> &left,
-                  const std::shared_ptr<Robot> &right) {
-    const auto distance_left = left->getPosition() - position;
-    const auto distance_right = right->getPosition() - position;
+  auto comp = [=](const std::shared_ptr<Robot> &first,
+                  const std::shared_ptr<Robot> &second) {
+    const auto distance_first = first->getPosition() - position;
+    const auto distance_second = second->getPosition() - position;
 
-    return distance_left.magnitude() < distance_right.magnitude();
+    return distance_first.magnitude() < distance_second.magnitude();
   };
 
   return *std::min_element(scanTargets.begin(), scanTargets.end(), comp);

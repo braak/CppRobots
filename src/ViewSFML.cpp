@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file LICENSE.md for rights and limitations.
 *   \file ViewSFML.cpp
 *   \author Jan-Niklas Braak
@@ -43,16 +44,18 @@ void ViewSFML::input() {
       window.close();
     }
     if (event.type == sf::Event::Resized) {
+      // The Window was resized, resize the window.view apropriatly.
       sf::View new_view = window.getView();
       new_view.setSize(static_cast<sf::Vector2f>(window.getSize()));
       new_view.zoom(zoom_level);
       window.setView(new_view);
     }
     if (event.type == sf::Event::MouseWheelMoved) {
+      // Mouswheel was moved, change the zoom level.
       sf::View new_view = window.getView();
       const double zoom = pow(zoom_speed, event.mouseWheel.delta);
-      new_view.zoom(zoom);
-      zoom_level *= zoom;
+      new_view.zoom(zoom); // zoom the view
+      zoom_level *= zoom;  // save the current zoom_level (needed for resizing)
       window.setView(new_view);
     }
     if (event.type == sf::Event::KeyPressed) {
@@ -60,7 +63,7 @@ void ViewSFML::input() {
         window.close();
       }
       if (event.key.code == sf::Keyboard::Key::Space) {
-        // window.close();
+        // Take schreenshot
         static int num = 0;
         window.capture().saveToFile("screenshot" + std::to_string(num++) +
                                     ".png");
@@ -110,20 +113,21 @@ void ViewSFML::finish() {
 
     window.clear(sf::Color::Black);
 
+    // switch View to Screen space
     sf::View old_view = window.getView();
-    // float size_x = static_cast<float>(window.getSize().x);
-    // float size_y = static_cast<float>(window.getSize().y);
     sf::Vector2f size = (sf::Vector2f)window.getSize();
-
     window.setView(sf::View({0.f, 0.f, size.x, size.y}));
 
+    // Draw Text in center of schreen
     sf::Text game_over_text("Game Over ", font, 32);
     game_over_text.setPosition({size.x / 2, size.y / 2});
     game_over_text.setOrigin(0.5 * game_over_text.getLocalBounds().width, 0);
     window.draw(game_over_text);
 
+    // switch back
     window.setView(old_view);
 
+    // draw old UI on top of it.
     drawUI(window);
 
     window.display();
@@ -216,13 +220,16 @@ void ViewSFML::drawRobot(sf::RenderTarget &target, const Robot &robot) const {
 }
 
 void ViewSFML::drawUI(sf::RenderTarget &target) const {
+  // Schich View to Screenspace
   sf::View old_view = target.getView();
   sf::Vector2f size = (sf::Vector2f)target.getSize();
   target.setView(sf::View({0.f, 0.f, size.x, size.y}));
 
+  // Draw fps counter
   sf::Text fps_counter(frameTimer.getOutput(), font, 12);
   target.draw(fps_counter);
 
+  // Draw Log
   const int spacing = 14;
   sf::Text log_line("", font, 12);
   for (int i = 0; i < logLength; i++) {
