@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file Projectile.hpp
@@ -43,7 +44,7 @@ public:
   const Rectangle &getBody() const;
 
   /**
-    name of the owner of the Projetile.
+    name of the owner of the Projetile. Used to track who shot who.
   */
   const std::string owner;
 };

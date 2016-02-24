@@ -29,7 +29,6 @@ class Agent;
    and orientation of a player.
 */
 class Robot {
-  // Data and declarations
 public:
   /**
     The Rules used in the Simulation.
@@ -48,40 +47,36 @@ private:
 
   bool shooting;
 
-  // Methodes
 public:
   /**
-  Constructs a Robot with a specified timeStep. The timeStep determins the
-  simulation speed.
-  \param rules the Rules of the game.
-  \param agent the Agent ust to controll the Robot.
+    Constructs a Robot with a specified timeStep. The timeStep determins the
+    simulation speed.
+    \param rules the Rules of the game.
+    \param agent the Agent ust to controll the Robot.
   */
   Robot(const Rules &rules, Agent *agent);
 
-  // Robot(const Rules &rules, Agent *agent, Vector_d position, double
-  // rotation);
-
   /**
-  Get method for the position of the Robot.
-  \return the position of the Robot.
+    Get method for the position of the Robot.
+    \return the position of the Robot.
   */
   Vector_d getPosition() const;
 
   /**
-  Get method for the rotation of the Robot.
-  \return the rotation of the Robot.
+    Get method for the rotation of the Robot.
+    \return the rotation of the Robot.
   */
   double getRotation() const;
 
   /**
-  Get method for the Robot body.
-  \return the body of the Robot.
+    Get method for the Robot body.
+    \return the body of the Robot.
   */
   const Rectangle &getBody() const;
 
   /**
-  Get method for the Robot body.
-  \return the body of the Robot.
+    Get method for the Robot body.
+    \return the body of the Robot.
   */
   Rectangle &getBody();
 
@@ -103,15 +98,14 @@ public:
   std::shared_ptr<const Robot> scanAny() const;
 
   /**
-  Get the current health of the Robot.
-  \return the current health of the Robot.
+    Get the current health of the Robot.
+    \return the current health of the Robot.
   */
   double getHealth() const;
 
   /**
-  Get the angle of the turret relative to the body.
-
-  \return the angle of the turret relative to the body.
+    Get the angle of the turret relative to the body.
+    \return the angle of the turret relative to the body.
   */
   double getTurretAngle() const;
 
@@ -119,40 +113,40 @@ private:
   friend class Simulation;
 
   /**
-  updates the position and orientation of the Robot
+    updates the position and orientation of the Robot
   */
   virtual void update();
 
   /**
-    set the current Agent.
+    Set the current Agent.
     \param agent An Agent.
   */
   void setAgent(Agent *agent);
 
   /**
-  Set method for the Position.
-  \param position the new position.
+    Set method for the Position.
+    \param position the new position.
   */
   void setPosition(Vector_d position);
 
   /**
-  Set method for the Rotation.
-  \param rotation the new rotation.
+    Set method for the Rotation.
+    \param rotation the new rotation.
   */
   void setRotation(double rotation);
 
   /**
-  set the list of visible Robots.
-  \param scanTargets the list of visible Robots.
+    Set the list of visible Robots.
+    \param scanTargets the list of visible Robots.
   */
   void setScanTargets(std::list<std::shared_ptr<Robot>> scanTargets);
 
   /**
-  Method that is called each time there is a collision.
+    Method that is called each time there is a collision.
   */
+  void onCollision();
   // NOTE: we could pass the collision target so we can do better collision
   // resolution
-  void onCollision();
 
   double takeDamage(double damage);
 

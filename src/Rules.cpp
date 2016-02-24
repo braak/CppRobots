@@ -10,7 +10,7 @@
 #include "Rules.hpp"
 
 std::istream &operator>>(std::istream &is, Rules &rules) {
-  Rules defaultRules = Rules();
+  Rules defaultRules;
   Json::Value root;
   is >> root;
 

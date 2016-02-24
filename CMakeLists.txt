@@ -21,4 +21,4 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 subdirs(src)
 subdirs(doc)
-subdirs(test)
+subdirs(EXCLUDE_FROM_ALL test)

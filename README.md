@@ -46,7 +46,7 @@ sudo make install
 ## Getting the Source ##
 
 To download the project run
-~~~~
+~~~~{.sh}
 git clone https://github.com/braak/CppRobots
 ~~~~
 
@@ -54,7 +54,7 @@ Or download and extract the Zip file: https://github.com/braak/CppRobots/archive
 
 ## Compiling ##
 To build the project use `cmake` and `make`
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~{.sh}
 cd CppRobots
 mkdir build
 cd build
@@ -67,7 +67,19 @@ The makefile will always build an executable called `robots`, this is a program 
 
 The executable depends on libraries `CppRobots` and `CppRobotsAgents`, which will be created automatically and placed in the `lib` folder. In addition the `CppRobotsSFML` will be build if SFML is used.
 
-If Cmake finds [gtest](https://github.com/google/googletest) on the system it will generate the following tests:
+
+## Tests
+creating the tests requires [gtest](https://github.com/google/googletest).
+To build and run tests run:
+~~~~{.sh}
+make check
+~~~~
+To build the tests without running them run:
+~~~~{.sh}
+make tests
+~~~~
+
+Currently the following tests will be build
 * `testPose`
 * `testVector`
 * `testRectangle`
@@ -80,7 +92,7 @@ If Cmake finds [gtest](https://github.com/google/googletest) on the system it wi
 Creating the documentation requires [Doxygen](http://www.stack.nl/~dimitri/doxygen/). And optionally [Graphviz](http://www.graphviz.org/) for graphs.
 
 To generate the documentation run:
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~{.sh}
 make doc
 ~~~~~~~~~~~~~
 

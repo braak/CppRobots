@@ -7,18 +7,23 @@ endif(NOT IS_DIRECTORY ${GTEST_ROOT})
 enable_testing()
 
 # include Gtest and build
-subdirs(${GTEST_ROOT})
+subdirs(EXCLUDE_FROM_ALL ${GTEST_ROOT})
 include_directories(${GTEST_ROOT}/include)
 set(GTEST_LIBRARIES gtest gtest_main)
 
 include(CTest)
+add_custom_target(tests)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+add_dependencies(check tests)
+
 
 macro(add_unit_test test_name target_test libraries)
   add_executable(${target_test} ${target_test}.cpp)
   target_link_libraries(${target_test} ${libraries} ${GTEST_LIBRARIES} pthread)
 
   add_test(${test_name} ${CMAKE_CURRENT_BINARY_DIR}/${target_test})
-  set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target_test})
+  # set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target_test})
+  add_dependencies(tests ${target_test})
 endmacro(add_unit_test)
 
 if(BUILD_TESTING)
@@ -32,11 +37,4 @@ if(BUILD_TESTING)
   add_unit_test(UnitTestSignal testSignal CppRobots)
   add_unit_test(UnitTestMath testMath CppRobots)
 
-
-  add_custom_target(run_tests
-                   COMMENT "Run tests"
-                   COMMAND ctest ARGS --output-on-failure
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                   DEPENDS ${UNIT_TEST_TARGETS}
-                 )
 endif(BUILD_TESTING)

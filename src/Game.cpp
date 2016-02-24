@@ -33,7 +33,7 @@ void Game::run() {
     simulation->update();
     view->output();
   }
-  // disconect slots to make sure thex are no longer triggert.
+  // disconect slots to make sure there are no longer triggert.
   _onDeath.disconnect();
   _onSimulationStep.disconnect();
   // Perform some cleanup for the view
