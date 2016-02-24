@@ -41,13 +41,12 @@ Collision::Projection Collision::project(const Rectangle &rect,
 }
 
 std::vector<Vector_d> Collision::getAxes(const Rectangle &rect) {
-  std::vector<Vector_d> axes(2);
   // the first axis is a unit vector in the direction of the Rectangle
-  axes[0] = Vector_d::polar(rect.getRotation());
+  const auto axis0 = Vector_d::polar(rect.getRotation());
   // the second axis is perpendicular to the first
-  axes[1] = {-axes[0].y, axes[0].x};
+  const auto axis1 = axis0.perp();
   // the other two axes are parallel to the first two, so we don't need them.
-  return axes;
+  return {axis0, axis1};
 }
 
 Collision::Collision(const Rectangle &rect1, const Rectangle &rect2) {

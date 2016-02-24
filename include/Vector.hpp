@@ -96,6 +96,16 @@ public:
   constexpr Vector<T> operator-() const { return Vector(-x, -y); }
 
   /**
+  Perpendicular Vector.
+  \param clockwise if true return the clockwise perpendicular otherwise return
+  the counterclockwise perpendicular.
+  \return the perpendicular of the Vector.
+  */
+  constexpr Vector<T> perp(bool clockwise = false) const {
+    return clockwise ? Vector<T>{y, -x} : Vector<T>{-y, x};
+  }
+
+  /**
   Rotates the Vector by the given rotation.
   \param rotation the amount to rotate tne Vector by.
   \return *this for method chaining.

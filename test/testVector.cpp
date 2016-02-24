@@ -49,9 +49,20 @@ TEST(VectorTest, RightScalarMultiplication) {
   EXPECT_EQ(Vector_i(2, 4), p1 * 2);
 }
 
-TEST(VectorTest, ScalarDivisionn) {
+TEST(VectorTest, ScalarDivision) {
   Vector_i p1(4, 4);
   EXPECT_EQ(Vector_i(2, 2), p1 / 2);
+}
+
+TEST(VectorTest, UnaryMinus) {
+  Vector_i p1(1, 2);
+  EXPECT_EQ(Vector_i(-1, -2), -p1);
+}
+
+TEST(VectorTest, Perpendicular) {
+  Vector_i p1(1, 2);
+  EXPECT_EQ(Vector_i(-2, 1), p1.perp());
+  EXPECT_EQ(Vector_i(2, -1), p1.perp(true));
 }
 
 TEST(VectorTest, Cast) {
