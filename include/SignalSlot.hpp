@@ -1,5 +1,6 @@
 /**
-*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
+*   \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under
 * the MIT License, see the file
 * LICENSE.md for rights and limitations.
 *   \file SignalSlot.hpp
@@ -11,7 +12,6 @@
 
 #include <map>
 #include <functional>
-#include <memory>
 
 template <class... Args> class Signal;
 
@@ -20,7 +20,8 @@ template <class... Args> class Signal;
 
   A Signal-Slot   system is a variation of the Observer pattern, the Signal is
   the 'Subject' and the Slot is the 'Observer'. The main difference is, that
-  no internal state is managed (at least not by deafult).
+  no internal state is managed (at least not by default, see test/testSignal.cpp
+  for an example how to do that).
 
   A Slot will be called when its connected Signal is called.
 
@@ -33,7 +34,7 @@ template <class... Args> class Signal;
 template <class... Args> class Slot : public std::function<void(Args...)> {
 public:
   /**
-    Inherited Constructors.
+    Inherited Constructors from std::function.
   */
   using std::function<void(Args...)>::function;
 
@@ -48,10 +49,7 @@ public:
   The old Signal will be disconnected.
   \param newSignal the new Signal.
   */
-  void connect(Signal<Args...> &newSignal) {
-    disconnect(); // disconnect from the previous Signal
-    newSignal.connect(*this);
-  };
+  void connect(Signal<Args...> &newSignal) { newSignal.connect(*this); };
 
   /**
     \brief  Disconnects the Slot from its Signal
@@ -71,7 +69,7 @@ private:
 /**
 \brief The startpoint of a Signal-Slot connection.
 
-A Signal-Slot   system is a cariation of the Observer pattern, the Signal is
+A Signal-Slot   system is a variation of the Observer pattern, the Signal is
 the 'Subject' and   the Slot is the 'Observer'. The main difference is, that
 Slots does not store an internal state.
 
@@ -79,16 +77,12 @@ When a Signal is called all connected Slots will be called.
 
 A Signal can be connected to many Slots.
 
-
-
 \tparam Args Arguments of the underliying function.
-
 */
 template <class... Args> class Signal {
 public:
   /**
   \brief Destructor.
-
   All Slots will be automaticaly disconnected.
   */
   ~Signal() {
@@ -99,16 +93,23 @@ public:
 
   /**
   \brief  Connect the Signal to a new Slot.
-
   \param slot The new Slot.
   */
   void connect(Slot<Args...> &slot) {
-    slots[nextID] = &slot;
+    if (slot.signal == this) {
+      // we are already connected
+      return;
+    }
+    slot.disconnect(); // disconnect from the previous Signal
 
-    slot.id = nextID;
+    auto id = nextID++;
+
+    // update the slot
+    slot.id = id;
     slot.signal = this;
 
-    nextID++;
+    // save the slot in slots
+    slots[id] = &slot;
   }
 
   /**
@@ -117,7 +118,7 @@ public:
   \param slot The Slot to disconnect.
   */
   void disconnect(Slot<Args...> &slot) {
-    if (slot.signal == this) {
+    if (slot.signal == this) { // if we are the owner of the slot
       slots.erase(slot.id);
       slot.signal = nullptr;
     }
@@ -130,6 +131,7 @@ public:
     \param args The Function arguments of the connected Slot.
   */
   void operator()(Args... args) {
+    // call all slots with the given arguments.
     for (auto &slot : slots) {
       if (slot.second) {
         (*slot.second)(args...);
@@ -140,6 +142,10 @@ public:
 private:
   std::map<std::size_t, Slot<Args...> *> slots;
   std::size_t nextID = 1;
+  /*NOTE: unfortunatly std::functions are not comparable (neither less than nor
+   * equality). If they were we could use a set (or unordered_set) to store
+   * them, instead of having to rely on nextID.
+   */
 };
 
 #endif /* end of include guard: __SIGNAL_SLOT__ */
