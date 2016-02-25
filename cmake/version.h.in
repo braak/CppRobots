@@ -1,10 +1,9 @@
 /**
 * \warning @AUTOGEN_WARNING@
-* \copyright Copyright 2016 Hochschule Emden/Leer. This project is released under
-* the MIT License, see the file
-* LICENSE.md for rights and limitations.
-*   \file main.h
-*   \author Jan-Niklas Braak
+* \copyright Copyright 2016 Hochschule Emden/Leer. This project is released
+* under the MIT License, see the file LICENSE.md for rights and limitations.
+* \file version.h
+* \author Jan-Niklas Braak
 */
 
 #define VERSION "@VERSION@"
