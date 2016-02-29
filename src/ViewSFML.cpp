@@ -40,34 +40,43 @@ void ViewSFML::setSimulation(std::shared_ptr<const Simulation> sim) {
 void ViewSFML::input() {
   sf::Event event;
   while (window.pollEvent(event)) {
-    if (event.type == sf::Event::Closed) {
+    switch (event.type) {
+    case sf::Event::Closed:
       window.close();
-    }
-    if (event.type == sf::Event::Resized) {
+      break;
+    case sf::Event::Resized: {
       // The Window was resized, resize the window.view apropriatly.
       sf::View new_view = window.getView();
       new_view.setSize(static_cast<sf::Vector2f>(window.getSize()));
       new_view.zoom(zoom_level);
       window.setView(new_view);
-    }
-    if (event.type == sf::Event::MouseWheelMoved) {
+      break;
+    } // scope needed to destroy temporary new_view before the next case
+    case sf::Event::MouseWheelMoved: {
       // Mouswheel was moved, change the zoom level.
       sf::View new_view = window.getView();
       const double zoom = pow(zoom_speed, event.mouseWheel.delta);
       new_view.zoom(zoom); // zoom the view
       zoom_level *= zoom;  // save the current zoom_level (needed for resizing)
       window.setView(new_view);
-    }
-    if (event.type == sf::Event::KeyPressed) {
-      if (event.key.code == sf::Keyboard::Key::Escape) {
+      break;
+    } // scope needed to destroy temporary new_view before the next case
+    case sf::Event::KeyPressed:
+      switch (event.key.code) {
+      case sf::Keyboard::Key::Escape:
         window.close();
-      }
-      if (event.key.code == sf::Keyboard::Key::Space) {
-        // Take schreenshot
+        break;
+      case sf::Keyboard::Key::Space:
         static int num = 0;
         window.capture().saveToFile("screenshot" + std::to_string(num++) +
                                     ".png");
+        break;
+      default:
+        break;
       }
+      break;
+    default:
+      break;
     }
   }
 }
@@ -79,10 +88,12 @@ void ViewSFML::output() {
 
   frameTimer.sync();
 
-  /*NOTE: to get better perfomance for drawing only create only create the
+  /* NOTE: to get better perfomance for drawing only create  the
    * Graphical objets once and update their state here.
-  */
+   */
   // clear-draw-display cycle
+
+  // clear background
   window.clear(sf::Color::Black);
 
   // draw Arena
@@ -103,31 +114,26 @@ void ViewSFML::output() {
 }
 
 void ViewSFML::finish() {
-  // if (!simulation) {
-  //   throw std::runtime_error("No Simulation was set for this View.");
-  // }
-  // const Rules &rules = simulation->rules;
-
   while (isRunning()) {
     input();
 
     window.clear(sf::Color::Black);
 
-    // switch View to Screen space
+    // switch View to screen space
     sf::View old_view = window.getView();
     sf::Vector2f size = (sf::Vector2f)window.getSize();
     window.setView(sf::View({0.f, 0.f, size.x, size.y}));
 
-    // Draw Text in center of schreen
+    // Draw Text in center of screen
     sf::Text game_over_text("Game Over ", font, 32);
     game_over_text.setPosition({size.x / 2, size.y / 2});
     game_over_text.setOrigin(0.5 * game_over_text.getLocalBounds().width, 0);
     window.draw(game_over_text);
 
-    // switch back
+    // restore view
     window.setView(old_view);
 
-    // draw old UI on top of it.
+    // draw UI on top of it.
     drawUI(window);
 
     window.display();
@@ -152,6 +158,7 @@ void ViewSFML::drawProjectile(sf::RenderTarget &target,
   rect.setRotation(degrees(body.getRotation()));
   target.draw(rect);
 }
+
 void ViewSFML::drawPlayer(sf::RenderTarget &target, const std::string &name,
                           const Robot &robot) const {
   // drawRobot
@@ -172,9 +179,10 @@ void ViewSFML::drawArc(sf::RenderTarget &target, Vector_d position,
 
   double angle = rules.scan_angle;
   double radius = rules.scan_range;
-  /* NOTE: this function is very inefficient. It can be improved by having a
-  constant Arc object and modifiing its position via the transformation
-  matrix of RenderStates acording to the player position.
+  /* NOTE: this function is _very_ inefficient. It can be improved by having a
+  constant Arc object and modifiing its position & rotation via the
+  transformation matrix of RenderStates acording to the player position &
+  rotation.
   */
   sf::VertexArray lines(sf::TrianglesFan);
   lines.append({{(float)position.x, (float)position.y}, {0, 0, 255, 60}});
@@ -198,8 +206,13 @@ void ViewSFML::drawLable(sf::RenderTarget &target, const std::string &name,
   target.draw(name_tag);
 }
 void ViewSFML::drawRobot(sf::RenderTarget &target, const Robot &robot) const {
+  /*NOTE: to make this function more efficient store the rect and turret for
+   * each robot and modify it before drawing instead of reconstructing
+   * it every time.
+   */
   Rectangle body = robot.getBody();
 
+  // construct the sf::RectangleShape that represents the robots body
   sf::RectangleShape rect({(float)body.getSize().x, (float)body.getSize().y});
   rect.setOrigin(0.5 * body.getSize().x, 0.5 * body.getSize().y);
   rect.setPosition({(float)body.getPosition().x, (float)body.getPosition().y});
@@ -207,8 +220,10 @@ void ViewSFML::drawRobot(sf::RenderTarget &target, const Robot &robot) const {
   double a = robot.getHealth() / 100.0;
   if (a > 0)
     rect.setFillColor({(uint8_t)(255 * (1 - a)), (uint8_t)(255 * a), 0});
+  // draw it
   target.draw(rect);
 
+  // construct the sf::RectangleShape that represents the robots turret
   sf::RectangleShape turret(
       {(float)body.getSize().x, (float)body.getSize().y / 3});
   turret.setPosition(
@@ -216,11 +231,12 @@ void ViewSFML::drawRobot(sf::RenderTarget &target, const Robot &robot) const {
   turret.setRotation(degrees(body.getRotation() + robot.getTurretAngle()));
   turret.setOrigin(0.5 * turret.getSize().y, 0.5 * turret.getSize().y);
 
+  // draw it
   target.draw(turret);
 }
 
 void ViewSFML::drawUI(sf::RenderTarget &target) const {
-  // Schich View to Screenspace
+  // Switch view to Screenspace
   sf::View old_view = target.getView();
   sf::Vector2f size = (sf::Vector2f)target.getSize();
   target.setView(sf::View({0.f, 0.f, size.x, size.y}));
@@ -230,13 +246,13 @@ void ViewSFML::drawUI(sf::RenderTarget &target) const {
   target.draw(fps_counter);
 
   // Draw Log
-  const int spacing = 14;
+  // const int spacing = 14;
   sf::Text log_line("", font, 12);
   for (int i = 0; i < logLength; i++) {
     const std::string &line = logging[(logIndex + i) % logLength];
     if (!line.empty()) {
       log_line.setString(sf::String::fromUtf8(line.begin(), line.end()));
-      log_line.move({0, spacing});
+      log_line.move({0, log_line.getLocalBounds().height * 1.1f});
 
       target.draw(log_line);
     }
@@ -250,6 +266,9 @@ void ViewSFML::drawArena(sf::RenderTarget &target) const {
     throw std::runtime_error("No Simulation was set for this View.");
   }
   const Rules &rules = simulation->rules;
+  /*NOTE: The arena only needs to be constructed once (asuming its size doesn't
+   * change).
+   */
   sf::RectangleShape rect(
       {(float)rules.arena_size.x, (float)rules.arena_size.y});
   rect.setFillColor(sf::Color::Transparent);

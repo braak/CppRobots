@@ -18,6 +18,10 @@
     "cmd": "make clean",
     "cwd": "{PROJECT_PATH}/build/"
   },
+  "check": {
+    "cmd": "make check",
+    "cwd": "{PROJECT_PATH}/build/"
+  },
   "rebuild_cache": {
     "cmd": "make rebuild_cache",
     "cwd": "{PROJECT_PATH}/build/"
