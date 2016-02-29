@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
 IF(NOT IS_DIRECTORY ${GTEST_ROOT})
-  message(WARNING "GTEST_ROOT is not a valid directory. Unit Tests will not be generated.")
+  message(WARNING "GTEST_ROOT '${GTEST_ROOT}' is not a valid directory. Unit Tests will not be generated.")
   return()
 endif(NOT IS_DIRECTORY ${GTEST_ROOT})
 

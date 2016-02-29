@@ -33,7 +33,7 @@ To use googletest clone or download the repository at https://github.com/google/
 
 To download the project run
 ~~~~{.sh}
-git clone https://github.com/braak/CppRobots
+git clone --recursive https://github.com/braak/CppRobots
 ~~~~
 
 Or download and extract the Zip file: https://github.com/braak/CppRobots/archive/master.zip
@@ -54,7 +54,14 @@ The executable depends on libraries `CppRobots` and `CppRobotsAgents`, which wil
 
 
 ## Tests
-Creating the tests requires [googletest](https://github.com/google/googletest).
+Creating the tests requires [googletest](https://github.com/google/googletest). This project uses googletest as a subproject, the `git clone` command above already downloaded it if you used the `--recursive` flag. If you did not us the `--recursive` flag execute the following commands in the repository folder:
+~~~~{.sh}
+git submodule init
+git submodule update
+~~~~
+Or provide your the location of googletest to cmake via the GTEST_ROOT variable.
+
+
 To build and run tests run:
 ~~~~{.sh}
 make check
