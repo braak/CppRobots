@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <random>
+#include <functional>
 
 /**
   \brief A  rudimentary Agent, that moves around randomly (wanders).
